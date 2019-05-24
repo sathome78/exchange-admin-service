@@ -1,57 +1,64 @@
 package me.exrates.adminservice.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @Order(2)
-@EnableTransactionManagement
-@EnableJpaRepositories(
-        entityManagerFactoryRef = "coreEntityManagerFactory",
-        basePackages = {"me.exrates.adminservice.core.repository"}
-)
 public class CoreDatasourceConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(CoreDatasourceConfig.class);
 
-    @Primary
+    @Value("${db-core.datasource.url}")
+    private String databaseUrl;
+
+    @Value("${db-core.datasource.driver-class-name}")
+    private String databaseDriverName;
+
+    @Value("${db-core.datasource.username}")
+    private String databaseUsername;
+
+    @Value("${db-core.datasource.password}")
+    private String databasePassword;
+
     @Bean(name = "coreDataSource")
-    @ConfigurationProperties(prefix = "spring.db-core.datasource")
     public DataSource dataSource() {
-        return DataSourceBuilder.create().build();
+        return createDataSource();
     }
 
-    @Primary
-    @Bean(name = "coreEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
-                                                                       @Qualifier("coreDataSource") DataSource dataSource) {
-        return builder
-                .dataSource(dataSource)
-                .packages("me.exrates.adminservice.core.domain")
-                .persistenceUnit("core")
-                .build();
+    @Bean
+    public NamedParameterJdbcTemplate coreTemplate(@Qualifier("coreDataSource") DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
     }
 
-    @Primary
-    @Bean(name = "coreTransactionManager")
-    public PlatformTransactionManager transactionManager(@Qualifier("coreEntityManagerFactory") EntityManagerFactory emf) {
-        return new JpaTransactionManager(emf);
+    private HikariDataSource createDataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setInitializationFailTimeout(-1);
+        config.setJdbcUrl(databaseUrl);
+        config.setUsername(databaseUsername);
+        config.setPassword(databasePassword);
+        config.setDriverClassName(databaseDriverName);
+        config.setMaximumPoolSize(2);
+        config.setLeakDetectionThreshold(TimeUnit.MILLISECONDS.convert(45, TimeUnit.SECONDS));
+        config.setMinimumIdle(1);
+        config.setIdleTimeout(30000);
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.addDataSourceProperty("useServerPrepStmts", "true");
+        logger.debug("Created hikari datasource with db url: {} and for user: {}", databaseUrl, databaseUsername);
+        return new HikariDataSource(config);
     }
 
 }
