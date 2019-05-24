@@ -1,0 +1,32 @@
+
+server:
+  port: 8088
+
+spring:
+  db-core:
+    datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/birzha?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      username: root
+    ssm:
+      password-path:
+  db-admin:
+    datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/admin_panel?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      username: root
+    ssm:
+      password-path:
+
+ssm:
+  mode: develop
+
+api:
+  exchange:
+    url:
+    username:
+    password:
+  wallets:
+    url:
+    username:
+    password:
