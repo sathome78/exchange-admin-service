@@ -1,50 +1,57 @@
 package me.exrates.adminservice.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
-@Order(1)
-@EnableTransactionManagement
-@EnableJpaRepositories(
-        entityManagerFactoryRef = "entityManagerFactory",
-        transactionManagerRef = "transactionManager",
-        basePackages = {"me.exrates.adminservice.repository"}
-)
-public class AdminDatasourceConfig {
+@Order(2)
+public class AdminDatasourceConfig extends DBConfig {
 
-    @Bean(name = "dataSource")
-    @ConfigurationProperties(prefix = "spring.db-admin.datasource")
+    @Value("${spring.datasource.url}")
+    private String databaseUrl;
+
+    @Value("${spring.datasource.driver-class-name}")
+    private String databaseDriverName;
+
+    @Value("${spring.datasource.username}")
+    private String databaseUsername;
+
+    @Value("${spring.datasource.password}")
+    private String databasePassword;
+
+    @Bean(name = "adminDataSource")
     public DataSource dataSource() {
-        return DataSourceBuilder.create().build();
+        return createDataSource();
     }
 
-    @Bean(name = "entityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean
-    barEntityManagerFactory(EntityManagerFactoryBuilder builder, @Qualifier("dataSource") DataSource dataSource) {
-        return
-                builder
-                        .dataSource(dataSource)
-                        .packages("me.exrates.adminservice.domain")
-                        .persistenceUnit("admin")
-                        .build();
+    @Bean(name = "adminTemplate")
+    public NamedParameterJdbcTemplate adminTemplate(@Qualifier("adminDataSource") DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
     }
 
-    @Bean(name = "transactionManager")
-    public PlatformTransactionManager barTransactionManager(@Qualifier("entityManagerFactory") EntityManagerFactory emf) {
-        return new JpaTransactionManager(emf);
+    @Override
+    protected String getDatabaseUrl() {
+        return databaseUrl;
+    }
+
+    @Override
+    protected String getDatabaseUsername() {
+        return databaseUsername;
+    }
+
+    @Override
+    protected String getDatabasePassword() {
+        return databasePassword;
+    }
+
+    @Override
+    protected String getDatabaseDriverClassName() {
+        return databaseDriverName;
     }
 }

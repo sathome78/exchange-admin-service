@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @Order(2)
-public class CoreDatasourceConfig {
+public class CoreDatasourceConfig extends DBConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(CoreDatasourceConfig.class);
 
@@ -37,28 +37,28 @@ public class CoreDatasourceConfig {
         return createDataSource();
     }
 
-    @Bean
+    @Bean(name = "coreTemplate")
     public NamedParameterJdbcTemplate coreTemplate(@Qualifier("coreDataSource") DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 
-    private HikariDataSource createDataSource() {
-        HikariConfig config = new HikariConfig();
-        config.setInitializationFailTimeout(-1);
-        config.setJdbcUrl(databaseUrl);
-        config.setUsername(databaseUsername);
-        config.setPassword(databasePassword);
-        config.setDriverClassName(databaseDriverName);
-        config.setMaximumPoolSize(2);
-        config.setLeakDetectionThreshold(TimeUnit.MILLISECONDS.convert(45, TimeUnit.SECONDS));
-        config.setMinimumIdle(1);
-        config.setIdleTimeout(30000);
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        config.addDataSourceProperty("useServerPrepStmts", "true");
-        logger.debug("Created hikari datasource with db url: {} and for user: {}", databaseUrl, databaseUsername);
-        return new HikariDataSource(config);
+    @Override
+    protected String getDatabaseUrl() {
+        return databaseUrl;
     }
 
+    @Override
+    protected String getDatabaseUsername() {
+        return databaseUsername;
+    }
+
+    @Override
+    protected String getDatabasePassword() {
+        return databasePassword;
+    }
+
+    @Override
+    protected String getDatabaseDriverClassName() {
+        return databaseDriverName;
+    }
 }
