@@ -1,11 +1,5 @@
-server:
-  port: 8888
 
 spring:
-  application:
-    name: admin-service
-  profiles:
-    active: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false
@@ -21,16 +15,6 @@ spring:
       minimum-idle: 5
       maximum-pool-size: 10
       validation-timeout: 5000
-  jpa:
-    hibernate:
-      ddl-auto: none
-    open-in-view: false
-  jackson:
-    serialization:
-      write_dates_as_timestamps: false
-    mapper:
-      default_view_inclusion: true
-    default-property-inclusion: 'non_null'
   flyway:
     url: ${spring.datasource.url}
     user: ${spring.datasource.username}
@@ -38,10 +22,10 @@ spring:
     baseline-on-migrate: true
 
 
-db-core:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/birzha?autoReconnect=true&useSSL=false
-    username: root
-    password: root
+#db-core:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/birzha?autoReconnect=true&useSSL=false
+#    username: root
+#    password: root
 

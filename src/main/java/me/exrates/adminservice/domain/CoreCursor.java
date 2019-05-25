@@ -15,6 +15,6 @@ public class CoreCursor {
 
     private String tableName;
     private String tableColumn;
-    private Long cursorPosition;
+    private Integer cursorPosition;
     private LocalDateTime modified;
 }

@@ -41,7 +41,8 @@ public class CoreCursorRepositoryImpl implements CoreCursorRepository {
 
     @Override
     public CoreCursor save(CoreCursor coreCursor) {
-        String sql = "INSERT INTO " + TABLE_NAME + " VALUE (:tableName, :tableColumnName, :cursorPosition) "
+        String sql = "INSERT INTO " + TABLE_NAME + " (table_name, table_column, last_id) " +
+                " VALUE (:tableName, :tableColumnName, :cursorPosition) "
                 + " ON DUPLICATE KEY UPDATE " + COL_LAST_ID + " = :cursorPosition";
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("tableName", coreCursor.getTableName())
@@ -64,7 +65,7 @@ public class CoreCursorRepositoryImpl implements CoreCursorRepository {
         return (rs, i) -> CoreCursor.builder()
                 .tableName(rs.getString(COL_TABLE_NAME))
                 .tableColumn(rs.getString(COL_COLUMN_NAME))
-                .cursorPosition(rs.getLong(COL_LAST_ID))
+                .cursorPosition(rs.getInt(COL_LAST_ID))
                 .modified(rs.getTimestamp(COL_MODIFIED).toLocalDateTime())
                 .build();
     }
