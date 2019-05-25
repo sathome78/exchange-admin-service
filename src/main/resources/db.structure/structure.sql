@@ -1,8 +1,9 @@
 CREATE TABLE IF NOT EXISTS `CURSORS`
 (
-    `id`      int(11)      NOT NULL AUTO_INCREMENT,
-    `table_name`   varchar(255)  NOT NULL,
-    `table_column`    varchar(255)  NOT NULL,
-    `last_id` INTEGER DEFAULT 0,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+    `table_name`   varchar(255) DEFAULT 'id',
+    `table_column` varchar(255) NOT NULL,
+    `last_id`      LONG      DEFAULT 0,
+    `modified_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`table_name`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
