@@ -1,6 +1,6 @@
 package me.exrates.adminservice.services;
 
-public interface ExchangeService {
+public interface ExchangeRatesService {
 
     void updateCurrencyExchangeRates();
 }
