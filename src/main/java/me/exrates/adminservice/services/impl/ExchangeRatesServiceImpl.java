@@ -7,13 +7,20 @@ import me.exrates.adminservice.models.api.RateDto;
 import me.exrates.adminservice.services.ExchangeRatesService;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toMap;
+import static me.exrates.adminservice.configurations.CacheConfiguration.ALL_RATES_CACHE;
 import static me.exrates.adminservice.utils.CollectionUtil.isEmpty;
 
 @Log4j2
@@ -23,12 +30,27 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService {
 
     private final ExchangeApi exchangeApi;
     private final ExchangeRatesDao exchangeRatesDao;
+    private final Cache ratesCache;
 
     @Autowired
     public ExchangeRatesServiceImpl(ExchangeApi exchangeApi,
-                                    ExchangeRatesDao exchangeRatesDao) {
+                                    ExchangeRatesDao exchangeRatesDao,
+                                    @Qualifier(ALL_RATES_CACHE) Cache ratesCache) {
         this.exchangeApi = exchangeApi;
         this.exchangeRatesDao = exchangeRatesDao;
+        this.ratesCache = ratesCache;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<RateDto> getAllExchangeRates() {
+        return exchangeRatesDao.getAllExchangeRates();
+    }
+
+    @Override
+    public Map<String, RateDto> getCachedRates() {
+        return Objects.requireNonNull(ratesCache.get(ALL_RATES_CACHE, this::getAllExchangeRates)).stream()
+                .collect(toMap(RateDto::getCurrencyName, Function.identity()));
     }
 
     @Override
@@ -40,16 +62,19 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService {
         if (isEmpty(rates)) {
             return;
         }
-        rates.forEach(rateDto -> {
+        for (RateDto rateDto : rates) {
             RateDto oldRateDto = exchangeRatesDao.getRateByCurrencyName(rateDto.getCurrencyName());
             if (isNull(oldRateDto)) {
                 boolean inserted = exchangeRatesDao.addCurrencyExchangeRates(rateDto);
                 log.debug("Process of add new exchange rates for currency: {} finished with result: {}", rateDto.getCurrencyName(), inserted);
             } else {
+                if (oldRateDto.getUsdRate().compareTo(rateDto.getUsdRate()) == 0 && oldRateDto.getBtcRate().compareTo(rateDto.getBtcRate()) == 0) {
+                    continue;
+                }
                 boolean updated = exchangeRatesDao.updateCurrencyExchangeRates(rateDto);
                 log.debug("Process of update exchange rates for currency: {} finished with result: {}", rateDto.getCurrencyName(), updated);
             }
-        });
+        }
         log.info("Process of updating currency exchange rates end... Time: {}", stopWatch.getTime(TimeUnit.MILLISECONDS));
     }
 }

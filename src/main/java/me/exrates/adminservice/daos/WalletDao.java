@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface WalletDao {
 
+    ExternalWalletBalancesDto getExternalMainWalletBalanceByCurrencyName(String currencyName);
+
     List<ExternalWalletBalancesDto> getExternalMainWalletBalances();
 
     List<InternalWalletBalancesDto> getInternalWalletBalances();

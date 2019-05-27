@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -25,14 +26,29 @@ public class ExchangeRatesDaoImpl implements ExchangeRatesDao {
 
     @Override
     public RateDto getRateByCurrencyName(String currencyName) {
-        final String sql = "SELECT * FROM CURRENT_CURRENCY_RATES ccr WHERE ccr.currency_name = :currency_name";
+        final String sql = "SELECT ccr.currency_name, ccr.usd_rate, ccr.btc_rate FROM CURRENT_CURRENCY_RATES ccr WHERE ccr.currency_name = :currency_name";
 
         try {
-            return npJdbcTemplate.queryForObject(sql, Collections.singletonMap("currency_name", currencyName), RateDto.class);
+            return npJdbcTemplate.queryForObject(sql, Collections.singletonMap("currency_name", currencyName), (rs, row) -> RateDto.builder()
+                    .currencyName(rs.getString("currency_name"))
+                    .usdRate(rs.getBigDecimal("usd_rate"))
+                    .btcRate(rs.getBigDecimal("btc_rate"))
+                    .build());
         } catch (Exception ex) {
             log.debug("Currency with name: {} not found", currencyName);
             return null;
         }
+    }
+
+    @Override
+    public List<RateDto> getAllExchangeRates() {
+        final String sql = "SELECT ccr.currency_name, ccr.usd_rate, ccr.btc_rate FROM CURRENT_CURRENCY_RATES ccr";
+
+        return npJdbcTemplate.query(sql, (rs, row) -> RateDto.builder()
+                .currencyName(rs.getString("currency_name"))
+                .usdRate(rs.getBigDecimal("usd_rate"))
+                .btcRate(rs.getBigDecimal("btc_rate"))
+                .build());
     }
 
     @Override

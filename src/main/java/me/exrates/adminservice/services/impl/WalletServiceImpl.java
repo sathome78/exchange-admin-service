@@ -7,7 +7,8 @@ import me.exrates.adminservice.models.ExternalWalletBalancesDto;
 import me.exrates.adminservice.models.InternalWalletBalancesDto;
 import me.exrates.adminservice.models.api.BalanceDto;
 import me.exrates.adminservice.models.api.RateDto;
-import me.exrates.adminservice.services.CurrencyService;
+import me.exrates.adminservice.services.ExchangeRatesService;
+import me.exrates.adminservice.services.WalletBalancesService;
 import me.exrates.adminservice.services.WalletService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -36,12 +37,16 @@ public class WalletServiceImpl implements WalletService {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 
     private final WalletDao walletDao;
-    private final CurrencyService currencyService;
+    private final ExchangeRatesService exchangeRatesService;
+    private final WalletBalancesService walletBalancesService;
 
     @Autowired
-    public WalletServiceImpl(WalletDao walletDao, CurrencyService currencyService) {
+    public WalletServiceImpl(WalletDao walletDao,
+                             ExchangeRatesService exchangeRatesService,
+                             WalletBalancesService walletBalancesService) {
         this.walletDao = walletDao;
-        this.currencyService = currencyService;
+        this.exchangeRatesService = exchangeRatesService;
+        this.walletBalancesService = walletBalancesService;
     }
 
     @Transactional(readOnly = true)
@@ -61,10 +66,8 @@ public class WalletServiceImpl implements WalletService {
         StopWatch stopWatch = StopWatch.createStarted();
         log.info("Process of updating external main wallets start...");
 
-        List<CurrencyDto> currencies = currencyService.getAllCurrencies();
-
-        final Map<String, RateDto> rates = currencyService.getRates();
-        final Map<String, BalanceDto> balances = currencyService.getBalances();
+        final Map<String, RateDto> rates = exchangeRatesService.getCachedRates();
+        final Map<String, BalanceDto> balances = walletBalancesService.getCachedBalances();
         final Map<String, ExternalWalletBalancesDto> mainBalancesMap = walletDao.getExternalMainWalletBalances()
                 .stream()
                 .collect(toMap(
@@ -76,9 +79,7 @@ public class WalletServiceImpl implements WalletService {
             log.info("Exchange or wallet api did not return any data");
             return;
         }
-
-        for (CurrencyDto currency : currencies) {
-            final String currencyName = currency.getName();
+        for (String currencyName : rates.keySet()) {
 
             RateDto rateDto = rates.getOrDefault(currencyName, RateDto.zeroRate(currencyName));
             BalanceDto balanceDto = balances.getOrDefault(currencyName, BalanceDto.zeroBalance(currencyName));
@@ -103,6 +104,8 @@ public class WalletServiceImpl implements WalletService {
                 builder.lastUpdatedDate(lastBalanceUpdate);
             }
             exWallet = builder.build();
+
+            ExternalWalletBalancesDto oldBalance = walletDao.getExternalMainWalletBalanceByCurrencyName(currencyName);
             walletDao.updateExternalMainWalletBalances(exWallet);
         }
         log.info("Process of updating external main wallets end... Time: {}", stopWatch.getTime(TimeUnit.MILLISECONDS));

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -26,14 +27,29 @@ public class WalletBalancesDaoImpl implements WalletBalancesDao {
 
     @Override
     public BalanceDto getBalancesByCurrencyName(String currencyName) {
-        final String sql = "SELECT * FROM CURRENT_CURRENCY_BALANCES ccb WHERE ccb.currency_name = :currency_name";
+        final String sql = "SELECT ccb.currency_name, ccb.balance, ccb.last_updated_at FROM CURRENT_CURRENCY_BALANCES ccb WHERE ccb.currency_name = :currency_name";
 
         try {
-            return npJdbcTemplate.queryForObject(sql, Collections.singletonMap("currency_name", currencyName), BalanceDto.class);
+            return npJdbcTemplate.queryForObject(sql, Collections.singletonMap("currency_name", currencyName), (rs, row) -> BalanceDto.builder()
+                    .currencyName(rs.getString("currency_name"))
+                    .balance(rs.getBigDecimal("balance"))
+                    .lastUpdatedAt(rs.getTimestamp("last_updated_at").toLocalDateTime())
+                    .build());
         } catch (Exception ex) {
             log.debug("Currency with name: {} not found", currencyName);
             return null;
         }
+    }
+
+    @Override
+    public List<BalanceDto> getAllWalletBalances() {
+        final String sql = "SELECT ccb.currency_name, ccb.balance, ccb.last_updated_at FROM CURRENT_CURRENCY_BALANCES ccb";
+
+        return npJdbcTemplate.query(sql, (rs, row) -> BalanceDto.builder()
+                .currencyName(rs.getString("currency_name"))
+                .balance(rs.getBigDecimal("balance"))
+                .lastUpdatedAt(rs.getTimestamp("last_updated_at").toLocalDateTime())
+                .build());
     }
 
     @Override
