@@ -1,11 +1,16 @@
 package me.exrates.adminservice.config;
 
+import me.exrates.SSMGetter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -22,8 +27,11 @@ public class AdminDatasourceConfig extends DBConfig {
     @Value("${spring.datasource.username}")
     private String databaseUsername;
 
-    @Value("${spring.datasource.password}")
-    private String databasePassword;
+    @Value("${spring.datasource.ssm.password-path}")
+    private String ssmPath;
+
+    @Autowired
+    private SSMGetter ssmGetter;
 
     @Bean(name = "adminDataSource")
     public DataSource dataSource() {
@@ -33,6 +41,12 @@ public class AdminDatasourceConfig extends DBConfig {
     @Bean(name = "adminTemplate")
     public NamedParameterJdbcTemplate adminTemplate(@Qualifier("adminDataSource") DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Primary
+    @Bean(name = "adminTxManager")
+    public PlatformTransactionManager platformTransactionManager(@Qualifier("adminDataSource") DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 
     @Override
@@ -47,7 +61,7 @@ public class AdminDatasourceConfig extends DBConfig {
 
     @Override
     protected String getDatabasePassword() {
-        return databasePassword;
+        return ssmGetter.lookup(ssmPath);
     }
 
     @Override

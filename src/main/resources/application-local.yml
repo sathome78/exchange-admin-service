@@ -1,11 +1,9 @@
 server:
-  port: 8888
+  port: 8088
 
 spring:
   application:
     name: admin-service
-  profiles:
-    active: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false
@@ -45,9 +43,18 @@ db-core:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/birzha?autoReconnect=true&useSSL=false
     username: root
-#    password: root
+  #    password: root
   ssm:
     password-path:
+
+
+#  db-admin:
+#    datasource:
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://localhost:3306/admin_panel?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+#      username: root
+#    ssm:
+#      password-path:
 
 ssm:
   mode: develop

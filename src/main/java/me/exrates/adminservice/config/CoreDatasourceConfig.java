@@ -2,14 +2,19 @@ package me.exrates.adminservice.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import me.exrates.SSMGetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.concurrent.TimeUnit;
@@ -29,8 +34,11 @@ public class CoreDatasourceConfig extends DBConfig {
     @Value("${db-core.datasource.username}")
     private String databaseUsername;
 
-    @Value("${db-core.datasource.password}")
-    private String databasePassword;
+    @Value("${db-core.ssm.password-path}")
+    private String ssmPath;
+
+    @Autowired
+    private SSMGetter ssmGetter;
 
     @Bean(name = "coreDataSource")
     public DataSource dataSource() {
@@ -40,6 +48,12 @@ public class CoreDatasourceConfig extends DBConfig {
     @Bean(name = "coreTemplate")
     public NamedParameterJdbcTemplate coreTemplate(@Qualifier("coreDataSource") DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Primary
+    @Bean(name = "coreTxManager")
+    public PlatformTransactionManager platformTransactionManager(@Qualifier("coreDataSource") DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 
     @Override
@@ -54,7 +68,7 @@ public class CoreDatasourceConfig extends DBConfig {
 
     @Override
     protected String getDatabasePassword() {
-        return databasePassword;
+        return ssmGetter.lookup(ssmPath);
     }
 
     @Override

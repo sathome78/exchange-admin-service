@@ -26,10 +26,6 @@ public abstract class DBConfig {
         config.setLeakDetectionThreshold(TimeUnit.MILLISECONDS.convert(45, TimeUnit.SECONDS));
         config.setMinimumIdle(1);
         config.setIdleTimeout(30000);
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        config.addDataSourceProperty("useServerPrepStmts", "true");
         return new HikariDataSource(config);
     }
 }
