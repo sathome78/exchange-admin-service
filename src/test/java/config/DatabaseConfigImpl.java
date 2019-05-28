@@ -1,9 +1,11 @@
 package config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile(value = {"test"})
 public final class DatabaseConfigImpl implements DatabaseConfig {
 
     @Value("${spring.datasource.url}")
@@ -24,7 +26,7 @@ public final class DatabaseConfigImpl implements DatabaseConfig {
     private final String dbScheme;
 
     DatabaseConfigImpl(String schemaName) {
-        this.dbScheme = schemaName;;
+        this.dbScheme = schemaName;
     }
 
     DatabaseConfigImpl(DatabaseConfig config) {

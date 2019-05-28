@@ -6,11 +6,7 @@ import java.util.List;
 
 public interface WalletBalancesDao {
 
-    BalanceDto getBalancesByCurrencyName(String currencyName);
-
     List<BalanceDto> getAllWalletBalances();
 
-    boolean addCurrencyWalletBalances(BalanceDto balanceDto);
-
-    boolean updateCurrencyWalletBalances(BalanceDto balanceDto);
+    void updateCurrencyWalletBalances(List<BalanceDto> balances);
 }

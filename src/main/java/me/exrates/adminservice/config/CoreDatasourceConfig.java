@@ -50,7 +50,6 @@ public class CoreDatasourceConfig extends DBConfig {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 
-    @Primary
     @Bean(name = "coreTxManager")
     public PlatformTransactionManager platformTransactionManager(@Qualifier("coreDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);

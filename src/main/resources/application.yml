@@ -6,23 +6,23 @@ spring:
     name: admin-service
   profiles:
     active: dev
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false
-    username: root
-#    password: root
-    scheme-name: admin_db
-    hikari:
-      connection-timeout: 30000
-      idle-timeout: 180000
-      max-lifetime: 600000
-      connection-init-sql: SELECT 1 FROM DUAL;
-      connection-test-query: SELECT 2 FROM DUAL;
-      minimum-idle: 5
-      maximum-pool-size: 10
-      validation-timeout: 5000
-    ssm:
-      password-path:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false
+#    username: root
+##    password: root
+#    scheme-name: admin_db
+#    hikari:
+#      connection-timeout: 30000
+#      idle-timeout: 180000
+#      max-lifetime: 600000
+#      connection-init-sql: SELECT 1 FROM DUAL;
+#      connection-test-query: SELECT 2 FROM DUAL;
+#      minimum-idle: 5
+#      maximum-pool-size: 10
+#      validation-timeout: 5000
+#    ssm:
+#      password-path:
   jpa:
     hibernate:
       ddl-auto: none
@@ -33,12 +33,20 @@ spring:
     mapper:
       default_view_inclusion: true
     default-property-inclusion: 'non_null'
-  flyway:
-    url: ${spring.datasource.url}
-    user: ${spring.datasource.username}
-    password: ${spring.datasource.password}
-    baseline-on-migrate: true
+#  flyway:
+#    url: ${spring.datasource.url}
+#    user: ${spring.datasource.username}
+#    password: ${spring.datasource.password}
+#    baseline-on-migrate: true
 
+db-admin:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false
+    username: root
+  #    password: root
+  ssm:
+    password-path:
 
 db-core:
   datasource:
@@ -51,21 +59,6 @@ db-core:
 
 ssm:
   mode: develop
-
-api:
-  exchange:
-    url: http://172.50.10.10:80/currency/rates
-    username: varvatos
-    password: qGbxQ466NWpB3W5G
-  wallets:
-    url: http://172.31.3.72:80/currencies
-    username: varvatos
-    password: qGbxQ466NWpB3W5G
-
-scheduled:
-  update:
-    external-balances: 0 */5 * ? * *
-    internal-balances: 0 */5 * ? * *
 
 api:
   exchange:

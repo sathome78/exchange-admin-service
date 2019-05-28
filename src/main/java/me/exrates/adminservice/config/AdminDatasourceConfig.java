@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -15,19 +18,19 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 @Configuration
-@Order(2)
+@Order(1)
 public class AdminDatasourceConfig extends DBConfig {
 
-    @Value("${spring.datasource.url}")
+    @Value("${db-admin.datasource.url}")
     private String databaseUrl;
 
-    @Value("${spring.datasource.driver-class-name}")
+    @Value("${db-admin.datasource.driver-class-name}")
     private String databaseDriverName;
 
-    @Value("${spring.datasource.username}")
+    @Value("${db-admin.datasource.username}")
     private String databaseUsername;
 
-    @Value("${spring.datasource.ssm.password-path}")
+    @Value("${db-admin.ssm.password-path}")
     private String ssmPath;
 
     @Autowired
@@ -36,6 +39,12 @@ public class AdminDatasourceConfig extends DBConfig {
     @Bean(name = "adminDataSource")
     public DataSource dataSource() {
         return createDataSource();
+    }
+
+    @DependsOn("adminDataSource")
+    @Bean(name = "template")
+    public JdbcOperations jdbcTemplate(@Qualifier("adminDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
 
     @Bean(name = "adminTemplate")

@@ -1,13 +1,10 @@
 package config;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.io.Closeables;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -29,10 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,11 +34,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 import static java.io.File.separator;
 
@@ -159,7 +150,7 @@ public abstract class AbstractDatabaseContextTest {
         public DataSource dataSource() {
             String dbUrl = databaseConfig.getUrl().replace(databaseConfig.getRootSchemeName() + "?", getSchema() + "?");
             log.debug("DB PROPS: DB URL: " + databaseConfig.getUrl());
-            return createDataSource(databaseConfig.getUser(), databaseConfig.getPassword(), dbUrl);
+            return createDataSource(databaseConfig.getUser(), databaseConfig.getPassword(), dbUrl, databaseConfig.getDriverClassName());
         }
 
         @Bean(name = "testAdminTemplate")
@@ -173,12 +164,13 @@ public abstract class AbstractDatabaseContextTest {
             return new DataSourceTransactionManager(dataSource);
         }
 
-        private HikariDataSource createDataSource(String user, String password, String url) {
+        private HikariDataSource createDataSource(String user, String password, String url, String driverClassName) {
             HikariConfig config = new HikariConfig();
             config.setInitializationFailTimeout(-1);
             config.setJdbcUrl(url);
             config.setUsername(user);
             config.setPassword(password);
+            config.setDriverClassName(driverClassName);
             return new HikariDataSource(config);
         }
     }

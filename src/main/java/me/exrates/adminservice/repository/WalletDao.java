@@ -10,17 +10,15 @@ import java.util.List;
 
 public interface WalletDao {
 
-    ExternalWalletBalancesDto getExternalMainWalletBalanceByCurrencyName(String currencyName);
-
     List<ExternalWalletBalancesDto> getExternalMainWalletBalances();
 
     List<InternalWalletBalancesDto> getInternalWalletBalances();
 
-    void updateExternalMainWalletBalances(ExternalWalletBalancesDto externalWalletBalancesDto);
-
-    void updateInternalWalletBalances(InternalWalletBalancesDto internalWalletBalancesDto);
-
     List<InternalWalletBalancesDto> getWalletBalances();
+
+    void updateExternalMainWalletBalances(List<ExternalWalletBalancesDto> externalWalletBalances);
+
+    void updateInternalWalletBalances(List<InternalWalletBalancesDto> internalWalletBalances);
 
     void updateExternalReservedWalletBalances(int currencyId, String walletAddress, BigDecimal balance, LocalDateTime lastReservedBalanceUpdate);
 }

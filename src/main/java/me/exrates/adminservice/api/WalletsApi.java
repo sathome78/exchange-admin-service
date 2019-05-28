@@ -240,8 +240,4 @@ public class WalletsApi {
         @JsonProperty("eth_contract")
         String ethContract;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> financial-monitoring

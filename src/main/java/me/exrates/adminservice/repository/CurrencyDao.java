@@ -1,6 +1,6 @@
-package me.exrates.adminservice.daos;
+package me.exrates.adminservice.repository;
 
-import me.exrates.adminservice.models.CurrencyDto;
+import me.exrates.adminservice.domain.CurrencyDto;
 
 import java.util.List;
 

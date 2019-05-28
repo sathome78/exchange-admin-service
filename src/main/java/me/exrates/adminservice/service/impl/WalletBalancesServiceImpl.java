@@ -5,7 +5,6 @@ import me.exrates.adminservice.api.WalletsApi;
 import me.exrates.adminservice.repository.WalletBalancesDao;
 import me.exrates.adminservice.domain.api.BalanceDto;
 import me.exrates.adminservice.service.WalletBalancesService;
-import me.exrates.adminservice.service.WalletBalancesService;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,9 +18,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toMap;
-import static me.exrates.adminservice.config.CacheConfiguration.ALL_BALANCES_CACHE;
+import static me.exrates.adminservice.config.CacheConfiguration.ALL_MAIN_BALANCES_CACHE;
 import static me.exrates.adminservice.util.CollectionUtil.isEmpty;
 
 @Log4j2
@@ -31,15 +29,15 @@ public class WalletBalancesServiceImpl implements WalletBalancesService {
 
     private final WalletsApi walletsApi;
     private final WalletBalancesDao walletBalancesDao;
-    private final Cache balancesCache;
+    private final Cache mainBalancesCache;
 
     @Autowired
     public WalletBalancesServiceImpl(WalletsApi walletsApi,
                                      WalletBalancesDao walletBalancesDao,
-                                     @Qualifier(ALL_BALANCES_CACHE) Cache balancesCache) {
+                                     @Qualifier(ALL_MAIN_BALANCES_CACHE) Cache mainBalancesCache) {
         this.walletsApi = walletsApi;
         this.walletBalancesDao = walletBalancesDao;
-        this.balancesCache = balancesCache;
+        this.mainBalancesCache = mainBalancesCache;
     }
 
     @Transactional(readOnly = true)
@@ -50,7 +48,7 @@ public class WalletBalancesServiceImpl implements WalletBalancesService {
 
     @Override
     public Map<String, BalanceDto> getCachedBalances() {
-        return Objects.requireNonNull(balancesCache.get(ALL_BALANCES_CACHE, this::getAllWalletBalances)).stream()
+        return Objects.requireNonNull(mainBalancesCache.get(ALL_MAIN_BALANCES_CACHE, this::getAllWalletBalances)).stream()
                 .collect(toMap(BalanceDto::getCurrencyName, Function.identity()));
     }
 
@@ -63,19 +61,7 @@ public class WalletBalancesServiceImpl implements WalletBalancesService {
         if (isEmpty(balances)) {
             return;
         }
-        for (BalanceDto balanceDto : balances) {
-            BalanceDto oldBalanceDto = walletBalancesDao.getBalancesByCurrencyName(balanceDto.getCurrencyName());
-            if (isNull(oldBalanceDto)) {
-                boolean inserted = walletBalancesDao.addCurrencyWalletBalances(balanceDto);
-                log.debug("Process of add new wallet balances for currency: {} finished with result: {}", balanceDto.getCurrencyName(), inserted);
-            } else {
-                if (oldBalanceDto.getBalance().compareTo(balanceDto.getBalance()) == 0) {
-                    continue;
-                }
-                boolean updated = walletBalancesDao.updateCurrencyWalletBalances(balanceDto);
-                log.debug("Process of update wallet balances for currency: {} finished with result: {}", balanceDto.getCurrencyName(), updated);
-            }
-        }
+        walletBalancesDao.updateCurrencyWalletBalances(balances);
         log.info("Process of updating currency balances end... Time: {}", stopWatch.getTime(TimeUnit.MILLISECONDS));
     }
 }

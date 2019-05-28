@@ -1,12 +1,13 @@
-package me.exrates.adminservice.daos.impl;
+package me.exrates.adminservice.repository.impl;
 
 import lombok.extern.log4j.Log4j2;
-import me.exrates.adminservice.daos.CurrencyDao;
-import me.exrates.adminservice.models.CurrencyDto;
+import me.exrates.adminservice.repository.CurrencyDao;
+import me.exrates.adminservice.domain.CurrencyDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -16,10 +17,11 @@ import java.util.List;
 @Repository
 public class CurrencyDaoImpl implements CurrencyDao {
 
-    private final NamedParameterJdbcOperations npJdbcTemplate;
+    // todo let's separate repo for admin and core
+    private final NamedParameterJdbcTemplate npJdbcTemplate;
 
     @Autowired
-    public CurrencyDaoImpl(@Qualifier("coreNPTemplate") NamedParameterJdbcOperations npJdbcTemplate) {
+    public CurrencyDaoImpl(@Qualifier("coreTemplate") NamedParameterJdbcTemplate npJdbcTemplate) {
         this.npJdbcTemplate = npJdbcTemplate;
     }
 
