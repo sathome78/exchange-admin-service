@@ -1,4 +1,4 @@
-package me.exrates.adminservice.service;
+package me.exrates.adminservice.services;
 
 import me.exrates.adminservice.domain.ExternalWalletBalancesDto;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;

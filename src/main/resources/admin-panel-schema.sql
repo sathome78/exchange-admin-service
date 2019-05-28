@@ -77,3 +77,10 @@ INSERT IGNORE INTO admin_panel.INTERNAL_WALLET_BALANCES (currency_id, currency_n
 SELECT cur.id AS currency_id, cur.name AS currency_name, ur.id AS role_id, ur.name AS role_name
 FROM birzha.CURRENCY cur CROSS JOIN birzha.USER_ROLE ur
 ORDER BY cur.id, ur.id
+
+CREATE TABLE CURRENCY_RATES_HISTORY
+(
+  id                INT(40) UNSIGNED PRIMARY KEY   NOT NULL AUTO_INCREMENT,
+  content           BLOB                           NOT NULL,
+  created_at        TIMESTAMP                      NOT NULL
+);

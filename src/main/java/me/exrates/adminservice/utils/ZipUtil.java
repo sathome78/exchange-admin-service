@@ -1,4 +1,4 @@
-package me.exrates.adminservice.util;
+package me.exrates.adminservice.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package me.exrates.adminservice.service.impl;
+package me.exrates.adminservice.services.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.api.WalletsApi;
@@ -10,10 +10,10 @@ import me.exrates.adminservice.domain.api.BalanceDto;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.domain.enums.UserRole;
 import me.exrates.adminservice.repository.WalletRepository;
-import me.exrates.adminservice.service.CurrencyService;
-import me.exrates.adminservice.service.ExchangeRatesService;
-import me.exrates.adminservice.service.WalletBalancesService;
-import me.exrates.adminservice.service.WalletService;
+import me.exrates.adminservice.services.CurrencyService;
+import me.exrates.adminservice.services.ExchangeRatesService;
+import me.exrates.adminservice.services.WalletBalancesService;
+import me.exrates.adminservice.services.WalletService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;

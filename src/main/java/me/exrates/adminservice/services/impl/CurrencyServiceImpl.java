@@ -1,9 +1,9 @@
-package me.exrates.adminservice.service.impl;
+package me.exrates.adminservice.services.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
 import me.exrates.adminservice.core.repository.CoreCurrencyRepository;
-import me.exrates.adminservice.service.CurrencyService;
+import me.exrates.adminservice.services.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;

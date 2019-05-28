@@ -30,8 +30,8 @@ public class CoreCurrencyRepositoryImpl implements CoreCurrencyRepository {
         try {
             return npJdbcTemplate.queryForObject(sql, Collections.singletonMap("name", name), new BeanPropertyRowMapper<>(CoreCurrencyDto.class));
         } catch (Exception ex) {
-            log.warn("Failed to find currency for name: {}", name, ex);
-            throw ex;
+            log.warn("Failed to find currency for name: {}", name);
+            return null;
         }
     }
 

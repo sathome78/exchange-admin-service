@@ -1,6 +1,7 @@
 package me.exrates.adminservice.repository.impl;
 
 import lombok.extern.log4j.Log4j2;
+import me.exrates.adminservice.domain.RateHistoryDto;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.repository.ExchangeRatesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,11 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Repository
@@ -60,5 +65,37 @@ public class ExchangeRatesRepositoryImpl implements ExchangeRatesRepository {
                 return rates.size();
             }
         });
+    }
+
+    @Override
+    public void saveCurrencyExchangeRatesHistory(byte[] zippedBytes) {
+        final String sql = "INSERT INTO CURRENCY_RATES_HISTORY(content, created_at) VALUES (:content, :created_at)";
+
+        final Map<String, Object> params = new HashMap<String, Object>() {
+            {
+                put("content", zippedBytes);
+                put("created_at", Timestamp.valueOf(LocalDateTime.now().withMinute(0).withSecond(0).withNano(0)));
+            }
+        };
+        npJdbcTemplate.update(sql, params);
+    }
+
+    @Override
+    public List<RateHistoryDto> getExchangeRatesHistoryByDate(LocalDateTime fromDate, LocalDateTime toDate) {
+        String sql = "SELECT crh.content, crh.created_at" +
+                " FROM CURRENCY_RATES_HISTORY crh" +
+                " WHERE crh.created_at BETWEEN :from_date AND :to_date";
+
+        final Map<String, Object> params = new HashMap<String, Object>() {
+            {
+                put("from_date", Timestamp.valueOf(fromDate));
+                put("to_date", Timestamp.valueOf(toDate));
+            }
+        };
+
+        return npJdbcTemplate.query(sql, params, (rs, row) -> RateHistoryDto.builder()
+                .content(rs.getBytes("content"))
+                .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                .build());
     }
 }

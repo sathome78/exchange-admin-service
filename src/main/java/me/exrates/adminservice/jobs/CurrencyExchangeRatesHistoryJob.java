@@ -10,17 +10,17 @@ import org.springframework.stereotype.Component;
 @Log4j2
 @EnableScheduling
 @Component
-public class CurrencyExchangeRatesJob {
+public class CurrencyExchangeRatesHistoryJob {
 
     private final ExchangeRatesService exchangeRatesService;
 
     @Autowired
-    public CurrencyExchangeRatesJob(ExchangeRatesService exchangeRatesService) {
+    public CurrencyExchangeRatesHistoryJob(ExchangeRatesService exchangeRatesService) {
         this.exchangeRatesService = exchangeRatesService;
     }
 
-    @Scheduled(initialDelay = 0, fixedDelay = 30 * 60 * 1000)
-    public void update() {
-        exchangeRatesService.updateCurrencyExchangeRates();
+    @Scheduled(cron = "${scheduled.update.rates-history}")
+    public void updateCurrencyRateHistory() {
+        exchangeRatesService.updateCurrencyExchangeRateHistory();
     }
 }
