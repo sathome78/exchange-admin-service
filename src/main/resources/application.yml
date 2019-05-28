@@ -66,3 +66,18 @@ scheduled:
   update:
     external-balances: 0 */5 * ? * *
     internal-balances: 0 */5 * ? * *
+
+api:
+  exchange:
+    url: http://172.50.10.10:80/currency/rates
+    username: varvatos
+    password: qGbxQ466NWpB3W5G
+  wallets:
+    url: http://172.31.3.72:80/currencies
+    username: varvatos
+    password: qGbxQ466NWpB3W5G
+
+scheduled:
+  update:
+    external-balances: 0 */5 * ? * *
+    internal-balances: 0 */5 * ? * *
