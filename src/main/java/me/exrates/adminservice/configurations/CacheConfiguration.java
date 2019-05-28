@@ -1,4 +1,4 @@
-package me.exrates.adminservice.config;
+package me.exrates.adminservice.configurations;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.Cache;

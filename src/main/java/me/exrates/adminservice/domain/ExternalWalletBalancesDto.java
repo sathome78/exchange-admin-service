@@ -50,6 +50,5 @@ public class ExternalWalletBalancesDto {
                 .totalBalanceUSD(BigDecimal.ZERO)
                 .totalBalanceBTC(BigDecimal.ZERO)
                 .build();
-
     }
 }

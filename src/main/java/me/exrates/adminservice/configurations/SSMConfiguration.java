@@ -1,4 +1,4 @@
-package me.exrates.adminservice.config;
+package me.exrates.adminservice.configurations;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.SSMGetter;

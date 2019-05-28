@@ -1,4 +1,4 @@
-package me.exrates.adminservice.config;
+package me.exrates.adminservice.configurations;
 
 import me.exrates.SSMGetter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -19,7 +20,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @Order(1)
-public class AdminDatasourceConfig extends DBConfig {
+public class AdminDatasourceConfiguration extends DatabaseConfiguration {
 
     @Value("${db-admin.datasource.url}")
     private String databaseUrl;
@@ -36,23 +37,28 @@ public class AdminDatasourceConfig extends DBConfig {
     @Autowired
     private SSMGetter ssmGetter;
 
+    @Primary
     @Bean(name = "adminDataSource")
     public DataSource dataSource() {
         return createDataSource();
     }
 
+    @Primary
     @DependsOn("adminDataSource")
-    @Bean(name = "template")
+    @Bean(name = "adminTemplate")
     public JdbcOperations jdbcTemplate(@Qualifier("adminDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
-    @Bean(name = "adminTemplate")
-    public NamedParameterJdbcTemplate adminTemplate(@Qualifier("adminDataSource") DataSource dataSource) {
+    @Primary
+    @DependsOn("adminDataSource")
+    @Bean(name = "adminNPTemplate")
+    public NamedParameterJdbcOperations adminTemplate(@Qualifier("adminDataSource") DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 
     @Primary
+    @DependsOn("adminDataSource")
     @Bean(name = "adminTxManager")
     public PlatformTransactionManager platformTransactionManager(@Qualifier("adminDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);

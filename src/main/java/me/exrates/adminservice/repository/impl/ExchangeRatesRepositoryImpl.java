@@ -2,12 +2,12 @@ package me.exrates.adminservice.repository.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.domain.api.RateDto;
-import me.exrates.adminservice.repository.ExchangeRatesDao;
+import me.exrates.adminservice.repository.ExchangeRatesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
@@ -16,14 +16,14 @@ import java.util.List;
 
 @Log4j2
 @Repository
-public class ExchangeRatesDaoImpl implements ExchangeRatesDao {
+public class ExchangeRatesRepositoryImpl implements ExchangeRatesRepository {
 
-    private final NamedParameterJdbcTemplate npJdbcTemplate;
+    private final NamedParameterJdbcOperations npJdbcTemplate;
     private final JdbcOperations jdbcTemplate;
 
     @Autowired
-    public ExchangeRatesDaoImpl(@Qualifier("adminTemplate") NamedParameterJdbcTemplate npJdbcTemplate,
-                                @Qualifier("template") JdbcOperations jdbcTemplate) {
+    public ExchangeRatesRepositoryImpl(@Qualifier("adminNPTemplate") NamedParameterJdbcOperations npJdbcTemplate,
+                                       @Qualifier("adminTemplate") JdbcOperations jdbcTemplate) {
         this.npJdbcTemplate = npJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
     }

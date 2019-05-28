@@ -2,13 +2,14 @@ package me.exrates.adminservice.service.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.api.WalletsApi;
-import me.exrates.adminservice.repository.WalletDao;
-import me.exrates.adminservice.domain.CurrencyDto;
+import me.exrates.adminservice.core.domain.CoreCurrencyDto;
+import me.exrates.adminservice.core.repository.CoreWalletRepository;
 import me.exrates.adminservice.domain.ExternalWalletBalancesDto;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
 import me.exrates.adminservice.domain.api.BalanceDto;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.repository.WalletRepository;
 import me.exrates.adminservice.service.CurrencyService;
 import me.exrates.adminservice.service.ExchangeRatesService;
 import me.exrates.adminservice.service.WalletBalancesService;
@@ -41,19 +42,22 @@ public class WalletServiceImpl implements WalletService {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 
-    private final WalletDao walletDao;
+    private final WalletRepository walletRepository;
+    private final CoreWalletRepository coreWalletRepository;
     private final ExchangeRatesService exchangeRatesService;
     private final WalletBalancesService walletBalancesService;
     private final CurrencyService currencyService;
     private final WalletsApi walletsApi;
 
     @Autowired
-    public WalletServiceImpl(WalletDao walletDao,
+    public WalletServiceImpl(WalletRepository walletRepository,
+                             CoreWalletRepository coreWalletRepository,
                              ExchangeRatesService exchangeRatesService,
                              WalletBalancesService walletBalancesService,
                              CurrencyService currencyService,
                              WalletsApi walletsApi) {
-        this.walletDao = walletDao;
+        this.walletRepository = walletRepository;
+        this.coreWalletRepository = coreWalletRepository;
         this.exchangeRatesService = exchangeRatesService;
         this.walletBalancesService = walletBalancesService;
         this.currencyService = currencyService;
@@ -63,17 +67,17 @@ public class WalletServiceImpl implements WalletService {
     @Transactional(readOnly = true)
     @Override
     public List<ExternalWalletBalancesDto> getExternalWalletBalances() {
-        final Map<String, CurrencyDto> currenciesMap = currencyService.getCachedCurrencies()
+        final Map<String, CoreCurrencyDto> currenciesMap = currencyService.getCachedCurrencies()
                 .stream()
                 .collect(toMap(
-                        CurrencyDto::getName,
+                        CoreCurrencyDto::getName,
                         Function.identity()
                 ));
 
-        return walletDao.getExternalMainWalletBalances()
+        return walletRepository.getExternalMainWalletBalances()
                 .stream()
                 .map(exWallet -> {
-                    CurrencyDto currencyDto = currenciesMap.get(exWallet.getCurrencyName());
+                    CoreCurrencyDto currencyDto = currenciesMap.get(exWallet.getCurrencyName());
 
                     if (nonNull(currencyDto) && currencyDto.isHidden()) {
                         return ExternalWalletBalancesDto.getZeroBalances(exWallet.getCurrencyId(), exWallet.getCurrencyName());
@@ -86,17 +90,17 @@ public class WalletServiceImpl implements WalletService {
     @Transactional(readOnly = true)
     @Override
     public List<InternalWalletBalancesDto> getInternalWalletBalances() {
-        final Map<String, CurrencyDto> currenciesMap = currencyService.getCachedCurrencies()
+        final Map<String, CoreCurrencyDto> currenciesMap = currencyService.getCachedCurrencies()
                 .stream()
                 .collect(toMap(
-                        CurrencyDto::getName,
+                        CoreCurrencyDto::getName,
                         Function.identity()
                 ));
 
-        return walletDao.getInternalWalletBalances()
+        return walletRepository.getInternalWalletBalances()
                 .stream()
                 .map(inWallet -> {
-                    CurrencyDto currencyDto = currenciesMap.get(inWallet.getCurrencyName());
+                    CoreCurrencyDto currencyDto = currenciesMap.get(inWallet.getCurrencyName());
 
                     if (nonNull(currencyDto) && currencyDto.isHidden()) {
                         return InternalWalletBalancesDto.getZeroBalances(inWallet.getCurrencyId(), inWallet.getCurrencyName(), inWallet.getRoleId(), inWallet.getRoleName());
@@ -109,7 +113,7 @@ public class WalletServiceImpl implements WalletService {
     @Transactional(readOnly = true)
     @Override
     public List<InternalWalletBalancesDto> getWalletBalances() {
-        return walletDao.getWalletBalances();
+        return coreWalletRepository.getWalletBalances();
     }
 
     @Override
@@ -147,7 +151,7 @@ public class WalletServiceImpl implements WalletService {
                 exWallet.setLastUpdatedDate(lastBalanceUpdate);
             }
         }
-        walletDao.updateExternalMainWalletBalances(externalWalletBalances);
+        walletRepository.updateExternalMainWalletBalances(externalWalletBalances);
         log.info("Process of updating external main wallets end... Time: {}", stopWatch.getTime(TimeUnit.MILLISECONDS));
     }
 
@@ -174,12 +178,12 @@ public class WalletServiceImpl implements WalletService {
                     ? LocalDateTime.parse(data[3], FORMATTER)
                     : null;
 
-            CurrencyDto currency = currencyService.findByName(currencySymbol);
+            CoreCurrencyDto currency = currencyService.findByName(currencySymbol);
             if (isNull(currency)) {
                 return;
             }
 
-            walletDao.updateExternalReservedWalletBalances(currency.getId(), walletAddress, balance, lastReservedBalanceUpdate);
+            walletRepository.updateExternalReservedWalletBalances(currency.getId(), walletAddress, balance, lastReservedBalanceUpdate);
         }
         log.info("Process of updating external reserved wallets end... Time: {}", stopWatch.getTime(TimeUnit.MILLISECONDS));
     }
@@ -227,7 +231,7 @@ public class WalletServiceImpl implements WalletService {
             inWallet.setBtcRate(btcRate);
             inWallet.setTotalBalance(totalBalance);
         }
-        walletDao.updateInternalWalletBalances(internalWalletBalances);
+        walletRepository.updateInternalWalletBalances(internalWalletBalances);
         log.info("Process of updating internal wallets end... Time: {}", stopWatch.getTime(TimeUnit.MILLISECONDS));
     }
 }

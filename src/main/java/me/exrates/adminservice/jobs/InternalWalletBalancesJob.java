@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @EnableScheduling
-@Log4j2(topic = "Cron_job_layer_log")
+@Log4j2
 @Component
 public class InternalWalletBalancesJob {
 

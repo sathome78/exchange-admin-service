@@ -4,12 +4,12 @@ import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.domain.ExternalWalletBalancesDto;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
 import me.exrates.adminservice.domain.enums.UserRole;
-import me.exrates.adminservice.repository.WalletDao;
+import me.exrates.adminservice.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -25,19 +25,16 @@ import static java.util.Objects.nonNull;
 
 @Log4j2
 @Repository
-public class WalletDaoImpl implements WalletDao {
+public class WalletRepositoryImpl implements WalletRepository {
 
-    private final NamedParameterJdbcTemplate adminTemplate;
+    private final NamedParameterJdbcOperations npJdbcTemplate;
     private final JdbcOperations jdbcTemplate;
-    private final NamedParameterJdbcTemplate coreTemplate;
 
     @Autowired
-    public WalletDaoImpl(@Qualifier("adminTemplate") NamedParameterJdbcTemplate adminTemplate,
-                         @Qualifier("template") JdbcOperations jdbcTemplate,
-                         @Qualifier("coreTemplate") NamedParameterJdbcTemplate coreTemplate) {
-        this.adminTemplate = adminTemplate;
+    public WalletRepositoryImpl(@Qualifier("adminNPTemplate") NamedParameterJdbcOperations npJdbcTemplate,
+                                @Qualifier("adminTemplate") JdbcOperations jdbcTemplate) {
+        this.npJdbcTemplate = npJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
-        this.coreTemplate = coreTemplate;
     }
 
     @Override
@@ -55,7 +52,7 @@ public class WalletDaoImpl implements WalletDao {
                 " FROM COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " ORDER BY cewb.currency_id";
 
-        return adminTemplate.query(sql, (rs, row) -> ExternalWalletBalancesDto.builder()
+        return npJdbcTemplate.query(sql, (rs, row) -> ExternalWalletBalancesDto.builder()
                 .currencyId(rs.getInt("currency_id"))
                 .currencyName(rs.getString("currency_name"))
                 .usdRate(rs.getBigDecimal("usd_rate"))
@@ -84,7 +81,7 @@ public class WalletDaoImpl implements WalletDao {
                 " FROM INTERNAL_WALLET_BALANCES iwb" +
                 " ORDER BY iwb.currency_id, iwb.role_id";
 
-        return adminTemplate.query(sql, (rs, row) -> InternalWalletBalancesDto.builder()
+        return npJdbcTemplate.query(sql, (rs, row) -> InternalWalletBalancesDto.builder()
                 .currencyId(rs.getInt("currency_id"))
                 .currencyName(rs.getString("currency_name"))
                 .roleId(rs.getInt("role_id"))
@@ -95,31 +92,6 @@ public class WalletDaoImpl implements WalletDao {
                 .totalBalanceUSD(rs.getBigDecimal("total_balance_usd"))
                 .totalBalanceBTC(rs.getBigDecimal("total_balance_btc"))
                 .lastUpdatedDate(rs.getTimestamp("last_updated_at").toLocalDateTime())
-                .build());
-    }
-
-    // todo let's put such functionality apart into me.exrates.adminservice.core.repository
-    @Override
-    public List<InternalWalletBalancesDto> getWalletBalances() {
-        final String sql = "SELECT cur.id AS currency_id, " +
-                "cur.name AS currency_name, " +
-                "ur.id AS role_id, " +
-                "ur.name AS role_name, " +
-                "w.active_balance, " +
-                "w.reserved_balance" +
-                " FROM WALLET w" +
-                " JOIN CURRENCY cur ON cur.id = w.currency_id AND cur.hidden = 0" +
-                " JOIN USER u ON u.id = w.user_id" +
-                " JOIN USER_ROLE ur ON ur.id = u.roleid" +
-                " GROUP BY cur.id, ur.id" +
-                " ORDER BY cur.id, ur.id";
-
-        return coreTemplate.query(sql, (rs, row) -> InternalWalletBalancesDto.builder()
-                .currencyId(rs.getInt("currency_id"))
-                .currencyName(rs.getString("currency_name"))
-                .roleId(rs.getInt("role_id"))
-                .roleName(UserRole.valueOf(rs.getString("role_name")))
-                .totalBalance(rs.getBigDecimal("active_balance").add(rs.getBigDecimal("reserved_balance")))
                 .build());
     }
 
@@ -196,7 +168,7 @@ public class WalletDaoImpl implements WalletDao {
                 put("balance", balance);
             }
         };
-        adminTemplate.update(sql, params);
+        npJdbcTemplate.update(sql, params);
 
         sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
@@ -212,6 +184,6 @@ public class WalletDaoImpl implements WalletDao {
                 put("last_updated_at", lastReservedBalanceUpdate);
             }
         };
-        adminTemplate.update(sql, params);
+        npJdbcTemplate.update(sql, params);
     }
 }

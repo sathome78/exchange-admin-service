@@ -1,7 +1,6 @@
-package me.exrates.adminservice.domain;
+package me.exrates.adminservice.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,15 +11,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CurrencyDto {
+public class CoreCurrencyDto {
 
     private int id;
     private String name;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String description;
     private boolean hidden;
 
-    public CurrencyDto(int id) {
+    public CoreCurrencyDto(int id) {
         this.id = id;
     }
 }

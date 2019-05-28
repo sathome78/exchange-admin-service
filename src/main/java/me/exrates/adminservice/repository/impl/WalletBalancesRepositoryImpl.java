@@ -2,12 +2,12 @@ package me.exrates.adminservice.repository.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.domain.api.BalanceDto;
-import me.exrates.adminservice.repository.WalletBalancesDao;
+import me.exrates.adminservice.repository.WalletBalancesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
@@ -17,14 +17,14 @@ import java.util.List;
 
 @Log4j2
 @Repository
-public class WalletBalancesDaoImpl implements WalletBalancesDao {
+public class WalletBalancesRepositoryImpl implements WalletBalancesRepository {
 
-    private final NamedParameterJdbcTemplate npJdbcTemplate;
+    private final NamedParameterJdbcOperations npJdbcTemplate;
     private final JdbcOperations jdbcTemplate;
 
     @Autowired
-    public WalletBalancesDaoImpl(@Qualifier("adminTemplate") NamedParameterJdbcTemplate npJdbcTemplate,
-                                 @Qualifier("template") JdbcOperations jdbcTemplate) {
+    public WalletBalancesRepositoryImpl(@Qualifier("adminNPTemplate") NamedParameterJdbcOperations npJdbcTemplate,
+                                        @Qualifier("adminTemplate") JdbcOperations jdbcTemplate) {
         this.npJdbcTemplate = npJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
     }

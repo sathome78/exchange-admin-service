@@ -1,18 +1,12 @@
-package me.exrates.adminservice.config;
+package me.exrates.adminservice.configurations;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Validation;
@@ -21,7 +15,7 @@ import javax.validation.ValidatorFactory;
 
 @Configuration
 @Order(3)
-public class AppConfig {
+public class ApplicationConfiguration {
 
     @Bean
     @Qualifier("restTemplate")
@@ -29,7 +23,6 @@ public class AppConfig {
         return new RestTemplate();
     }
 
-    @Primary
     @Bean
     @Qualifier("jsonMapper")
     public ObjectMapper mapper() {
@@ -48,5 +41,4 @@ public class AppConfig {
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
 }

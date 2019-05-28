@@ -3,7 +3,7 @@ package me.exrates.adminservice.service.impl;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.api.ExchangeApi;
 import me.exrates.adminservice.domain.api.RateDto;
-import me.exrates.adminservice.repository.ExchangeRatesDao;
+import me.exrates.adminservice.repository.ExchangeRatesRepository;
 import me.exrates.adminservice.service.ExchangeRatesService;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
-import static me.exrates.adminservice.config.CacheConfiguration.ALL_RATES_CACHE;
+import static me.exrates.adminservice.configurations.CacheConfiguration.ALL_RATES_CACHE;
 import static me.exrates.adminservice.util.CollectionUtil.isEmpty;
 
 @Log4j2
@@ -28,22 +28,22 @@ import static me.exrates.adminservice.util.CollectionUtil.isEmpty;
 public class ExchangeRatesServiceImpl implements ExchangeRatesService {
 
     private final ExchangeApi exchangeApi;
-    private final ExchangeRatesDao exchangeRatesDao;
+    private final ExchangeRatesRepository exchangeRatesRepository;
     private final Cache ratesCache;
 
     @Autowired
     public ExchangeRatesServiceImpl(ExchangeApi exchangeApi,
-                                    ExchangeRatesDao exchangeRatesDao,
+                                    ExchangeRatesRepository exchangeRatesRepository,
                                     @Qualifier(ALL_RATES_CACHE) Cache ratesCache) {
         this.exchangeApi = exchangeApi;
-        this.exchangeRatesDao = exchangeRatesDao;
+        this.exchangeRatesRepository = exchangeRatesRepository;
         this.ratesCache = ratesCache;
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<RateDto> getAllExchangeRates() {
-        return exchangeRatesDao.getAllExchangeRates();
+        return exchangeRatesRepository.getAllExchangeRates();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService {
         if (isEmpty(rates)) {
             return;
         }
-        exchangeRatesDao.updateCurrencyExchangeRates(rates);
+        exchangeRatesRepository.updateCurrencyExchangeRates(rates);
         log.info("Process of updating currency exchange rates end... Time: {}", stopWatch.getTime(TimeUnit.MILLISECONDS));
     }
 }

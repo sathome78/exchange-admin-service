@@ -1,11 +1,11 @@
-package me.exrates.adminservice.config;
+package me.exrates.adminservice.configurations;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.util.concurrent.TimeUnit;
 
-public abstract class DBConfig {
+public abstract class DatabaseConfiguration {
 
     protected abstract String getDatabaseUrl();
 

@@ -2,8 +2,8 @@ package me.exrates.adminservice.service.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.api.WalletsApi;
-import me.exrates.adminservice.repository.WalletBalancesDao;
 import me.exrates.adminservice.domain.api.BalanceDto;
+import me.exrates.adminservice.repository.WalletBalancesRepository;
 import me.exrates.adminservice.service.WalletBalancesService;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
-import static me.exrates.adminservice.config.CacheConfiguration.ALL_MAIN_BALANCES_CACHE;
+import static me.exrates.adminservice.configurations.CacheConfiguration.ALL_MAIN_BALANCES_CACHE;
 import static me.exrates.adminservice.util.CollectionUtil.isEmpty;
 
 @Log4j2
@@ -28,22 +28,22 @@ import static me.exrates.adminservice.util.CollectionUtil.isEmpty;
 public class WalletBalancesServiceImpl implements WalletBalancesService {
 
     private final WalletsApi walletsApi;
-    private final WalletBalancesDao walletBalancesDao;
+    private final WalletBalancesRepository walletBalancesRepository;
     private final Cache mainBalancesCache;
 
     @Autowired
     public WalletBalancesServiceImpl(WalletsApi walletsApi,
-                                     WalletBalancesDao walletBalancesDao,
+                                     WalletBalancesRepository walletBalancesRepository,
                                      @Qualifier(ALL_MAIN_BALANCES_CACHE) Cache mainBalancesCache) {
         this.walletsApi = walletsApi;
-        this.walletBalancesDao = walletBalancesDao;
+        this.walletBalancesRepository = walletBalancesRepository;
         this.mainBalancesCache = mainBalancesCache;
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<BalanceDto> getAllWalletBalances() {
-        return walletBalancesDao.getAllWalletBalances();
+        return walletBalancesRepository.getAllWalletBalances();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class WalletBalancesServiceImpl implements WalletBalancesService {
         if (isEmpty(balances)) {
             return;
         }
-        walletBalancesDao.updateCurrencyWalletBalances(balances);
+        walletBalancesRepository.updateCurrencyWalletBalances(balances);
         log.info("Process of updating currency balances end... Time: {}", stopWatch.getTime(TimeUnit.MILLISECONDS));
     }
 }

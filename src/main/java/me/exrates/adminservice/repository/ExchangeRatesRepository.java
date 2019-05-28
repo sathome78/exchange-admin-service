@@ -4,7 +4,7 @@ import me.exrates.adminservice.domain.api.RateDto;
 
 import java.util.List;
 
-public interface ExchangeRatesDao {
+public interface ExchangeRatesRepository {
 
     List<RateDto> getAllExchangeRates();
 

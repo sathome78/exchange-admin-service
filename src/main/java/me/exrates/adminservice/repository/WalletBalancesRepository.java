@@ -4,7 +4,7 @@ import me.exrates.adminservice.domain.api.BalanceDto;
 
 import java.util.List;
 
-public interface WalletBalancesDao {
+public interface WalletBalancesRepository {
 
     List<BalanceDto> getAllWalletBalances();
 

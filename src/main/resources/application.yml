@@ -8,7 +8,7 @@ spring:
     active: dev
 #  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false
+#    url: jdbc:mysql://localhost:4406/admin_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
 #    username: root
 ##    password: root
 #    scheme-name: admin_db
@@ -42,7 +42,7 @@ spring:
 db-admin:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false
+    url: jdbc:mysql://localhost:4406/admin_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
   #    password: root
   ssm:
@@ -51,7 +51,7 @@ db-admin:
 db-core:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/birzha?autoReconnect=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/birzha?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
 #    password: root
   ssm:
