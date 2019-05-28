@@ -35,4 +35,19 @@ public class InternalWalletBalancesDto {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime lastUpdatedDate;
+
+    public static InternalWalletBalancesDto getZeroBalances(Integer currencyId, String currencyName, Integer roleId, UserRole roleName) {
+        return InternalWalletBalancesDto
+                .builder()
+                .currencyId(currencyId)
+                .currencyName(currencyName)
+                .roleId(roleId)
+                .roleName(roleName)
+                .usdRate(BigDecimal.ZERO)
+                .btcRate(BigDecimal.ZERO)
+                .totalBalance(BigDecimal.ZERO)
+                .totalBalanceUSD(BigDecimal.ZERO)
+                .totalBalanceBTC(BigDecimal.ZERO)
+                .build();
+    }
 }

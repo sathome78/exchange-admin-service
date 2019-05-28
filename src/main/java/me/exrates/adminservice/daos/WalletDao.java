@@ -16,9 +16,9 @@ public interface WalletDao {
 
     List<InternalWalletBalancesDto> getWalletBalances();
 
-    void updateExternalMainWalletBalances(ExternalWalletBalancesDto externalWalletBalancesDto);
+    void updateExternalMainWalletBalances(List<ExternalWalletBalancesDto> externalWalletBalances);
 
-    void updateInternalWalletBalances(InternalWalletBalancesDto internalWalletBalancesDto);
+    void updateInternalWalletBalances(List<InternalWalletBalancesDto> internalWalletBalances);
 
     void updateExternalReservedWalletBalances(int currencyId, String walletAddress, BigDecimal balance, LocalDateTime lastReservedBalanceUpdate);
 }
