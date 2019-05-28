@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,7 +37,6 @@ public class CoreDatasourceConfig {
     @Autowired
     private SSMGetter ssmGetter;
 
-    @Primary
     @Bean(name = "coreDataSource")
     public DataSource dataSource() {
         HikariConfig hikariConfig = new HikariConfig();
@@ -51,7 +49,6 @@ public class CoreDatasourceConfig {
         return new HikariDataSource(hikariConfig);
     }
 
-    @Primary
     @DependsOn("coreDataSource")
     @Bean(name = "coreTemplate")
     public JdbcOperations jdbcTemplate(@Qualifier("coreDataSource") DataSource dataSource) {
@@ -64,7 +61,6 @@ public class CoreDatasourceConfig {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 
-    @Primary
     @Bean(name = "coreTxManager")
     public PlatformTransactionManager platformTransactionManager(@Qualifier("coreDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);

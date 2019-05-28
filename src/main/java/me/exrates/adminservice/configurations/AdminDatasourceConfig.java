@@ -56,6 +56,7 @@ public class AdminDatasourceConfig {
         return new JdbcTemplate(dataSource);
     }
 
+    @Primary
     @DependsOn("dataSource")
     @Bean(name = "NPTemplate")
     public NamedParameterJdbcOperations namedParameterJdbcTemplate(@Qualifier("dataSource") DataSource dataSource) {
