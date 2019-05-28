@@ -62,19 +62,7 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService {
         if (isEmpty(rates)) {
             return;
         }
-        for (RateDto rateDto : rates) {
-            RateDto oldRateDto = exchangeRatesDao.getRateByCurrencyName(rateDto.getCurrencyName());
-            if (isNull(oldRateDto)) {
-                boolean inserted = exchangeRatesDao.addCurrencyExchangeRates(rateDto);
-                log.debug("Process of add new exchange rates for currency: {} finished with result: {}", rateDto.getCurrencyName(), inserted);
-            } else {
-                if (oldRateDto.getUsdRate().compareTo(rateDto.getUsdRate()) == 0 && oldRateDto.getBtcRate().compareTo(rateDto.getBtcRate()) == 0) {
-                    continue;
-                }
-                boolean updated = exchangeRatesDao.updateCurrencyExchangeRates(rateDto);
-                log.debug("Process of update exchange rates for currency: {} finished with result: {}", rateDto.getCurrencyName(), updated);
-            }
-        }
+        exchangeRatesDao.updateCurrencyExchangeRates(rates);
         log.info("Process of updating currency exchange rates end... Time: {}", stopWatch.getTime(TimeUnit.MILLISECONDS));
     }
 }

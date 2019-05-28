@@ -11,11 +11,11 @@ public interface WalletService {
 
     List<InternalWalletBalancesDto> getInternalWalletBalances();
 
+    List<InternalWalletBalancesDto> getWalletBalances();
+
     void updateExternalMainWalletBalances();
 
     void updateExternalReservedWalletBalances();
 
     void updateInternalWalletBalances();
-
-    List<InternalWalletBalancesDto> getWalletBalances();
 }

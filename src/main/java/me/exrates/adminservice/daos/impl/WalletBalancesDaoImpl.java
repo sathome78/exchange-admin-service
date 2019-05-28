@@ -5,40 +5,28 @@ import me.exrates.adminservice.daos.WalletBalancesDao;
 import me.exrates.adminservice.models.api.BalanceDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Log4j2
 @Repository
 public class WalletBalancesDaoImpl implements WalletBalancesDao {
 
     private final NamedParameterJdbcOperations npJdbcTemplate;
+    private final JdbcOperations jdbcTemplate;
 
     @Autowired
-    public WalletBalancesDaoImpl(@Qualifier("NPTemplate") NamedParameterJdbcOperations npJdbcTemplate) {
+    public WalletBalancesDaoImpl(@Qualifier("NPTemplate") NamedParameterJdbcOperations npJdbcTemplate,
+                                 @Qualifier("template") JdbcOperations jdbcTemplate) {
         this.npJdbcTemplate = npJdbcTemplate;
-    }
-
-    @Override
-    public BalanceDto getBalancesByCurrencyName(String currencyName) {
-        final String sql = "SELECT ccb.currency_name, ccb.balance, ccb.last_updated_at FROM CURRENT_CURRENCY_BALANCES ccb WHERE ccb.currency_name = :currency_name";
-
-        try {
-            return npJdbcTemplate.queryForObject(sql, Collections.singletonMap("currency_name", currencyName), (rs, row) -> BalanceDto.builder()
-                    .currencyName(rs.getString("currency_name"))
-                    .balance(rs.getBigDecimal("balance"))
-                    .lastUpdatedAt(rs.getTimestamp("last_updated_at").toLocalDateTime())
-                    .build());
-        } catch (Exception ex) {
-            log.debug("Currency with name: {} not found", currencyName);
-            return null;
-        }
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -53,25 +41,25 @@ public class WalletBalancesDaoImpl implements WalletBalancesDao {
     }
 
     @Override
-    public boolean addCurrencyWalletBalances(BalanceDto balanceDto) {
-        final String sql = "INSERT INTO CURRENT_CURRENCY_BALANCES (currency_name, balance, last_updated_at) VALUES (:currency_name, :balance, :last_updated_at)";
+    public void updateCurrencyWalletBalances(List<BalanceDto> balances) {
+        final String sql = "UPDATE CURRENT_CURRENCY_BALANCES ccb " +
+                "SET ccb.balance = ?, ccb.last_updated_at = ? " +
+                "WHERE ccb.currency_name = ?";
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("currency_name", balanceDto.getCurrencyName());
-        params.put("balance", balanceDto.getBalance());
-        params.put("last_updated_at", Timestamp.valueOf(balanceDto.getLastUpdatedAt()));
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
-        return npJdbcTemplate.update(sql, params) > 0;
-    }
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                BalanceDto balanceDto = balances.get(i);
+                ps.setBigDecimal(1, balanceDto.getBalance());
+                ps.setTimestamp(2, Timestamp.valueOf(balanceDto.getLastUpdatedAt()));
+                ps.setString(3, balanceDto.getCurrencyName());
+            }
 
-    @Override
-    public boolean updateCurrencyWalletBalances(BalanceDto balanceDto) {
-        final String sql = "UPDATE CURRENT_CURRENCY_BALANCES ccb SET ccb.balance = :balance, ccb.last_updated_at = :last_updated_at";
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("balance", balanceDto.getBalance());
-        params.put("last_updated_at", Timestamp.valueOf(balanceDto.getLastUpdatedAt()));
-
-        return npJdbcTemplate.update(sql, params) > 0;
+            @Override
+            public int getBatchSize() {
+                return balances.size();
+            }
+        });
     }
 }
