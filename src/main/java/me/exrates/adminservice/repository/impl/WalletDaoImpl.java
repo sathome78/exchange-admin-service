@@ -22,11 +22,11 @@ import java.util.Map;
 @Repository
 public class WalletDaoImpl implements WalletDao {
 
-    private final NamedParameterJdbcOperations coreTemplate;
+    private final NamedParameterJdbcOperations adminTemplate;
 
     @Autowired
-    public WalletDaoImpl(@Qualifier(value = "coreTemplate") NamedParameterJdbcOperations coreTemplate) {
-        this.coreTemplate = coreTemplate;
+    public WalletDaoImpl(@Qualifier(value = "adminTemplate") NamedParameterJdbcOperations coreTemplate) {
+        this.adminTemplate = coreTemplate;
     }
 
     // todo implement please
@@ -52,7 +52,7 @@ public class WalletDaoImpl implements WalletDao {
                 " RIGHT JOIN CURRENCY cur on cewb.currency_id = cur.id" +
                 " ORDER BY currency_id";
 
-        return coreTemplate.query(sql, (rs, row) -> ExternalWalletBalancesDto.builder()
+        return adminTemplate.query(sql, (rs, row) -> ExternalWalletBalancesDto.builder()
                 .currencyId(rs.getInt("currency_id"))
                 .currencyName(rs.getString("currency_name"))
                 .usdRate(rs.getBigDecimal("usd_rate"))
@@ -84,7 +84,7 @@ public class WalletDaoImpl implements WalletDao {
                 " JOIN USER_ROLE ur ON ur.id = iwb.role_id" +
                 " ORDER BY iwb.currency_id, iwb.role_id";
 
-        return coreTemplate.query(sql, (rs, row) -> InternalWalletBalancesDto.builder()
+        return adminTemplate.query(sql, (rs, row) -> InternalWalletBalancesDto.builder()
                 .currencyId(rs.getInt("currency_id"))
                 .currencyName(rs.getString("currency_name"))
                 .roleId(rs.getInt("role_id"))
@@ -98,55 +98,53 @@ public class WalletDaoImpl implements WalletDao {
                 .build());
     }
 
-    // todo only read ops
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-//    @Override
-//    public void updateExternalMainWalletBalances(ExternalWalletBalancesDto externalWalletBalancesDto) {
-//        final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
-//                " SET cewb.usd_rate = :usd_rate, cewb.btc_rate = :btc_rate, " +
-//                "cewb.main_balance = :main_balance, " +
-//                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance, " +
-//                "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
-//                "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
-//                "cewb.last_updated_at = IFNULL(:last_updated_at, cewb.last_updated_at)" +
-//                " WHERE cewb.currency_id = :currency_id";
-//
-//        final Map<String, Object> params = new HashMap<String, Object>() {
-//            {
-//                put("currency_id", externalWalletBalancesDto.getCurrencyId());
-//                put("usd_rate", externalWalletBalancesDto.getUsdRate());
-//                put("btc_rate", externalWalletBalancesDto.getBtcRate());
-//                put("main_balance", externalWalletBalancesDto.getMainBalance());
-//                put("last_updated_at", externalWalletBalancesDto.getLastUpdatedDate());
-//            }
-//        };
-//
-//        masterJdbcTemplate.update(sql, params);
-//    }
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void updateExternalMainWalletBalances(ExternalWalletBalancesDto externalWalletBalancesDto) {
+        final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
+                " SET cewb.usd_rate = :usd_rate, cewb.btc_rate = :btc_rate, " +
+                "cewb.main_balance = :main_balance, " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance, " +
+                "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
+                "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
+                "cewb.last_updated_at = IFNULL(:last_updated_at, cewb.last_updated_at)" +
+                " WHERE cewb.currency_id = :currency_id";
 
-    // todo only read
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-//    @Override
-//    public void updateInternalWalletBalances(InternalWalletBalancesDto internalWalletBalancesDto) {
-//        final String sql = "UPDATE INTERNAL_WALLET_BALANCES iwb" +
-//                " SET iwb.usd_rate = :usd_rate, iwb.btc_rate = :btc_rate, " +
-//                "iwb.total_balance = IFNULL(:total_balance, 0), " +
-//                "iwb.total_balance_usd = iwb.total_balance * iwb.usd_rate, " +
-//                "iwb.total_balance_btc = iwb.total_balance * iwb.btc_rate, " +
-//                "iwb.last_updated_at = CURRENT_TIMESTAMP" +
-//                " WHERE iwb.currency_id = :currency_id AND iwb.role_id = :role_id";
-//
-//        final Map<String, Object> params = new HashMap<String, Object>() {
-//            {
-//                put("currency_id", internalWalletBalancesDto.getCurrencyId());
-//                put("role_id", internalWalletBalancesDto.getRoleId());
-//                put("usd_rate", internalWalletBalancesDto.getUsdRate());
-//                put("btc_rate", internalWalletBalancesDto.getBtcRate());
-//                put("total_balance", internalWalletBalancesDto.getTotalBalance());
-//            }
-//        };
-//        masterJdbcTemplate.update(sql, params);
-//    }
+        final Map<String, Object> params = new HashMap<String, Object>() {
+            {
+                put("currency_id", externalWalletBalancesDto.getCurrencyId());
+                put("usd_rate", externalWalletBalancesDto.getUsdRate());
+                put("btc_rate", externalWalletBalancesDto.getBtcRate());
+                put("main_balance", externalWalletBalancesDto.getMainBalance());
+                put("last_updated_at", externalWalletBalancesDto.getLastUpdatedDate());
+            }
+        };
+
+        adminTemplate.update(sql, params);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void updateInternalWalletBalances(InternalWalletBalancesDto internalWalletBalancesDto) {
+        final String sql = "UPDATE INTERNAL_WALLET_BALANCES iwb" +
+                " SET iwb.usd_rate = :usd_rate, iwb.btc_rate = :btc_rate, " +
+                "iwb.total_balance = IFNULL(:total_balance, 0), " +
+                "iwb.total_balance_usd = iwb.total_balance * iwb.usd_rate, " +
+                "iwb.total_balance_btc = iwb.total_balance * iwb.btc_rate, " +
+                "iwb.last_updated_at = CURRENT_TIMESTAMP" +
+                " WHERE iwb.currency_id = :currency_id AND iwb.role_id = :role_id";
+
+        final Map<String, Object> params = new HashMap<String, Object>() {
+            {
+                put("currency_id", internalWalletBalancesDto.getCurrencyId());
+                put("role_id", internalWalletBalancesDto.getRoleId());
+                put("usd_rate", internalWalletBalancesDto.getUsdRate());
+                put("btc_rate", internalWalletBalancesDto.getBtcRate());
+                put("total_balance", internalWalletBalancesDto.getTotalBalance());
+            }
+        };
+        adminTemplate.update(sql, params);
+    }
 
     @Override
     public List<InternalWalletBalancesDto> getWalletBalances() {
@@ -162,7 +160,7 @@ public class WalletDaoImpl implements WalletDao {
                 " GROUP BY cur.id, ur.id" +
                 " ORDER BY cur.id, ur.id";
 
-        return coreTemplate.query(sql, (rs, row) -> InternalWalletBalancesDto.builder()
+        return adminTemplate.query(sql, (rs, row) -> InternalWalletBalancesDto.builder()
                 .currencyId(rs.getInt("currency_id"))
                 .currencyName(rs.getString("currency_name"))
                 .roleId(rs.getInt("role_id"))
@@ -171,39 +169,37 @@ public class WalletDaoImpl implements WalletDao {
                 .build());
     }
 
-    // todo only read ops
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void updateExternalReservedWalletBalances(int currencyId, String walletAddress, BigDecimal balance, LocalDateTime lastReservedBalanceUpdate) {
+        String sql = "UPDATE COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera" +
+                " SET cwera.balance = :balance" +
+                " WHERE cwera.currency_id = :currency_id" +
+                " AND cwera.wallet_address = :wallet_address";
 
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-//    @Override
-//    public void updateExternalReservedWalletBalances(int currencyId, String walletAddress, BigDecimal balance, LocalDateTime lastReservedBalanceUpdate) {
-//        String sql = "UPDATE birzha.COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera" +
-//                " SET cwera.balance = :balance" +
-//                " WHERE cwera.currency_id = :currency_id" +
-//                " AND cwera.wallet_address = :wallet_address";
-//
-//        Map<String, Object> params = new HashMap<String, Object>() {
-//            {
-//                put("currency_id", currencyId);
-//                put("wallet_address", walletAddress);
-//                put("balance", balance);
-//            }
-//        };
-//        masterJdbcTemplate.update(sql, params);
-//
-//        sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
-//                " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
-//                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance, " +
-//                "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
-//                "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
-//                "cewb.last_updated_at = IFNULL(:last_updated_at, cewb.last_updated_at)" +
-//                " WHERE cewb.currency_id = :currency_id";
-//
-//        params = new HashMap<String, Object>() {
-//            {
-//                put("currency_id", currencyId);
-//                put("last_updated_at", lastReservedBalanceUpdate);
-//            }
-//        };
-//        masterJdbcTemplate.update(sql, params);
-//    }
+        Map<String, Object> params = new HashMap<String, Object>() {
+            {
+                put("currency_id", currencyId);
+                put("wallet_address", walletAddress);
+                put("balance", balance);
+            }
+        };
+        adminTemplate.update(sql, params);
+
+        sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
+                " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance, " +
+                "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
+                "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
+                "cewb.last_updated_at = IFNULL(:last_updated_at, cewb.last_updated_at)" +
+                " WHERE cewb.currency_id = :currency_id";
+
+        params = new HashMap<String, Object>() {
+            {
+                put("currency_id", currencyId);
+                put("last_updated_at", lastReservedBalanceUpdate);
+            }
+        };
+        adminTemplate.update(sql, params);
+    }
 }

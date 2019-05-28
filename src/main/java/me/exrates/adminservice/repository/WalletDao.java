@@ -16,11 +16,11 @@ public interface WalletDao {
 
     List<InternalWalletBalancesDto> getInternalWalletBalances();
 
-//    void updateExternalMainWalletBalances(ExternalWalletBalancesDto externalWalletBalancesDto);
+    void updateExternalMainWalletBalances(ExternalWalletBalancesDto externalWalletBalancesDto);
 
-//    void updateInternalWalletBalances(InternalWalletBalancesDto internalWalletBalancesDto);
+    void updateInternalWalletBalances(InternalWalletBalancesDto internalWalletBalancesDto);
 
     List<InternalWalletBalancesDto> getWalletBalances();
 
-//    void updateExternalReservedWalletBalances(int currencyId, String walletAddress, BigDecimal balance, LocalDateTime lastReservedBalanceUpdate);
+    void updateExternalReservedWalletBalances(int currencyId, String walletAddress, BigDecimal balance, LocalDateTime lastReservedBalanceUpdate);
 }
