@@ -19,7 +19,7 @@ public class AdminTransactionRepositoryImpl implements AdminTransactionRepositor
     private final JdbcOperations jdbcTemplate;
 
     @Autowired
-    public AdminTransactionRepositoryImpl(@Qualifier("template") JdbcOperations jdbcTemplate) {
+    public AdminTransactionRepositoryImpl(@Qualifier("coreTemplate") JdbcOperations jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

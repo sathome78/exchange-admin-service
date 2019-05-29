@@ -22,7 +22,7 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
     private final NamedParameterJdbcOperations coreJdbcTemplate;
 
     @Autowired
-    public CoreTransactionRepositoryImpl(@Qualifier("coreTemplate") NamedParameterJdbcOperations coreJdbOps) {
+    public CoreTransactionRepositoryImpl(@Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreJdbOps) {
         this.coreJdbcTemplate = coreJdbOps;
     }
 

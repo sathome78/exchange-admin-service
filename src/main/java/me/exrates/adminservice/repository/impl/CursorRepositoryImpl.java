@@ -25,7 +25,7 @@ public class CursorRepositoryImpl implements CursorRepository {
     private final NamedParameterJdbcOperations adminTemplate;
 
     @Autowired
-    public CursorRepositoryImpl(@Qualifier("adminTemplate") NamedParameterJdbcOperations adminTemplate) {
+    public CursorRepositoryImpl(@Qualifier("adminNPTemplate") NamedParameterJdbcOperations adminTemplate) {
         this.adminTemplate = adminTemplate;
     }
 

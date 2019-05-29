@@ -8,7 +8,9 @@ import me.exrates.adminservice.events.TransactionsUpdateEvent;
 import me.exrates.adminservice.repository.AdminTransactionRepository;
 import me.exrates.adminservice.repository.CursorRepository;
 import me.exrates.adminservice.repository.impl.CursorRepositoryImpl;
-import me.exrates.adminservice.service.impl.SyncTransactionServiceImpl;
+import me.exrates.adminservice.services.impl.SyncTransactionServiceImpl;
+import me.exrates.adminservice.services.ExchangeRatesService;
+import me.exrates.adminservice.services.SyncTransactionService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -134,8 +136,8 @@ public class SyncTransactionServiceTest {
         }
 
         @Bean
-        public UpdateTransactionService updateTransactionService() {
-            return Mockito.mock(UpdateTransactionService.class);
+        public me.exrates.adminservice.service.UpdateTransactionService updateTransactionService() {
+            return Mockito.mock(me.exrates.adminservice.service.UpdateTransactionService.class);
         }
 
 

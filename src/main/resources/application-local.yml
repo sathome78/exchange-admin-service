@@ -73,3 +73,4 @@ scheduled:
   update:
     external-balances: 0 */5 * ? * *
     internal-balances: 0 */5 * ? * *
+    rates-history: 0 0 * ? * *

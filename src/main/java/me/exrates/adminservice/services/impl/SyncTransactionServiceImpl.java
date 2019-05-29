@@ -1,4 +1,4 @@
-package me.exrates.adminservice.service.impl;
+package me.exrates.adminservice.services.impl;
 
 import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
@@ -6,8 +6,8 @@ import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.events.TransactionsUpdateEvent;
 import me.exrates.adminservice.repository.AdminTransactionRepository;
 import me.exrates.adminservice.repository.CursorRepository;
-import me.exrates.adminservice.service.ExchangeRatesService;
-import me.exrates.adminservice.service.SyncTransactionService;
+import me.exrates.adminservice.services.ExchangeRatesService;
+import me.exrates.adminservice.services.SyncTransactionService;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,7 +31,8 @@ public class SyncTransactionServiceImpl implements SyncTransactionService {
 
     @Autowired
     public SyncTransactionServiceImpl(AdminTransactionRepository adminTransactionRepository,
-                                      ApplicationEventPublisher applicationEventPublisher, @Qualifier(value = "cursorRepository") CursorRepository cursorRepository,
+                                      ApplicationEventPublisher applicationEventPublisher,
+                                      @Qualifier(value = "cursorRepository") CursorRepository cursorRepository,
                                       CoreTransactionRepository coreTransactionRepository,
                                       ExchangeRatesService exchangeRatesService) {
         this.adminTransactionRepository = adminTransactionRepository;
