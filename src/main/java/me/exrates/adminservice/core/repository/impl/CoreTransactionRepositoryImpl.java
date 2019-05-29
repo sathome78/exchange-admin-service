@@ -4,10 +4,9 @@ import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,10 +14,10 @@ import java.util.List;
 @Repository
 public class CoreTransactionRepositoryImpl implements CoreTransactionRepository {
 
-    private final NamedParameterJdbcTemplate coreJdbcTemplate;
+    private final NamedParameterJdbcOperations coreJdbcTemplate;
 
     @Autowired
-    public CoreTransactionRepositoryImpl(@Qualifier("coreTemplate") NamedParameterJdbcTemplate coreJdbcTemplate) {
+    public CoreTransactionRepositoryImpl(@Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreJdbcTemplate) {
         this.coreJdbcTemplate = coreJdbcTemplate;
     }
 
@@ -35,8 +34,10 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
                 "WHERE t.id > :position " +
                 "ORDER BY t.id ASC " +
                 "LIMIT :size";
+        
         MapSqlParameterSource params = new MapSqlParameterSource("size", String.valueOf(limit))
                 .addValue("position", String.valueOf(position));
+        
         return coreJdbcTemplate.query(sql, params, getRowMapper());
     }
 

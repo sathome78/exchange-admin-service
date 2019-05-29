@@ -1,6 +1,6 @@
 package me.exrates.adminservice.domain.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,9 +14,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class RateDto {
 
-    @JsonIgnore
+    @JsonProperty("currency_name")
     private String currencyName;
+    @JsonProperty("usd_rate")
     private BigDecimal usdRate;
+    @JsonProperty("btc_rate")
     private BigDecimal btcRate;
 
     public static RateDto zeroRate(String currencyName) {

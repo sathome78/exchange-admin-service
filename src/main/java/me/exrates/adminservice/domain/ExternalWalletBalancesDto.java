@@ -26,6 +26,7 @@ public class ExternalWalletBalancesDto {
 
     private BigDecimal mainBalance;
     private BigDecimal reservedBalance;
+    private BigDecimal imbalance;
 
     private BigDecimal totalBalance;
     private BigDecimal totalBalanceUSD;
@@ -46,10 +47,10 @@ public class ExternalWalletBalancesDto {
                 .btcRate(BigDecimal.ZERO)
                 .mainBalance(BigDecimal.ZERO)
                 .reservedBalance(BigDecimal.ZERO)
+                .imbalance(BigDecimal.ZERO)
                 .totalBalance(BigDecimal.ZERO)
                 .totalBalanceUSD(BigDecimal.ZERO)
                 .totalBalanceBTC(BigDecimal.ZERO)
                 .build();
-
     }
 }

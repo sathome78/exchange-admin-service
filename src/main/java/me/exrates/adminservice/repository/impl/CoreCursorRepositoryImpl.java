@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -20,21 +20,23 @@ public class CoreCursorRepositoryImpl implements CoreCursorRepository {
 
     public static final Logger logger = LoggerFactory.getLogger(CoreCursorRepositoryImpl.class);
 
-    private final NamedParameterJdbcTemplate adminTemplate;
+    private final NamedParameterJdbcOperations adminTemplate;
 
     @Autowired
-    public CoreCursorRepositoryImpl(@Qualifier("adminTemplate") NamedParameterJdbcTemplate adminTemplate) {
+    public CoreCursorRepositoryImpl(@Qualifier("adminNPTemplate") NamedParameterJdbcOperations adminTemplate) {
         this.adminTemplate = adminTemplate;
     }
 
     @Override
     public Long findLastByTable(String tableName) {
+        String sql = String.format("SELECT %s FROM %s WHERE %s = :tableName", COL_LAST_ID, TABLE_NAME, COL_TABLE_NAME);
+
+        MapSqlParameterSource params = new MapSqlParameterSource("tableName", tableName);
+
         try {
-            String sql = String.format("SELECT %s FROM %s WHERE %s = :tableName", COL_LAST_ID, TABLE_NAME, COL_TABLE_NAME);
-            MapSqlParameterSource params = new MapSqlParameterSource("tableName", tableName);
             return adminTemplate.queryForObject(sql, params, Long.class);
-        } catch (DataAccessException e) {
-            logger.warn("Failed to find last cursor value for table name: " + tableName, e);
+        } catch (DataAccessException ex) {
+            logger.warn("Failed to find last cursor value for table name: " + tableName, ex);
             return -1L;
         }
     }
@@ -44,10 +46,12 @@ public class CoreCursorRepositoryImpl implements CoreCursorRepository {
         String sql = "INSERT INTO " + TABLE_NAME + " (table_name, table_column, last_id) " +
                 " VALUE (:tableName, :tableColumnName, :cursorPosition) "
                 + " ON DUPLICATE KEY UPDATE " + COL_LAST_ID + " = :cursorPosition";
+
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("tableName", coreCursor.getTableName())
                 .addValue("tableColumnName", coreCursor.getTableColumn())
                 .addValue("cursorPosition", coreCursor.getCursorPosition());
+
         final int rowsUpdated = adminTemplate.update(sql, params);
         if (rowsUpdated > 0) {
             coreCursor.setModified(LocalDateTime.now());
@@ -57,7 +61,8 @@ public class CoreCursorRepositoryImpl implements CoreCursorRepository {
 
     @Override
     public Collection<CoreCursor> findAll() {
-        String sql = "SELECT * FROM " + TABLE_NAME;
+        final String sql = "SELECT * FROM " + TABLE_NAME;
+
         return adminTemplate.query(sql, getRowMapper());
     }
 
@@ -69,5 +74,4 @@ public class CoreCursorRepositoryImpl implements CoreCursorRepository {
                 .modified(rs.getTimestamp(COL_MODIFIED).toLocalDateTime())
                 .build();
     }
-
 }
