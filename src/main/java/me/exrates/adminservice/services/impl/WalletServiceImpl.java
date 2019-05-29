@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.api.WalletsApi;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
 import me.exrates.adminservice.core.repository.CoreWalletRepository;
+import me.exrates.adminservice.domain.ExternalReservedWalletAddressDto;
 import me.exrates.adminservice.domain.ExternalWalletBalancesDto;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
 import me.exrates.adminservice.domain.api.BalanceDto;
@@ -233,5 +234,84 @@ public class WalletServiceImpl implements WalletService {
         }
         walletRepository.updateInternalWalletBalances(internalWalletBalances);
         log.info("Process of updating internal wallets end... Time: {}", stopWatch.getTime(TimeUnit.MILLISECONDS));
+    }
+
+    @Override
+    public void createWalletAddress(int currencyId) {
+        walletRepository.createReservedWalletAddress(currencyId);
+    }
+
+    @Override
+    public void deleteWalletAddress(int id, int currencyId, String walletAddress) {
+        walletRepository.deleteReservedWalletAddress(id, currencyId);
+
+        final String currencySymbol = currencyService.getCurrencyName(currencyId);
+        if (isNull(currencySymbol)) {
+            log.info("External reserved address have not been deleted from WalletChecker Service");
+            return;
+        }
+
+        boolean deleted = walletsApi.deleteReservedWallet(currencySymbol, walletAddress);
+
+        log.info("External reserved address [{}:{}] {}",
+                currencySymbol,
+                walletAddress,
+                deleted ? "have been deleted" : "have not been deleted");
+    }
+
+    @Override
+    public void updateWalletAddress(ExternalReservedWalletAddressDto externalReservedWalletAddressDto, boolean isSavedAsAddress) {
+        walletRepository.updateReservedWalletAddress(externalReservedWalletAddressDto);
+
+        if (isSavedAsAddress) {
+            final int currencyId = externalReservedWalletAddressDto.getCurrencyId();
+            final String walletAddress = externalReservedWalletAddressDto.getWalletAddress();
+
+            final String currencySymbol = currencyService.getCurrencyName(currencyId);
+            if (isNull(currencySymbol)) {
+                log.info("External reserved address have not been saved in WalletChecker Service");
+                return;
+            }
+
+            boolean saved = walletsApi.addReservedWallet(currencySymbol, walletAddress);
+
+            log.info("External reserved address [{}:{}] {}",
+                    currencySymbol,
+                    walletAddress,
+                    saved ? "have been saved" : "have not been saved");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ExternalReservedWalletAddressDto> getReservedWalletsByCurrencyId(String currencyId) {
+        return walletRepository.getReservedWalletsByCurrencyId(currencyId);
+    }
+
+    @Override
+    public BigDecimal getExternalReservedWalletBalance(Integer currencyId, String walletAddress) {
+        CoreCurrencyDto currency = currencyService.findById(currencyId);
+        if (isNull(currency)) {
+            log.info("Currency with id: {} not found", currencyId);
+            return null;
+        }
+        return walletsApi.getBalanceByCurrencyAndWallet(currency.getName(), walletAddress);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public BigDecimal retrieveSummaryUSD() {
+        return walletRepository.retrieveSummaryUSD();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public BigDecimal retrieveSummaryBTC() {
+        return walletRepository.retrieveSummaryBTC();
+    }
+
+    @Override
+    public void updateAccountingImbalance(String currencyName, BigDecimal accountingProfit, BigDecimal accountingManualBalanceChanges) {
+        walletRepository.updateAccountingImbalance(currencyName, accountingProfit, accountingManualBalanceChanges);
     }
 }

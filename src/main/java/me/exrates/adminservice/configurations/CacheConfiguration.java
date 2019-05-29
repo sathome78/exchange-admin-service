@@ -14,7 +14,8 @@ public class CacheConfiguration {
     public static final String ALL_RATES_CACHE = "all-rates-cache";
     public static final String ALL_MAIN_BALANCES_CACHE = "all-main-balances-cache";
     public static final String ALL_CURRENCIES_CACHE = "all-currencies-cache";
-    public static final String CURRENCY_CACHE = "currency-cache";
+    public static final String CURRENCY_CACHE_BY_NAME = "currency-cache-name";
+    public static final String CURRENCY_CACHE_BY_ID = "currency-cache-id";
 
     @Bean(ALL_RATES_CACHE)
     public Cache cacheAllRates() {
@@ -37,9 +38,16 @@ public class CacheConfiguration {
                 .build());
     }
 
-    @Bean(CURRENCY_CACHE)
-    public Cache cacheCurrency() {
-        return new CaffeineCache(CURRENCY_CACHE, Caffeine.newBuilder()
+    @Bean(CURRENCY_CACHE_BY_NAME)
+    public Cache cacheCurrencyByName() {
+        return new CaffeineCache(CURRENCY_CACHE_BY_NAME, Caffeine.newBuilder()
+                .expireAfterWrite(30, TimeUnit.MINUTES)
+                .build());
+    }
+
+    @Bean(CURRENCY_CACHE_BY_ID)
+    public Cache cacheCurrencyById() {
+        return new CaffeineCache(CURRENCY_CACHE_BY_ID, Caffeine.newBuilder()
                 .expireAfterWrite(30, TimeUnit.MINUTES)
                 .build());
     }

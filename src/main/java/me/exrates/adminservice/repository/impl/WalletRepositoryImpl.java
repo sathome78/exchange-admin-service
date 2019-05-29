@@ -1,10 +1,12 @@
 package me.exrates.adminservice.repository.impl;
 
 import lombok.extern.log4j.Log4j2;
+import me.exrates.adminservice.domain.ExternalReservedWalletAddressDto;
 import me.exrates.adminservice.domain.ExternalWalletBalancesDto;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
 import me.exrates.adminservice.domain.enums.UserRole;
 import me.exrates.adminservice.repository.WalletRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -17,10 +19,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.singletonMap;
 import static java.util.Objects.nonNull;
 
 @Log4j2
@@ -45,6 +49,7 @@ public class WalletRepositoryImpl implements WalletRepository {
                 "cewb.btc_rate, " +
                 "cewb.main_balance,  " +
                 "cewb.reserved_balance, " +
+                "cewb.imbalance, " +
                 "cewb.total_balance, " +
                 "cewb.total_balance_usd, " +
                 "cewb.total_balance_btc, " +
@@ -59,6 +64,7 @@ public class WalletRepositoryImpl implements WalletRepository {
                 .btcRate(rs.getBigDecimal("btc_rate"))
                 .mainBalance(rs.getBigDecimal("main_balance"))
                 .reservedBalance(rs.getBigDecimal("reserved_balance"))
+                .imbalance(rs.getBigDecimal("imbalance"))
                 .totalBalance(rs.getBigDecimal("total_balance"))
                 .totalBalanceUSD(rs.getBigDecimal("total_balance_usd"))
                 .totalBalanceBTC(rs.getBigDecimal("total_balance_btc"))
@@ -100,7 +106,7 @@ public class WalletRepositoryImpl implements WalletRepository {
         final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.usd_rate = ?, cewb.btc_rate = ?, " +
                 "cewb.main_balance = ?, " +
-                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance, " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.imbalance, " +
                 "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
                 "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
                 "cewb.last_updated_at = IFNULL(?, cewb.last_updated_at)" +
@@ -172,7 +178,7 @@ public class WalletRepositoryImpl implements WalletRepository {
 
         sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
-                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance, " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.imbalance, " +
                 "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
                 "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
                 "cewb.last_updated_at = IFNULL(:last_updated_at, cewb.last_updated_at)" +
@@ -182,6 +188,120 @@ public class WalletRepositoryImpl implements WalletRepository {
             {
                 put("currency_id", currencyId);
                 put("last_updated_at", lastReservedBalanceUpdate);
+            }
+        };
+        npJdbcTemplate.update(sql, params);
+    }
+
+    @Override
+    public void createReservedWalletAddress(int currencyId) {
+        final String sql = "INSERT INTO COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS (currency_id) VALUES (:currency_id)";
+
+        npJdbcTemplate.update(sql, singletonMap("currency_id", currencyId));
+    }
+
+    @Override
+    public void deleteReservedWalletAddress(int id, int currencyId) {
+        String sql = "DELETE FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS WHERE id = :id";
+
+        npJdbcTemplate.update(sql, singletonMap("id", id));
+
+        sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
+                " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.imbalance, " +
+                "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
+                "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate" +
+                " WHERE cewb.currency_id = :currency_id";
+
+        npJdbcTemplate.update(sql, singletonMap("currency_id", currencyId));
+    }
+
+    @Override
+    public void updateReservedWalletAddress(ExternalReservedWalletAddressDto externalReservedWalletAddressDto) {
+        String nameSql = StringUtils.EMPTY;
+        if (nonNull(externalReservedWalletAddressDto.getName())) {
+            nameSql = "cwera.name = :name,";
+        }
+        String sql = String.format("UPDATE COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera" +
+                " SET cwera.currency_id = :currency_id, %s cwera.wallet_address = :wallet_address, cwera.balance = :balance" +
+                " WHERE cwera.id = :id", nameSql);
+
+        Map<String, Object> params = new HashMap<String, Object>() {
+            {
+                put("id", externalReservedWalletAddressDto.getId());
+                put("currency_id", externalReservedWalletAddressDto.getCurrencyId());
+                put("name", externalReservedWalletAddressDto.getName());
+                put("wallet_address", externalReservedWalletAddressDto.getWalletAddress());
+                put("balance", externalReservedWalletAddressDto.getBalance());
+            }
+        };
+        npJdbcTemplate.update(sql, params);
+
+        sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
+                " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.imbalance, " +
+                "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
+                "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
+                "cewb.last_updated_at = CURRENT_TIMESTAMP" +
+                " WHERE cewb.currency_id = :currency_id";
+
+        npJdbcTemplate.update(sql, Collections.singletonMap("currency_id", externalReservedWalletAddressDto.getCurrencyId()));
+    }
+
+    @Override
+    public List<ExternalReservedWalletAddressDto> getReservedWalletsByCurrencyId(String currencyId) {
+        final String sql = "SELECT cwera.id, cwera.currency_id, cwera.name, cwera.wallet_address, cwera.balance" +
+                " FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera" +
+                " WHERE cwera.currency_id = :currency_id";
+
+        Map<String, String> params = Collections.singletonMap("currency_id", currencyId);
+
+        return npJdbcTemplate.query(sql, params, (rs, row) -> ExternalReservedWalletAddressDto.builder()
+                .id(rs.getInt("id"))
+                .currencyId(rs.getInt("currency_id"))
+                .name(rs.getString("name"))
+                .walletAddress(rs.getString("wallet_address"))
+                .balance(rs.getBigDecimal("balance"))
+                .build());
+    }
+
+    @Override
+    public BigDecimal retrieveSummaryUSD() {
+        String sql = "SELECT SUM(cewb.total_balance_usd) FROM COMPANY_EXTERNAL_WALLET_BALANCES cewb";
+
+        try {
+            return jdbcTemplate.queryForObject(sql, BigDecimal.class);
+        } catch (Exception ex) {
+            return BigDecimal.ZERO;
+        }
+    }
+
+    @Override
+    public BigDecimal retrieveSummaryBTC() {
+        String sql = "SELECT SUM(cewb.total_balance_btc) FROM COMPANY_EXTERNAL_WALLET_BALANCES cewb";
+
+        try {
+            return jdbcTemplate.queryForObject(sql, BigDecimal.class);
+        } catch (Exception ex) {
+            return BigDecimal.ZERO;
+        }
+    }
+
+    @Override
+    public void updateAccountingImbalance(String currencyName, BigDecimal accountingProfit, BigDecimal accountingManualBalanceChanges) {
+        final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
+                " SET cewb.imbalance = IFNULL(:accounting_profit, 0) + IFNULL(:accounting_manual_balance_changes, 0), " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.imbalance, " +
+                "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
+                "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
+                "cewb.last_updated_at = CURRENT_TIMESTAMP" +
+                " WHERE cewb.currency_name = :currency_name";
+
+        Map<String, Object> params = new HashMap<String, Object>() {
+            {
+                put("currency_name", currencyName);
+                put("accounting_profit", accountingProfit);
+                put("accounting_manual_balance_changes", accountingManualBalanceChanges);
             }
         };
         npJdbcTemplate.update(sql, params);
