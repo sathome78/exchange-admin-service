@@ -42,7 +42,7 @@ spring:
 db-admin:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false
+    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false&rewriteBatchedStatements=true
     username: root
   #    password: root
   ssm:
@@ -74,3 +74,8 @@ scheduled:
   update:
     external-balances: 0 */5 * ? * *
     internal-balances: 0 */5 * ? * *
+    sync-transactions: 0 0 */3 * * *
+
+sync:
+  properties:
+    transaction-chunk-size: 20

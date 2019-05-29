@@ -6,7 +6,7 @@ spring:
     name: admin-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false
+    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false&rewriteBatchedStatements=true
     username: root
 #    password: root
     scheme-name: admin_db

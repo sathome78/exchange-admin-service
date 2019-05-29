@@ -1,16 +1,15 @@
-package me.exrates.adminservice.core.repository;
+package me.exrates.adminservice.repository;
 
 import me.exrates.adminservice.core.domain.CoreTransaction;
-import me.exrates.adminservice.repository.CursorRepository;
 
 import java.util.List;
 
-public interface CoreTransactionRepository {
+public interface AdminTransactionRepository {
 
     String TABLE = "TRANSACTION";
     String COL_ID = "id";
     String COL_USER_ID = "user_id";
-    String COL_CURRENCY_NAME = "currency_name";
+    String COL_CURRENCY_NAME = "user_id";
     String COL_AMOUNT = "amount";
     String COL_COMMISSION_AMOUNT = "commission_amount";
     String COL_SOURCE_TYPE = "source_type";
@@ -18,7 +17,6 @@ public interface CoreTransactionRepository {
     String COL_DATETIME = "datetime";
     String COL_RATE_IN_USD = "rate_in_usd";
     String COL_RATE_IN_BTC = "rate_in_btc";
-    String UPDATE_CURSOR_SQL =  "REPLACE INTO CURSORS (last_id, table_name, table_column) SELECT MAX(id), 'TRANSACTION', 'id' FROM TRANSACTION;";
 
-    List<CoreTransaction> findAllLimited(int limit, long position);
+    boolean batchInsert(List<CoreTransaction> transactions);
 }
