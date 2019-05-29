@@ -3,7 +3,7 @@ package me.exrates.adminservice.repository.impl;
 import config.AbstractDatabaseContextTest;
 import config.DataComparisonTest;
 import me.exrates.adminservice.domain.CoreCursor;
-import me.exrates.adminservice.repository.CoreCursorRepository;
+import me.exrates.adminservice.repository.CursorRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +29,14 @@ import static org.junit.Assert.assertNotNull;
 public class CoreCursorRepositoryImplTest extends DataComparisonTest {
 
     @Autowired
-    private CoreCursorRepository coreCursorRepository;
+    @Qualifier("testCoreCursorRepository")
+    private CursorRepository coreCursorRepository;
 
     @Override
     protected void before() {
         try {
-            truncateTables(CoreCursorRepository.TABLE_NAME);
-            String sql = "INSERT INTO " + CoreCursorRepository.TABLE_NAME
+            truncateTables(CursorRepository.TABLE_NAME);
+            String sql = "INSERT INTO " + CursorRepository.TABLE_NAME
                     + " (table_name, table_column, last_id) VALUE (\'table1\', \'id\', 42342134);";
             prepareTestData(sql);
         } catch (SQLException e) {
@@ -59,14 +60,14 @@ public class CoreCursorRepositoryImplTest extends DataComparisonTest {
     public void save() {
         CoreCursor coreCursor = getTestCursor();
         around()
-                .withSQL("SELECT * FROM " + CoreCursorRepository.TABLE_NAME)
+                .withSQL("SELECT * FROM " + CursorRepository.TABLE_NAME)
                 .run(() -> coreCursorRepository.save(coreCursor));
         assertNotNull(coreCursor.getModified());
     }
 
     @Test
     public void update() throws SQLException {
-        final String sql = "INSERT INTO " + CoreCursorRepository.TABLE_NAME
+        final String sql = "INSERT INTO " + CursorRepository.TABLE_NAME
                 + " (table_name, table_column, last_id) VALUE (\'table2\', \'id\', 45);";
 
         prepareTestData(sql);
@@ -76,7 +77,7 @@ public class CoreCursorRepositoryImplTest extends DataComparisonTest {
                 .cursorPosition(10)
                 .build();
         around()
-                .withSQL("SELECT * FROM " + CoreCursorRepository.TABLE_NAME)
+                .withSQL("SELECT * FROM " + CursorRepository.TABLE_NAME)
                 .run(() -> coreCursorRepository.save(update));
     }
 
@@ -109,9 +110,9 @@ public class CoreCursorRepositoryImplTest extends DataComparisonTest {
             return "CoreCursorRepositoryImplTest";
         }
 
-        @Bean
-        CoreCursorRepository coreCursorRepository() {
-            return new CoreCursorRepositoryImpl(jdbcTemplate);
+        @Bean("testCoreCursorRepository")
+        public CursorRepository coreCursorRepository() {
+            return new CursorRepositoryImpl(jdbcTemplate);
         }
     }
 }

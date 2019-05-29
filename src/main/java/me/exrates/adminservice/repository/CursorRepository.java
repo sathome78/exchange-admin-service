@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 
-public interface CoreCursorRepository {
+public interface CursorRepository {
 
     String TABLE_NAME = "CURSORS";
     String COL_TABLE_NAME = "table_name";
@@ -13,7 +13,11 @@ public interface CoreCursorRepository {
     String COL_LAST_ID = "last_id";
     String COL_MODIFIED = "modified_at";
 
+    String UPDATE_CURSOR_TEMPLATE = "REPLACE INTO CURSORS (last_id, table_name, table_column) SELECT MAX(%s), \'%s\', \'%s\' FROM %s;";
+
     Long findLastByTable(String tableName);
+
+    boolean updateCursorByTable(String sql);
 
     CoreCursor save(CoreCursor coreCursor);
 

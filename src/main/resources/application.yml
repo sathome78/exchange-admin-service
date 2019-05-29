@@ -75,3 +75,8 @@ scheduled:
     external-balances: 0 */5 * ? * *
     internal-balances: 0 */5 * ? * *
     rates-history: 0 0 * ? * *
+    sync-transactions: 0 0 */3 * * *
+
+sync:
+  properties:
+    transaction-chunk-size: 20

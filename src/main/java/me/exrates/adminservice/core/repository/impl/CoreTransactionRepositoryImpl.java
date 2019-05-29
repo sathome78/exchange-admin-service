@@ -9,7 +9,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.sql.ResultSet;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class CoreTransactionRepositoryImpl implements CoreTransactionRepository {
@@ -17,16 +22,16 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
     private final NamedParameterJdbcOperations coreJdbcTemplate;
 
     @Autowired
-    public CoreTransactionRepositoryImpl(@Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreJdbcTemplate) {
-        this.coreJdbcTemplate = coreJdbcTemplate;
+    public CoreTransactionRepositoryImpl(@Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreJdbOps) {
+        this.coreJdbcTemplate = coreJdbOps;
     }
 
     @Override
-    public List<CoreTransaction> findAllLimited(int limit, int position) {
+    public List<CoreTransaction> findAllLimited(int limit, long position) {
         String sql = "SELECT t.id, w.user_id, C.name as currency_name, t.amount, t.commission_amount, t.source_type, " +
                 "UPPER(OT.name) as operation_type, t.datetime," +
-                "CASE C.name WHEN 'usd' THEN 1 ELSE NULL END AS rate_in_usd, " +
-                "CASE C.name WHEN 'btc' THEN 1 ELSE NULL END AS rate_in_btc " +
+                "CASE C.name WHEN 'USD' THEN 1 ELSE NULL END AS rate_in_usd, " +
+                "CASE C.name WHEN 'BTC' THEN 1 ELSE NULL END AS rate_in_btc " +
                 "FROM TRANSACTION t " +
                 "LEFT JOIN WALLET w ON w.id = t.user_wallet_id " +
                 "LEFT JOIN CURRENCY C on t.currency_id = C.id " +
@@ -34,10 +39,8 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
                 "WHERE t.id > :position " +
                 "ORDER BY t.id ASC " +
                 "LIMIT :size";
-        
         MapSqlParameterSource params = new MapSqlParameterSource("size", String.valueOf(limit))
                 .addValue("position", String.valueOf(position));
-        
         return coreJdbcTemplate.query(sql, params, getRowMapper());
     }
 
@@ -46,13 +49,23 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
                 .id(rs.getInt(COL_ID))
                 .userId(rs.getInt(COL_USER_ID))
                 .currencyName(rs.getString(COL_CURRENCY_NAME))
-                .amount(rs.getBigDecimal(COL_AMOUNT))
-                .commissionAmount(rs.getBigDecimal(COL_COMMISSION_AMOUNT))
-                .sourceType(COL_SOURCE_TYPE)
+                .amount(getBigDecimal(rs.getBigDecimal(COL_AMOUNT)))
+                .commissionAmount(getBigDecimal(rs.getBigDecimal(COL_COMMISSION_AMOUNT)))
+                .sourceType(rs.getString(COL_SOURCE_TYPE))
                 .operationType(rs.getString(COL_OPERATION_TYPE))
                 .dateTime(rs.getTimestamp(COL_DATETIME).toLocalDateTime())
-                .rateInUsd(rs.getBigDecimal(COL_RATE_IN_USD))
-                .rateInBtc(rs.getBigDecimal(COL_RATE_IN_BTC))
+                .rateInUsd(getBigDecimal(rs.getBigDecimal(COL_RATE_IN_USD), 2))
+                .rateInBtc(getBigDecimal(rs.getBigDecimal(COL_RATE_IN_BTC), 8))
                 .build();
+    }
+
+    private BigDecimal getBigDecimal(BigDecimal value, int scale) {
+        return Objects.isNull(value)
+                ? BigDecimal.ZERO
+                : value.setScale(scale, RoundingMode.HALF_DOWN).stripTrailingZeros();
+    }
+
+    private BigDecimal getBigDecimal(BigDecimal value) {
+        return getBigDecimal(value, 8);
     }
 }
