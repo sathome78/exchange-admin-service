@@ -1,7 +1,6 @@
 package me.exrates.adminservice.core.repository;
 
 import me.exrates.adminservice.core.domain.CoreTransaction;
-import me.exrates.adminservice.repository.CursorRepository;
 
 import java.util.List;
 

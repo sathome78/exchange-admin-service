@@ -76,5 +76,4 @@ public class CursorRepositoryImpl implements CursorRepository {
                 .modified(rs.getTimestamp(COL_MODIFIED).toLocalDateTime())
                 .build();
     }
-
 }
