@@ -21,9 +21,9 @@ public class DashboardTwoDto {
     private BigDecimal inWalletBalancesBTCSum;
     private BigDecimal deviationBTC;
 
-    private int inRangeCount;
-    private int outRangeCount;
-    private int withoutRangeCount;
+    private int lowDeviationCount;
+    private int highDeviationCount;
+    private int normalDeviationCount;
 
     private int activeCurrenciesCount;
     private int monitoredCurrenciesCount;

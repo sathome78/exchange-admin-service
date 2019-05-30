@@ -12,5 +12,7 @@ public interface CoreCurrencyRepository {
 
     List<CoreCurrencyDto> getAllCurrencies();
 
+    List<CoreCurrencyDto> getActiveCurrencies();
+
     String getCurrencyName(int currencyId);
 }

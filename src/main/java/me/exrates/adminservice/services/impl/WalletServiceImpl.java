@@ -379,14 +379,18 @@ public class WalletServiceImpl implements WalletService {
                     if (signOfMonitoring) {
                         if (checkCoinRange) {
                             deviationStatus = deviation.compareTo(coinRange.negate()) >= 0 && deviation.compareTo(coinRange) <= 0
-                                    ? DeviationStatus.MONITORED_IN_RANGE
-                                    : DeviationStatus.MONITORED_OUT_RANGE;
+                                    ? DeviationStatus.MONITORED_NORMAL
+                                    : deviation.compareTo(coinRange.negate()) < 0
+                                    ? DeviationStatus.MONITORED_LOW
+                                    : DeviationStatus.MONITORED_HIGH;
                         } else if (checkUsdRange) {
                             deviationStatus = deviationUSD.compareTo(usdRange.negate()) >= 0 && deviationUSD.compareTo(usdRange) <= 0
-                                    ? DeviationStatus.MONITORED_IN_RANGE
-                                    : DeviationStatus.MONITORED_OUT_RANGE;
+                                    ? DeviationStatus.MONITORED_NORMAL
+                                    : deviationUSD.compareTo(usdRange.negate()) < 0
+                                    ? DeviationStatus.MONITORED_LOW
+                                    : DeviationStatus.MONITORED_HIGH;
                         } else {
-                            deviationStatus = DeviationStatus.MONITORED_WITHOUT_RANGE;
+                            deviationStatus = DeviationStatus.MONITORED_NORMAL;
                         }
                     } else {
                         deviationStatus = DeviationStatus.NOT_MONITORED;
@@ -476,19 +480,19 @@ public class WalletServiceImpl implements WalletService {
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
 
-        final int inRangeCount = (int) balancesSliceStatistic.stream()
-                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_IN_RANGE)
+        final int lowDeviationCount = (int) balancesSliceStatistic.stream()
+                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_LOW)
                 .count();
 
-        final int outRangeCount = (int) balancesSliceStatistic.stream()
-                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_OUT_RANGE)
+        final int highDeviationCount = (int) balancesSliceStatistic.stream()
+                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_HIGH)
                 .count();
 
-        final int withoutRangeCount = (int) balancesSliceStatistic.stream()
-                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_WITHOUT_RANGE)
+        final int normalDeviationCount = (int) balancesSliceStatistic.stream()
+                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_NORMAL)
                 .count();
 
-        final int monitoredCurrenciesCount = inRangeCount + outRangeCount + withoutRangeCount;
+        final int monitoredCurrenciesCount = lowDeviationCount + highDeviationCount + normalDeviationCount;
 
         final int activeCurrenciesCount = currencyService.getActiveCachedCurrencies().size();
 
@@ -499,9 +503,9 @@ public class WalletServiceImpl implements WalletService {
                 .exWalletBalancesBTCSum(exWalletBalancesBTCSum)
                 .inWalletBalancesBTCSum(inWalletBalancesBTCSum)
                 .deviationBTC(deviationBTC)
-                .inRangeCount(inRangeCount)
-                .outRangeCount(outRangeCount)
-                .withoutRangeCount(withoutRangeCount)
+                .lowDeviationCount(lowDeviationCount)
+                .highDeviationCount(highDeviationCount)
+                .normalDeviationCount(normalDeviationCount)
                 .activeCurrenciesCount(activeCurrenciesCount)
                 .monitoredCurrenciesCount(monitoredCurrenciesCount)
                 .build();
