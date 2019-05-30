@@ -34,4 +34,8 @@ public interface WalletRepository {
     BigDecimal retrieveSummaryBTC();
 
     void updateAccountingImbalance(String currencyName, BigDecimal accountingProfit, BigDecimal accountingManualBalanceChanges);
+
+    boolean updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring);
+
+    boolean updateMonitoringRangeForCurrency(int currencyId, BigDecimal coinRange, boolean checkByCoinRange, BigDecimal usdRange, boolean checkByUsdRange);
 }

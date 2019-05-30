@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static me.exrates.adminservice.configurations.CacheConfiguration.ALL_CURRENCIES_CACHE;
 import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY_CACHE_BY_ID;
 import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY_CACHE_BY_NAME;
@@ -53,6 +54,21 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     public List<CoreCurrencyDto> getCachedCurrencies() {
         return allCurrenciesCache.get(ALL_CURRENCIES_CACHE, coreCurrencyRepository::getAllCurrencies);
+    }
+
+    @Override
+    public List<CoreCurrencyDto> getActiveCachedCurrencies() {
+        return this.getCachedCurrencies().stream()
+                .filter(currency -> !currency.isHidden())
+                .collect(toList());
+    }
+
+    @Override
+    public List<String> getActiveCurrencyNames() {
+        return this.getCachedCurrencies().stream()
+                .filter(currency -> !currency.isHidden())
+                .map(CoreCurrencyDto::getName)
+                .collect(toList());
     }
 
     @Transactional(readOnly = true)

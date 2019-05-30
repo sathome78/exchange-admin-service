@@ -13,5 +13,9 @@ public interface CurrencyService {
 
     List<CoreCurrencyDto> getCachedCurrencies();
 
+    List<CoreCurrencyDto> getActiveCachedCurrencies();
+
+    List<String> getActiveCurrencyNames();
+
     String getCurrencyName(int currencyId);
 }

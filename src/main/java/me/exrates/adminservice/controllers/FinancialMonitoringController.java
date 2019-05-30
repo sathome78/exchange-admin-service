@@ -113,9 +113,28 @@ public class FinancialMonitoringController {
 
     @PostMapping("/externalWallets/save/accountingImbalance")
     public ResponseEntity submitAccountingImbalance(@RequestParam String currencyName,
-                                                    @RequestParam BigDecimal accountingProfit,
-                                                    @RequestParam BigDecimal accountingManualBalanceChanges) {
+                                                    @RequestParam(defaultValue = "0") BigDecimal accountingProfit,
+                                                    @RequestParam(defaultValue = "0") BigDecimal accountingManualBalanceChanges) {
         walletService.updateAccountingImbalance(currencyName, accountingProfit, accountingManualBalanceChanges);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/externalWallets/update/monitoring")
+    public ResponseEntity updateSignOfMonitoringForCurrency(@RequestParam int currencyId,
+                                                            @RequestParam boolean signOfMonitoring) {
+        walletService.updateSignOfMonitoringForCurrency(currencyId, signOfMonitoring);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/externalWallets/update/monitoring-range")
+    public ResponseEntity updateMonitoringRangeForCurrency(@RequestParam int currencyId,
+                                                           @RequestParam BigDecimal coinRange,
+                                                           @RequestParam boolean checkByCoinRange,
+                                                           @RequestParam BigDecimal usdRange,
+                                                           @RequestParam boolean checkByUsdRange) {
+        walletService.updateMonitoringRangeForCurrency(currencyId, coinRange, checkByCoinRange, usdRange, checkByUsdRange);
 
         return ResponseEntity.ok().build();
     }

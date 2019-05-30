@@ -1,7 +1,11 @@
 package me.exrates.adminservice.services;
 
+import me.exrates.adminservice.domain.BalancesDto;
+import me.exrates.adminservice.domain.DashboardOneDto;
+import me.exrates.adminservice.domain.DashboardTwoDto;
 import me.exrates.adminservice.domain.ExternalReservedWalletAddressDto;
 import me.exrates.adminservice.domain.ExternalWalletBalancesDto;
+import me.exrates.adminservice.domain.FilterDto;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
 
 import java.math.BigDecimal;
@@ -36,4 +40,14 @@ public interface WalletService {
     BigDecimal retrieveSummaryBTC();
 
     void updateAccountingImbalance(String currencyName, BigDecimal accountingProfit, BigDecimal accountingManualBalanceChanges);
+
+    boolean updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring);
+
+    boolean updateMonitoringRangeForCurrency(int currencyId, BigDecimal coinRange, boolean checkByCoinRange, BigDecimal usdRange, boolean checkByUsdRange);
+
+    List<BalancesDto> getBalancesSliceStatistic(FilterDto filter);
+
+    DashboardOneDto getDashboardOne();
+
+    DashboardTwoDto getDashboardTwo(FilterDto filter);
 }
