@@ -49,11 +49,16 @@ public class WalletRepositoryImpl implements WalletRepository {
                 "cewb.btc_rate, " +
                 "cewb.main_balance,  " +
                 "cewb.reserved_balance, " +
-                "cewb.imbalance, " +
+                "cewb.accounting_imbalance, " +
                 "cewb.total_balance, " +
                 "cewb.total_balance_usd, " +
                 "cewb.total_balance_btc, " +
-                "cewb.last_updated_at " +
+                "cewb.last_updated_at, " +
+                "cewb.sign_of_monitoring, " +
+                "cewb.coin_range, " +
+                "cewb.check_coin_range, " +
+                "cewb.usd_range, " +
+                "cewb.check_usd_range" +
                 " FROM COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " ORDER BY cewb.currency_id";
 
@@ -64,11 +69,16 @@ public class WalletRepositoryImpl implements WalletRepository {
                 .btcRate(rs.getBigDecimal("btc_rate"))
                 .mainBalance(rs.getBigDecimal("main_balance"))
                 .reservedBalance(rs.getBigDecimal("reserved_balance"))
-                .imbalance(rs.getBigDecimal("imbalance"))
+                .accountingImbalance(rs.getBigDecimal("accounting_imbalance"))
                 .totalBalance(rs.getBigDecimal("total_balance"))
                 .totalBalanceUSD(rs.getBigDecimal("total_balance_usd"))
                 .totalBalanceBTC(rs.getBigDecimal("total_balance_btc"))
                 .lastUpdatedDate(rs.getTimestamp("last_updated_at").toLocalDateTime())
+                .signOfMonitoring(rs.getBoolean("sign_of_monitoring"))
+                .coinRange(rs.getBigDecimal("coin_range"))
+                .checkCoinRange(rs.getBoolean("check_coin_range"))
+                .usdRange(rs.getBigDecimal("usd_range"))
+                .checkUsdRange(rs.getBoolean("check_usd_range"))
                 .build());
     }
 
@@ -106,7 +116,7 @@ public class WalletRepositoryImpl implements WalletRepository {
         final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.usd_rate = ?, cewb.btc_rate = ?, " +
                 "cewb.main_balance = ?, " +
-                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.imbalance, " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.accounting_imbalance, " +
                 "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
                 "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
                 "cewb.last_updated_at = IFNULL(?, cewb.last_updated_at)" +
@@ -178,7 +188,7 @@ public class WalletRepositoryImpl implements WalletRepository {
 
         sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
-                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.imbalance, " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.accounting_imbalance, " +
                 "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
                 "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
                 "cewb.last_updated_at = IFNULL(:last_updated_at, cewb.last_updated_at)" +
@@ -208,7 +218,7 @@ public class WalletRepositoryImpl implements WalletRepository {
 
         sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
-                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.imbalance, " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.accounting_imbalance, " +
                 "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
                 "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate" +
                 " WHERE cewb.currency_id = :currency_id";
@@ -239,7 +249,7 @@ public class WalletRepositoryImpl implements WalletRepository {
 
         sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
-                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.imbalance, " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.accounting_imbalance, " +
                 "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
                 "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
                 "cewb.last_updated_at = CURRENT_TIMESTAMP" +
@@ -290,8 +300,8 @@ public class WalletRepositoryImpl implements WalletRepository {
     @Override
     public void updateAccountingImbalance(String currencyName, BigDecimal accountingProfit, BigDecimal accountingManualBalanceChanges) {
         final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
-                " SET cewb.imbalance = IFNULL(:accounting_profit, 0) + IFNULL(:accounting_manual_balance_changes, 0), " +
-                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.imbalance, " +
+                " SET cewb.accounting_imbalance = :accounting_imbalance, " +
+                "cewb.total_balance = cewb.main_balance + cewb.reserved_balance + cewb.accounting_imbalance, " +
                 "cewb.total_balance_usd = cewb.total_balance * cewb.usd_rate, " +
                 "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate, " +
                 "cewb.last_updated_at = CURRENT_TIMESTAMP" +
@@ -300,10 +310,47 @@ public class WalletRepositoryImpl implements WalletRepository {
         Map<String, Object> params = new HashMap<String, Object>() {
             {
                 put("currency_name", currencyName);
-                put("accounting_profit", accountingProfit);
-                put("accounting_manual_balance_changes", accountingManualBalanceChanges);
+                put("accounting_imbalance", accountingProfit.add(accountingManualBalanceChanges));
             }
         };
+
         npJdbcTemplate.update(sql, params);
+    }
+
+    @Override
+    public boolean updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring) {
+        final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
+                " SET cewb.sign_of_monitoring = :sign_of_monitoring" +
+                " WHERE currency_id = :currency_id";
+
+        Map<String, Object> params = new HashMap<String, Object>() {
+            {
+                put("sign_of_monitoring", signOfMonitoring);
+                put("currency_id", currencyId);
+            }
+        };
+
+        return npJdbcTemplate.update(sql, params) > 0;
+    }
+
+    @Override
+    public boolean updateMonitoringRangeForCurrency(int currencyId, BigDecimal coinRange, boolean checkByCoinRange,
+                                                    BigDecimal usdRange, boolean checkByUsdRange) {
+        final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
+                " SET cewb.coin_range = :coin_range, cewb.check_coin_range = :check_coin_range," +
+                " cewb.usd_range = :usd_range, cewb.check_usd_range = :check_usd_range" +
+                " WHERE currency_id = :currency_id";
+
+        Map<String, Object> params = new HashMap<String, Object>() {
+            {
+                put("coin_range", coinRange);
+                put("check_coin_range", checkByCoinRange);
+                put("usd_range", usdRange);
+                put("check_usd_range", checkByUsdRange);
+                put("currency_id", currencyId);
+            }
+        };
+
+        return npJdbcTemplate.update(sql, params) > 0;
     }
 }

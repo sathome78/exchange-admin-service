@@ -26,7 +26,7 @@ public class ExternalWalletBalancesDto {
 
     private BigDecimal mainBalance;
     private BigDecimal reservedBalance;
-    private BigDecimal imbalance;
+    private BigDecimal accountingImbalance;
 
     private BigDecimal totalBalance;
     private BigDecimal totalBalanceUSD;
@@ -36,7 +36,12 @@ public class ExternalWalletBalancesDto {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime lastUpdatedDate;
 
-    private boolean signOfCertainty;
+    private boolean signOfMonitoring;
+
+    private BigDecimal coinRange;
+    private boolean checkCoinRange;
+    private BigDecimal usdRange;
+    private boolean checkUsdRange;
 
     public static ExternalWalletBalancesDto getZeroBalances(Integer currencyId, String currencyName) {
         return ExternalWalletBalancesDto
@@ -47,7 +52,7 @@ public class ExternalWalletBalancesDto {
                 .btcRate(BigDecimal.ZERO)
                 .mainBalance(BigDecimal.ZERO)
                 .reservedBalance(BigDecimal.ZERO)
-                .imbalance(BigDecimal.ZERO)
+                .accountingImbalance(BigDecimal.ZERO)
                 .totalBalance(BigDecimal.ZERO)
                 .totalBalanceUSD(BigDecimal.ZERO)
                 .totalBalanceBTC(BigDecimal.ZERO)
