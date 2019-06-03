@@ -1,13 +1,10 @@
 package me.exrates.adminservice.service;
 
-import config.AsyncTransactionsTestConfig;
 import config.HSQLConfiguration;
-import me.exrates.adminservice.AdminServiceApplication;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.core.repository.impl.CoreTransactionRepositoryImpl;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.events.TransactionsUpdateEvent;
-import me.exrates.adminservice.events.listeners.TransactionsUpdateEventListener;
 import me.exrates.adminservice.repository.AdminTransactionRepository;
 import me.exrates.adminservice.repository.CursorRepository;
 import me.exrates.adminservice.repository.impl.CursorRepositoryImpl;
@@ -18,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +39,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -52,10 +47,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {
-        AsyncTransactionsTestConfig.class,
-        SyncTransactionServiceTest.InnerConfig.class
-})
+@ContextConfiguration(classes = SyncTransactionServiceTest.InnerConfig.class)
 public class SyncTransactionServiceTest {
 
     @Autowired
@@ -67,22 +59,28 @@ public class SyncTransactionServiceTest {
     @Autowired
     private AdminTransactionRepository adminTransactionRepository;
 
+    @Autowired
+    private ApplicationEventPublisher publisher;
+
+    @Autowired
+
     @Before
     public void before() {
         when(exchangeRatesService.getCachedRates()).thenReturn(getTestRates());
     }
 
     @Test
-    // todo this not complete test it's just for flow steps debugging
     public void syncTransactions_nonEmpty() {
         when(adminTransactionRepository.batchInsert(anyList())).thenReturn(Boolean.TRUE);
         syncTransactionService.syncTransactions();
 
-//        await().atMost(5, TimeUnit.SECONDS)
-//                .until(() -> {
-//                    verify(transactionsUpdateEventListener).handleTransactionsUpdateEvent(any());
-//                    return true;
-//                });
+        final TransactionsUpdateEvent event = new TransactionsUpdateEvent(false);
+
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> {
+                    verify(publisher, times(1)).publishEvent(event);
+                    return true;
+                });
     }
 
     private Map<String, RateDto> getTestRates() {
@@ -141,6 +139,7 @@ public class SyncTransactionServiceTest {
         public me.exrates.adminservice.service.UpdateTransactionService updateTransactionService() {
             return Mockito.mock(me.exrates.adminservice.service.UpdateTransactionService.class);
         }
+
 
         @PostConstruct
         public void prepareTestData() throws SQLException {

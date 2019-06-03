@@ -19,28 +19,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.CallableStatementCallback;
-import org.springframework.jdbc.core.CallableStatementCreator;
-import org.springframework.jdbc.core.ConnectionCallback;
-import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
-import org.springframework.jdbc.core.PreparedStatementCallback;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.SqlParameter;
-import org.springframework.jdbc.core.StatementCallback;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
@@ -53,8 +34,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -175,14 +154,10 @@ public abstract class AbstractDatabaseContextTest {
         }
 
         @Bean(name = "testAdminTemplate")
-        public NamedParameterJdbcOperations slaveTemplate(@Qualifier("testAdminDataSource") DataSource dataSource) {
+        public NamedParameterJdbcTemplate slaveTemplate(@Qualifier("testAdminDataSource") DataSource dataSource) {
             return new NamedParameterJdbcTemplate(dataSource);
         }
 
-        @Bean(name = "testJdbcOperations")
-        public JdbcOperations jdbcOperations(@Qualifier("testAdminDataSource") DataSource dataSource) {
-            return new JdbcTemplate(dataSource);
-        }
 
         @Bean
         public DataSourceTransactionManager dataSourceTransactionManager(@Qualifier("testAdminDataSource") DataSource dataSource) {
@@ -224,7 +199,6 @@ public abstract class AbstractDatabaseContextTest {
     private void populateSchema(DataSource rootDataSource) throws SQLException {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("db/structure/structure.sql"));
-        populator.addScript(new ClassPathResource("db/structure/after_transaction_trigger.sql"));
         populator.populate(rootDataSource.getConnection());
     }
 

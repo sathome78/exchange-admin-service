@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class SyncTransactionServiceImpl implements SyncTransactionService {
@@ -46,16 +44,19 @@ public class SyncTransactionServiceImpl implements SyncTransactionService {
 
     @Override
     public void syncTransactions() {
-        final MutableBoolean shouldProceed = new MutableBoolean(false);
-        final Set<Integer> updateUserIds = new HashSet<>();
+        final MutableBoolean shouldProcced = new MutableBoolean(false);
+        final MutableBoolean updateNeeded = new MutableBoolean(false);
         do {
             long lastIndex = cursorRepository.findLastByTable(CoreTransactionRepository.TABLE);
             final List<CoreTransaction> transactions = coreTransactionRepository.findAllLimited(chunkSize, lastIndex);
-            shouldProceed.setValue(! transactions.isEmpty());
+            shouldProcced.setValue(! transactions.isEmpty());
 
-            if (shouldProceed.getValue()) {
+            if (!updateNeeded.getValue()) {
+                updateNeeded.setValue(shouldProcced.getValue());
+            }
+
+            if (shouldProcced.getValue()) {
                 transactions.forEach(t -> {
-                    updateUserIds.add(t.getUserId());
                     RateDto rateDto = exchangeRatesService.getCachedRates().getOrDefault(t.getCurrencyName(), RateDto.zeroRate(t.getCurrencyName()));
                     if (!(t.getCurrencyName().equalsIgnoreCase("BTC"))) {
                         t.setRateInBtc(rateDto.getBtcRate());
@@ -66,9 +67,9 @@ public class SyncTransactionServiceImpl implements SyncTransactionService {
                 adminTransactionRepository.batchInsert(transactions);
                 cursorRepository.updateCursorByTable(CoreTransactionRepository.UPDATE_CURSOR_SQL);
             }
-        } while (shouldProceed.getValue());
-        if (! updateUserIds.isEmpty()) {
-            applicationEventPublisher.publishEvent(new TransactionsUpdateEvent(this, updateUserIds));
+        } while (shouldProcced.getValue());
+        if (updateNeeded.getValue()) {
+            applicationEventPublisher.publishEvent(new TransactionsUpdateEvent(updateNeeded.booleanValue()));
         }
     }
 }

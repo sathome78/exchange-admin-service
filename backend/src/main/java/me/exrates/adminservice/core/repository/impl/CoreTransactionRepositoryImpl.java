@@ -39,8 +39,8 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
                 "WHERE t.id > :position " +
                 "ORDER BY t.id ASC " +
                 "LIMIT :size";
-        MapSqlParameterSource params = new MapSqlParameterSource("size", limit)
-                .addValue("position", position);
+        MapSqlParameterSource params = new MapSqlParameterSource("size", String.valueOf(limit))
+                .addValue("position", String.valueOf(position));
         return coreJdbcTemplate.query(sql, params, getRowMapper());
     }
 
