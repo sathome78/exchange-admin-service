@@ -16,9 +16,9 @@ public class CoreUser {
     private String password;
     private LocalDateTime regdate;
     private String phone;
-    private String user_status;
-    private String user_role;
-    private String use2fa;
-    private String kyc_status;
+    private String userStatus;
+    private String userRole;
+    private boolean use2fa;
+    private String kycStatus;
 
 }

@@ -1,7 +1,7 @@
 package me.exrates.adminservice.services.impl;
 
 import me.exrates.adminservice.domain.User;
-import me.exrates.adminservice.repository.UserRepository;
+import me.exrates.adminservice.repository.AdminUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,10 +18,10 @@ import java.util.Set;
 @Transactional
 public class UserDetailServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final AdminUserRepository userRepository;
 
     @Autowired
-    public UserDetailServiceImpl(UserRepository userRepository) {
+    public UserDetailServiceImpl(AdminUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
