@@ -1,0 +1,15 @@
+config/DataComparisonTest$AssertWrapperBuilder.class
+config/DataComparisonTest$Table.class
+config/DatabaseConfigImpl.class
+me/exrates/adminservice/repository/impl/CoreCursorRepositoryImplTest.class
+config/DatabaseConfig.class
+config/HSQLConfiguration.class
+me/exrates/adminservice/repository/impl/CoreCursorRepositoryImplTest$InnerConfig.class
+config/DataComparisonTest$1.class
+me/exrates/adminservice/service/SyncTransactionServiceTest$InnerConfig.class
+config/AbstractDatabaseContextTest$SteppedTestPath.class
+config/DataComparisonTest.class
+config/DataComparisonTest$SQLReader.class
+config/AbstractDatabaseContextTest.class
+config/AbstractDatabaseContextTest$AppContextConfig.class
+me/exrates/adminservice/service/SyncTransactionServiceTest.class
