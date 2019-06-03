@@ -21,7 +21,8 @@
 .backend/mvnw.cmd
 
 # dependencies
-/node_modules
+.forntend/node_modules
+.forntend/node_modules/*
 
 # profiling files
 chrome-profiler-events.json
