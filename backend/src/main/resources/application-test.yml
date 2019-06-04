@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false&rewriteBatchedStatements=true
+    username: root
+    password: root
+    scheme-name: admin_db
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 180000
+      max-lifetime: 600000
+      connection-init-sql: SELECT 1 FROM DUAL;
+      connection-test-query: SELECT 2 FROM DUAL;
+      minimum-idle: 5
+      maximum-pool-size: 10
+      validation-timeout: 5000
+
+db-core:
+  datasource:
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    url: jdbc:hsqldb:mem:testdb;DB_CLOSE_DELAY=-1;sql.syntax_mys=true
+    username: sa
+    password: password
+

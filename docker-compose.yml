@@ -1,0 +1,24 @@
+version: '3.0'
+services:
+  user-mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'admin_db'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '5506:3306'
+    expose:
+      - '5506'
+    command: [mysqld, --useUnicode=true, --characterEncoding=UTF-8, --useSSL=false, --allowPublicKeyRetrieval=true, --autoReconnect=true, --useLegacyDatetimeCode=false, --serverTimezone=UTC]
+  user-service:
+    build: ./backend
+    entrypoint: java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=light -jar app.jar
+    links:
+      - user-mysql:mysql
+    ports:
+      - '8080:8080'
+  course-client:
+    build: ./frontend
+    ports:
+      - '4200:80'

@@ -7,27 +7,8 @@
 # Only exists if Bazel was run
 /bazel-out
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-.backend/mvn
-.backend/mvn/*
-.backend/idea
-.backend/idea/*
-.backend/initdb.sh
-.backend/mvnw
-.backend/mvnw.cmd
-*.settings
-*.settings/*
-.project
-.classpath
-.factorypath
-
 # dependencies
-.forntend/node_modules
-.forntend/node_modules/*
+/node_modules
 
 # profiling files
 chrome-profiler-events.json
@@ -35,8 +16,11 @@ speed-measure-plugin.json
 
 # IDEs and editors
 /.idea
+.project
+.classpath
 .c9/
 *.launch
+.settings/
 *.sublime-workspace
 
 # IDE - VSCode
@@ -60,9 +44,3 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-
-# Server
-/build/
-/!gradle/wrapper/gradle-wrapper.jar
-/out/
-/dist/
