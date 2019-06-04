@@ -17,8 +17,8 @@ services:
     links:
       - user-mysql:mysql
     ports:
-      - 8080:8080
+      - '8080:8080'
   course-client:
     build: ./frontend
     ports:
-      -4200:80
+      - '4200:80'
