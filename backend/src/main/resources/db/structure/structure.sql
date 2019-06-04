@@ -25,8 +25,6 @@ CREATE TABLE IF NOT EXISTS TRANSACTION
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
-CREATE INDEX idx_transaction_user_ops ON TRANSACTION (datetime, user_id, source_type, operation_type);
-
 CREATE TABLE IF NOT EXISTS CURRENT_CURRENCY_RATES
 (
     id                          INT(40) UNSIGNED PRIMARY KEY   NOT NULL AUTO_INCREMENT,

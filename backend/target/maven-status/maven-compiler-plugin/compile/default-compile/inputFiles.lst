@@ -26,6 +26,7 @@
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/repository/CursorRepository.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/controllers/ApiUserController.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/repository/impl/CoreUserRepositoryImpl.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/AdminLightDatasourceConfiguration.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/impl/EventHandlingServiceImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/domain/CoreTransaction.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/service/SyncUserService.java
