@@ -1,7 +1,8 @@
-/Users/olegpodolian/IdeaProjects/birzha/admin-service/src/test/java/config/HSQLConfiguration.java
-/Users/olegpodolian/IdeaProjects/birzha/admin-service/src/test/java/config/DatabaseConfig.java
-/Users/olegpodolian/IdeaProjects/birzha/admin-service/src/test/java/me/exrates/adminservice/service/SyncTransactionServiceTest.java
-/Users/olegpodolian/IdeaProjects/birzha/admin-service/src/test/java/me/exrates/adminservice/repository/impl/CoreCursorRepositoryImplTest.java
-/Users/olegpodolian/IdeaProjects/birzha/admin-service/src/test/java/config/AbstractDatabaseContextTest.java
-/Users/olegpodolian/IdeaProjects/birzha/admin-service/src/test/java/config/DatabaseConfigImpl.java
-/Users/olegpodolian/IdeaProjects/birzha/admin-service/src/test/java/config/DataComparisonTest.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/test/java/config/DatabaseConfig.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/test/java/config/HSQLConfiguration.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/test/java/config/DataComparisonTest.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/test/java/me/exrates/adminservice/repository/impl/CoreCursorRepositoryImplTest.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/test/java/config/DatabaseConfigImpl.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/test/java/config/AbstractDatabaseContextTest.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/test/java/config/AsyncTransactionsTestConfig.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/test/java/me/exrates/adminservice/service/SyncTransactionServiceTest.java

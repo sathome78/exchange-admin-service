@@ -1,20 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: me.exrates.adminservice.service.SyncTransactionServiceTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 1.062 s <<< FAILURE! - in me.exrates.adminservice.service.SyncTransactionServiceTest
-syncTransactions_empty(me.exrates.adminservice.service.SyncTransactionServiceTest)  Time elapsed: 0 s  <<< ERROR!
-java.lang.IllegalStateException: Failed to load ApplicationContext
-Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'syncTransactionServiceTest.InnerConfig': Unsatisfied dependency expressed through field 'namedParameterJdbcOperations'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'testInMemoDataSource' defined in config.HSQLConfiguration: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [javax.sql.DataSource]: Factory method 'dataSource' threw exception; nested exception is java.lang.IllegalStateException: Could not load JDBC driver class [org.h2.Driver]
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'testInMemoDataSource' defined in config.HSQLConfiguration: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [javax.sql.DataSource]: Factory method 'dataSource' threw exception; nested exception is java.lang.IllegalStateException: Could not load JDBC driver class [org.h2.Driver]
-Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [javax.sql.DataSource]: Factory method 'dataSource' threw exception; nested exception is java.lang.IllegalStateException: Could not load JDBC driver class [org.h2.Driver]
-Caused by: java.lang.IllegalStateException: Could not load JDBC driver class [org.h2.Driver]
-Caused by: java.lang.ClassNotFoundException: org.h2.Driver
-
-syncTransactions_nonEmpty(me.exrates.adminservice.service.SyncTransactionServiceTest)  Time elapsed: 0.002 s  <<< ERROR!
-java.lang.IllegalStateException: Failed to load ApplicationContext
-Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'syncTransactionServiceTest.InnerConfig': Unsatisfied dependency expressed through field 'namedParameterJdbcOperations'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'testInMemoDataSource' defined in config.HSQLConfiguration: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [javax.sql.DataSource]: Factory method 'dataSource' threw exception; nested exception is java.lang.IllegalStateException: Could not load JDBC driver class [org.h2.Driver]
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'testInMemoDataSource' defined in config.HSQLConfiguration: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [javax.sql.DataSource]: Factory method 'dataSource' threw exception; nested exception is java.lang.IllegalStateException: Could not load JDBC driver class [org.h2.Driver]
-Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [javax.sql.DataSource]: Factory method 'dataSource' threw exception; nested exception is java.lang.IllegalStateException: Could not load JDBC driver class [org.h2.Driver]
-Caused by: java.lang.IllegalStateException: Could not load JDBC driver class [org.h2.Driver]
-Caused by: java.lang.ClassNotFoundException: org.h2.Driver
-
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.634 s - in me.exrates.adminservice.service.SyncTransactionServiceTest

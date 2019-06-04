@@ -12,4 +12,5 @@ config/DataComparisonTest.class
 config/DataComparisonTest$SQLReader.class
 config/AbstractDatabaseContextTest.class
 config/AbstractDatabaseContextTest$AppContextConfig.class
+config/AsyncTransactionsTestConfig.class
 me/exrates/adminservice/service/SyncTransactionServiceTest.class

@@ -5,18 +5,21 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.5.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.1.3.RELEASE</version>
     </parent>
+
     <groupId>me.exrates</groupId>
-    <artifactId>admin-service</artifactId>
+    <artifactId>admin-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>admin-service</name>
-    <description>Exrates admin service</description>
+    <name>admin-server</name>
+    <description>Exrates admin service backend</description>
+
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>1.8</java.version>
         <scala.version>2.11.7</scala.version>
+        <docker.image.prefix>spring-boot-admin</docker.image.prefix>
     </properties>
 
     <dependencies>
@@ -148,15 +151,33 @@
             <version>3.0.0</version>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
 
     <build>
+        <finalName>admin-server-1.0-RELEASE</finalName>
         <plugins>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.0.0</version>
+
+                <configuration>
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>me.exrates.adminservice.AdminServiceApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

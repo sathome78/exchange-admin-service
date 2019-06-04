@@ -1,7 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: me.exrates.adminservice.repository.impl.CoreCursorRepositoryImplTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.468 s <<< FAILURE! - in me.exrates.adminservice.repository.impl.CoreCursorRepositoryImplTest
-initializationError(me.exrates.adminservice.repository.impl.CoreCursorRepositoryImplTest)  Time elapsed: 0.004 s  <<< ERROR!
-java.lang.Exception: Test class should have exactly one public zero-argument constructor
-
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.643 s - in me.exrates.adminservice.repository.impl.CoreCursorRepositoryImplTest
