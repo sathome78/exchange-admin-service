@@ -19,8 +19,8 @@
 .backend/initdb.sh
 .backend/mvnw
 .backend/mvnw.cmd
-.settings
-.settings/*
+*.settings
+*.settings/*
 
 # dependencies
 .forntend/node_modules
