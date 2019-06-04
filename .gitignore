@@ -19,6 +19,11 @@
 .backend/initdb.sh
 .backend/mvnw
 .backend/mvnw.cmd
+*.settings
+*.settings/*
+.project
+.classpath
+.factorypath
 
 # dependencies
 .forntend/node_modules
