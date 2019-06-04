@@ -52,9 +52,9 @@ CREATE TABLE WALLET
 );
 
 INSERT INTO WALLET (id, currency_id, user_id)
-VALUES (1, 1, 2),
-       (1, 1, 4),
-       (1, 1, 5);
+VALUES (1, 1, 9),
+       (1, 1, 10),
+       (1, 1, 11);
 
 CREATE TABLE CURRENCY
 (
