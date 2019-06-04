@@ -10,15 +10,15 @@ services:
       - '5506:3306'
     expose:
       - '5506'
-    command: [mysqld, --useUnicode=true, --characterEncoding=UTF-8, --useSSL=false, --allowPublicKeyRetrieval=true, --autoReconnect=true, --useLegacyDatetimeCode=false, --serverTimezone=UTC]
+#    command: [mysqld, --characterEncoding=UTF-8, --useSSL=false, --allowPublicKeyRetrieval=true, --autoReconnect=true, --useLegacyDatetimeCode=false, --serverTimezone=UTC]
   admin-service:
     build: ./backend
     entrypoint: java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=light -jar app.jar
     links:
-      - user-mysql:mysql
+      - admin-mysql:mysql
     ports:
-      - '8080:8080'
+      - '7777:7777'
   admin-client:
     build: ./frontend
     ports:
-      - '4200:80'
+      - '80:80'
