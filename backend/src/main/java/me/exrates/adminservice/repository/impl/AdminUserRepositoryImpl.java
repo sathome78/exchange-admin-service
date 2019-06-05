@@ -1,6 +1,5 @@
 package me.exrates.adminservice.repository.impl;
 
-import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.domain.CoreUser;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.domain.User;
@@ -8,7 +7,6 @@ import me.exrates.adminservice.domain.enums.UserRole;
 import me.exrates.adminservice.repository.AdminUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -22,7 +20,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 

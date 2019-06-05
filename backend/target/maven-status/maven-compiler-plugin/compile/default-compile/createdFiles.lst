@@ -20,6 +20,7 @@ me/exrates/adminservice/controllers/ApiUserController.class
 me/exrates/adminservice/domain/FilterDto$Builder.class
 me/exrates/adminservice/domain/InternalWalletBalancesDto.class
 me/exrates/adminservice/core/repository/CoreUserRepository.class
+me/exrates/adminservice/configurations/AdminLightDatasourceConfiguration.class
 me/exrates/adminservice/domain/api/BalanceDto$BalanceDtoBuilder.class
 me/exrates/adminservice/services/WalletService.class
 me/exrates/adminservice/api/ExchangeApi$Rates.class

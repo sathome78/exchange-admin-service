@@ -2,6 +2,7 @@ package me.exrates.adminservice.configurations;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,7 +23,7 @@ public abstract class DatabaseConfiguration {
         config.setUsername(getDatabaseUsername());
         config.setPassword(getDatabasePassword());
         config.setDriverClassName(getDatabaseDriverClassName());
-        config.setMaximumPoolSize(2);
+        config.setMaximumPoolSize(10);
         config.setLeakDetectionThreshold(TimeUnit.MILLISECONDS.convert(45, TimeUnit.SECONDS));
         config.setMinimumIdle(1);
         config.setIdleTimeout(30000);

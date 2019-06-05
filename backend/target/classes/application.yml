@@ -82,3 +82,5 @@ sync:
   properties:
     transaction-chunk-size: 20
     users-chunk-size: 100
+logging:
+  file: /logs/admin.log
