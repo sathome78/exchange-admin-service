@@ -14,6 +14,7 @@ me/exrates/adminservice/domain/ExternalWalletBalancesDto.class
 me/exrates/adminservice/domain/api/RateDto$RateDtoBuilder.class
 me/exrates/adminservice/events/listeners/TransactionsUpdateEventListener.class
 me/exrates/adminservice/repository/CursorRepository.class
+me/exrates/adminservice/configurations/AuthorizationServerConfiguration.class
 me/exrates/adminservice/controllers/FinancialMonitoringController.class
 me/exrates/adminservice/repository/WalletBalancesRepository.class
 me/exrates/adminservice/controllers/ApiUserController.class
@@ -30,6 +31,7 @@ me/exrates/adminservice/repository/impl/ExchangeRatesRepositoryImpl$3.class
 me/exrates/adminservice/domain/DashboardTwoDto$Builder.class
 me/exrates/adminservice/service/impl/UpdateTransactionServiceImpl.class
 me/exrates/adminservice/AdminServiceApplication.class
+me/exrates/adminservice/configurations/TokenStoreConfiguration.class
 me/exrates/adminservice/domain/CoreCursor$CoreCursorBuilder.class
 me/exrates/adminservice/domain/DashboardOneDto$Builder.class
 me/exrates/adminservice/domain/User$UserBuilder.class
@@ -66,7 +68,6 @@ me/exrates/adminservice/domain/ExternalReservedWalletAddressDto.class
 me/exrates/adminservice/configurations/CoreDatasourceConfiguration.class
 me/exrates/adminservice/repository/AdminUserRepository.class
 me/exrates/adminservice/domain/api/BalanceDto.class
-me/exrates/adminservice/configurations/WebSecurityConfiguration$1.class
 me/exrates/adminservice/configurations/AdminDatasourceConfiguration.class
 me/exrates/adminservice/repository/impl/ExchangeRatesRepositoryImpl$2.class
 me/exrates/adminservice/repository/impl/WalletRepositoryImpl$6.class
@@ -83,13 +84,16 @@ me/exrates/adminservice/utils/ZipUtil.class
 me/exrates/adminservice/jobs/ExternalReservedWalletBalancesJob.class
 me/exrates/adminservice/configurations/CacheConfiguration.class
 me/exrates/adminservice/exceptions/WalletsApiException.class
+me/exrates/adminservice/configurations/CORSFilter.class
 me/exrates/adminservice/jobs/ExternalMainWalletBalancesJob.class
 me/exrates/adminservice/api/WalletsApi$WalletsData.class
 me/exrates/adminservice/jobs/CurrencyExchangeRatesHistoryJob.class
 me/exrates/adminservice/controllers/WalletBalancesController.class
+me/exrates/adminservice/configurations/ResourceServerConfiguration.class
 me/exrates/adminservice/core/domain/CoreTransaction$CoreTransactionBuilder.class
 me/exrates/adminservice/domain/DashboardOneDto.class
 me/exrates/adminservice/core/service/impl/SyncUserServiceImpl.class
+me/exrates/adminservice/configurations/SecurityConfiguration.class
 me/exrates/adminservice/service/UpdateTransactionService.class
 me/exrates/adminservice/repository/impl/CursorRepositoryImpl.class
 me/exrates/adminservice/domain/enums/DeviationStatus.class
@@ -103,7 +107,6 @@ me/exrates/adminservice/repository/impl/WalletRepositoryImpl$4.class
 me/exrates/adminservice/core/repository/CoreTransactionRepository.class
 me/exrates/adminservice/core/repository/impl/CoreTransactionRepositoryImpl.class
 me/exrates/adminservice/repository/ExchangeRatesRepository.class
-me/exrates/adminservice/configurations/WebSecurityConfiguration.class
 me/exrates/adminservice/api/WalletsApi$WalletBalanceData.class
 me/exrates/adminservice/repository/impl/WalletBalancesRepositoryImpl$1.class
 me/exrates/adminservice/configurations/SSMConfiguration$MockSSM.class
@@ -122,4 +125,3 @@ me/exrates/adminservice/domain/DashboardTwoDto.class
 me/exrates/adminservice/repository/impl/AdminUserRepositoryImpl.class
 me/exrates/adminservice/repository/impl/AdminUserRepositoryImpl$1.class
 me/exrates/adminservice/repository/impl/WalletRepositoryImpl$5.class
-me/exrates/adminservice/services/impl/UserDetailServiceImpl.class

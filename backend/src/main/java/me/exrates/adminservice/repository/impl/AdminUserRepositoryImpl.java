@@ -45,7 +45,7 @@ public class AdminUserRepositoryImpl implements AdminUserRepository {
     @Override
     public Optional<User> findOne(String username) throws UsernameNotFoundException {
         try {
-            String sql = "SELECT * FROM " + CoreUserRepository.TABLE + " WHERE email =: username";
+            String sql = "SELECT * FROM " + CoreUserRepository.TABLE + " WHERE email = :username";
             MapSqlParameterSource params = new MapSqlParameterSource("username", username);
             return Optional.ofNullable(adminTemplate.queryForObject(sql, params, getRowMapper()));
         } catch (DataAccessException e) {

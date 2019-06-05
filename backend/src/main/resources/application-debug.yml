@@ -1,5 +1,5 @@
 server:
-  port: 7777
+  port: 6666
 
 
 spring:
@@ -20,7 +20,7 @@ spring:
 db-admin:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://admin-mysql:3306/admin_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:5506/admin_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
     password: root
   ssm:

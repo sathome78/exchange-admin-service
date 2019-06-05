@@ -84,3 +84,10 @@ sync:
     users-chunk-size: 100
 logging:
   file: /logs/admin.log
+
+angular:
+  allowed:
+    origins: http://localhost:4200,http://localhost:4400
+    methods: HEAD,GET,POST,PUT,DELETE,PATCH,OPTIONS
+    headers: authorization,content-type,X-Forwarded-For,x-auth-token,access-control-request-headers,access-control-request-method,accept,origin,x-requested-with
+

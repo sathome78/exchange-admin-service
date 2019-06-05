@@ -5,6 +5,7 @@
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/domain/enums/DeviationStatus.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/CurrencyService.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/WalletService.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/TokenStoreConfiguration.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/serializers/LocalDateTimeSerializer.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/ApplicationWebXml.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/service/impl/SyncUserServiceImpl.java
@@ -27,6 +28,8 @@
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/controllers/ApiUserController.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/repository/impl/CoreUserRepositoryImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/AdminLightDatasourceConfiguration.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/SecurityConfiguration.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/AuthorizationServerConfiguration.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/impl/EventHandlingServiceImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/domain/CoreTransaction.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/service/SyncUserService.java
@@ -37,7 +40,6 @@
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/jobs/CurrencyExchangeRatesHistoryJob.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/SSMConfiguration.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/CoreDatasourceConfiguration.java
-/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/WebSecurityConfiguration.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/repository/WalletRepository.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/WalletBalancesService.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/repository/impl/ExchangeRatesRepositoryImpl.java
@@ -45,10 +47,12 @@
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/domain/BalancesDto.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/jobs/TransactionJob.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/jobs/ExternalMainWalletBalancesJob.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/CORSFilter.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/repository/impl/WalletBalancesRepositoryImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/repository/CoreUserRepository.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/UserService.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/domain/CoreCurrencyDto.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/ResourceServerConfiguration.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/events/listeners/TransactionsUpdateEventListener.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/repository/impl/WalletRepositoryImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/repository/impl/AdminUserRepositoryImpl.java
@@ -78,7 +82,6 @@
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/impl/UpdateTransactionServiceImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/impl/WalletBalancesServiceImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/serializers/LocalDateTimeDeserializer.java
-/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/impl/UserDetailServiceImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/api/WalletsApi.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/repository/impl/CursorRepositoryImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/domain/InternalWalletBalancesDto.java
