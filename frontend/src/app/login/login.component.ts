@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    window.sessionStorage.remoßveItem('token');
+    window.sessionStorage.removeItem('token');
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.compose([Validators.required])],
       password: ['', Validators.required]
