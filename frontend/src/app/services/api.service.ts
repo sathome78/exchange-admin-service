@@ -10,7 +10,7 @@ export class ApiService {
 
   login(loginPayload) {
     const headers = {
-      'Authorization': 'Basic ' + btoa('devglan-client:devglan-secret'),
+      'Authorization': 'Basic ' + btoa('admin:admin-secret'),
       'Content-type': 'application/x-www-form-urlencoded'
     }
     return this.http.post('http://localhost:7777/' + 'oauth/token', loginPayload, {headers});

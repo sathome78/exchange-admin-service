@@ -18,7 +18,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     static final String CLIEN_ID = "admin";
     //static final String CLIENT_SECRET = "admin-secret";
-    static final String CLIENT_SECRET ="$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v."; // test1234
+    static final String CLIENT_SECRET ="admin-secret"; // test1234
     static final String GRANT_TYPE_PASSWORD = "password";
     static final String AUTHORIZATION_CODE = "authorization_code";
     static final String REFRESH_TOKEN = "refresh_token";
