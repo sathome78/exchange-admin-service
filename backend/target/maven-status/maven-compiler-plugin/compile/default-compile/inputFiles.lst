@@ -5,6 +5,7 @@
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/domain/enums/DeviationStatus.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/CurrencyService.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/WalletService.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/TokenStoreConfiguration.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/serializers/LocalDateTimeSerializer.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/ApplicationWebXml.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/service/impl/SyncUserServiceImpl.java
@@ -82,7 +83,6 @@
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/impl/WalletBalancesServiceImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/serializers/LocalDateTimeDeserializer.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/api/WalletsApi.java
-/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/TokenStoreConfig.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/repository/impl/CursorRepositoryImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/domain/InternalWalletBalancesDto.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/exceptions/WalletsApiException.java

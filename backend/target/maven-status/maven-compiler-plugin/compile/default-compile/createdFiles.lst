@@ -31,6 +31,7 @@ me/exrates/adminservice/repository/impl/ExchangeRatesRepositoryImpl$3.class
 me/exrates/adminservice/domain/DashboardTwoDto$Builder.class
 me/exrates/adminservice/service/impl/UpdateTransactionServiceImpl.class
 me/exrates/adminservice/AdminServiceApplication.class
+me/exrates/adminservice/configurations/TokenStoreConfiguration.class
 me/exrates/adminservice/domain/CoreCursor$CoreCursorBuilder.class
 me/exrates/adminservice/domain/DashboardOneDto$Builder.class
 me/exrates/adminservice/domain/User$UserBuilder.class
@@ -68,7 +69,6 @@ me/exrates/adminservice/configurations/CoreDatasourceConfiguration.class
 me/exrates/adminservice/repository/AdminUserRepository.class
 me/exrates/adminservice/domain/api/BalanceDto.class
 me/exrates/adminservice/configurations/AdminDatasourceConfiguration.class
-me/exrates/adminservice/configurations/TokenStoreConfig.class
 me/exrates/adminservice/repository/impl/ExchangeRatesRepositoryImpl$2.class
 me/exrates/adminservice/repository/impl/WalletRepositoryImpl$6.class
 me/exrates/adminservice/domain/enums/UserRole.class

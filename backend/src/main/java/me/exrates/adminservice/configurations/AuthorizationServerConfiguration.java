@@ -14,8 +14,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
     static final String CLIENT_ID = "admin";
-    //static final String CLIENT_SECRET = "admin-secret";
-    static final String CLIENT_SECRET ="{noop}admin-secret"; // test1234
+    static final String CLIENT_SECRET ="{noop}admin-secret";
     private static final String GRANT_TYPE_PASSWORD = "password";
     private static final String AUTHORIZATION_CODE = "authorization_code";
     private static final String REFRESH_TOKEN = "refresh_token";
