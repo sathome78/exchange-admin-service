@@ -24,13 +24,5 @@ public class ApiUserController {
         this.userService = userService;
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<?> login(Principal principal) {
-        if (Objects.isNull(principal) || StringUtils.isBlank(principal.getName())) {
-            return ResponseEntity.ok(principal);
-        }
-        User user = userService.findByUsername(principal.getName());
-        return ResponseEntity.ok(user);
-    }
 }
 
