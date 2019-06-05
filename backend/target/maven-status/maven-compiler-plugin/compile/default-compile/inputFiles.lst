@@ -47,6 +47,7 @@
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/domain/BalancesDto.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/jobs/TransactionJob.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/jobs/ExternalMainWalletBalancesJob.java
+/Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/configurations/CORSFilter.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/repository/impl/WalletBalancesRepositoryImpl.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/core/repository/CoreUserRepository.java
 /Users/olegpodolian/IdeaProjects/birzha/admin-service/backend/src/main/java/me/exrates/adminservice/services/UserService.java

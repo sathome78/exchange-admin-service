@@ -65,3 +65,7 @@ logging:
   level:
     me.exaretes.adminservice: DEBUG
     org.springframework: ERROR
+
+angular:
+  allowed:
+    origins: http://localhost:80
