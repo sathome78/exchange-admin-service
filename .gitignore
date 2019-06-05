@@ -26,6 +26,8 @@
 .factorypath
 admin-db
 admin-db*
+target
+target*
 
 # dependencies
 .forntend/node_modules
