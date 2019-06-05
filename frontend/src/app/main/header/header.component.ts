@@ -12,4 +12,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
   }
 
+  get isLogin() {
+    return window.location.pathname.indexOf('login') >= 0;
+  }
 }
