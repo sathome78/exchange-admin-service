@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @Configuration
-public class TokenStoreConfig {
+public class TokenStoreConfiguration {
 
     @Bean
     public TokenStore tokenStore() {
