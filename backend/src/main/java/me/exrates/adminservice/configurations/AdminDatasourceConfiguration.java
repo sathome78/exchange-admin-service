@@ -26,6 +26,10 @@ import javax.sql.DataSource;
 @Log4j2
 public class AdminDatasourceConfiguration extends DatabaseConfiguration {
 
+    public static final String ADMIN_DATASOURCE = "adminDataSource";
+    public static final String ADMIN_JDBC_OPS = "adminTemplate";
+    public static final String ADMIN_NP_TEMPLATE ="adminNPTemplate";
+
     @Value("${db-admin.datasource.url}")
     private String databaseUrl;
 
@@ -42,29 +46,29 @@ public class AdminDatasourceConfiguration extends DatabaseConfiguration {
     private SSMGetter ssmGetter;
 
     @Primary
-    @Bean(name = "adminDataSource")
+    @Bean(name = ADMIN_DATASOURCE)
     public DataSource dataSource() {
         return createDataSource();
     }
 
     @Primary
-    @DependsOn("adminDataSource")
-    @Bean(name = "adminTemplate")
-    public JdbcOperations jdbcTemplate(@Qualifier("adminDataSource") DataSource dataSource) {
+    @DependsOn(ADMIN_DATASOURCE)
+    @Bean(name = ADMIN_JDBC_OPS)
+    public JdbcOperations jdbcTemplate(@Qualifier(ADMIN_DATASOURCE) DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
     @Primary
-    @DependsOn("adminDataSource")
-    @Bean(name = "adminNPTemplate")
-    public NamedParameterJdbcOperations adminTemplate(@Qualifier("adminDataSource") DataSource dataSource) {
+    @DependsOn(ADMIN_DATASOURCE)
+    @Bean(name = ADMIN_NP_TEMPLATE)
+    public NamedParameterJdbcOperations adminTemplate(@Qualifier(ADMIN_DATASOURCE) DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 
     @Primary
-    @DependsOn("adminDataSource")
+    @DependsOn(ADMIN_DATASOURCE)
     @Bean(name = "adminTxManager")
-    public PlatformTransactionManager platformTransactionManager(@Qualifier("adminDataSource") DataSource dataSource) {
+    public PlatformTransactionManager platformTransactionManager(@Qualifier(ADMIN_DATASOURCE) DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 

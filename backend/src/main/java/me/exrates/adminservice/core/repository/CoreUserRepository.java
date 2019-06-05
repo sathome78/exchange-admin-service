@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CoreUserRepository {
 
-    String TABLE = "USER";
+    String TABLE = "USERS";
     String COL_USER_ID = "user_id";
     String COL_EMAIL = "email";
     String COL_PASSWORD = "password";

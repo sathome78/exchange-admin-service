@@ -1,5 +1,6 @@
 package me.exrates.adminservice.services.impl;
 
+import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.domain.User;
 import me.exrates.adminservice.repository.AdminUserRepository;
 import me.exrates.adminservice.services.UserService;
@@ -15,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service(value = "userService")
+@Log4j2
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final AdminUserRepository userRepository;
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findOne(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Failed to find user with username: " + username));
+        log.debug("FOUND USER: " + user);
 
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(user.getUserRole().name()));

@@ -9,8 +9,10 @@ export class ApiService {
   baseUrl: string = 'http://localhost:7777/users/';
 
   login(loginPayload) {
+    const creds = btoa('admin:$2a$10$sHGQ5i.izbR/zOOibOdqP.Z48Hz4Vpu.nMqjbB.FrUP0jROrpep9.');
+    console.log('CREDS: ' + creds);
     const headers = {
-      'Authorization': 'Basic ' + btoa('admin:admin-secret'),
+      'Authorization': 'Basic ' + creds,
       'Content-type': 'application/x-www-form-urlencoded'
     }
     return this.http.post('http://localhost:7777/' + 'oauth/token', loginPayload, {headers});

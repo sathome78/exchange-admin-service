@@ -9,7 +9,6 @@ me/exrates/adminservice/services/impl/WalletBalancesServiceImpl.class
 me/exrates/adminservice/configurations/SSMConfiguration.class
 me/exrates/adminservice/domain/User.class
 me/exrates/adminservice/core/service/SyncUserService.class
-me/exrates/adminservice/controllers/AdminController.class
 me/exrates/adminservice/domain/ExternalReservedWalletAddressDto$Builder.class
 me/exrates/adminservice/domain/ExternalWalletBalancesDto.class
 me/exrates/adminservice/domain/api/RateDto$RateDtoBuilder.class
@@ -69,6 +68,7 @@ me/exrates/adminservice/configurations/CoreDatasourceConfiguration.class
 me/exrates/adminservice/repository/AdminUserRepository.class
 me/exrates/adminservice/domain/api/BalanceDto.class
 me/exrates/adminservice/configurations/AdminDatasourceConfiguration.class
+me/exrates/adminservice/configurations/TokenStoreConfig.class
 me/exrates/adminservice/repository/impl/ExchangeRatesRepositoryImpl$2.class
 me/exrates/adminservice/repository/impl/WalletRepositoryImpl$6.class
 me/exrates/adminservice/domain/enums/UserRole.class
