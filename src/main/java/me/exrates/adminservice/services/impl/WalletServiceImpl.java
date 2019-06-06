@@ -379,21 +379,21 @@ public class WalletServiceImpl implements WalletService {
                     if (signOfMonitoring) {
                         if (checkCoinRange) {
                             deviationStatus = deviation.compareTo(coinRange.negate()) >= 0 && deviation.compareTo(coinRange) <= 0
-                                    ? DeviationStatus.MONITORED_NORMAL
+                                    ? DeviationStatus.YELLOW
                                     : deviation.compareTo(coinRange.negate()) < 0
-                                    ? DeviationStatus.MONITORED_LOW
-                                    : DeviationStatus.MONITORED_HIGH;
+                                    ? DeviationStatus.RED
+                                    : DeviationStatus.GREEN;
                         } else if (checkUsdRange) {
                             deviationStatus = deviationUSD.compareTo(usdRange.negate()) >= 0 && deviationUSD.compareTo(usdRange) <= 0
-                                    ? DeviationStatus.MONITORED_NORMAL
+                                    ? DeviationStatus.YELLOW
                                     : deviationUSD.compareTo(usdRange.negate()) < 0
-                                    ? DeviationStatus.MONITORED_LOW
-                                    : DeviationStatus.MONITORED_HIGH;
+                                    ? DeviationStatus.RED
+                                    : DeviationStatus.GREEN;
                         } else {
-                            deviationStatus = DeviationStatus.MONITORED_NORMAL;
+                            deviationStatus = DeviationStatus.YELLOW;
                         }
                     } else {
-                        deviationStatus = DeviationStatus.NOT_MONITORED;
+                        deviationStatus = DeviationStatus.NONE;
                     }
 
                     return BalancesDto.builder()
@@ -429,7 +429,8 @@ public class WalletServiceImpl implements WalletService {
                 .filter(inWallet -> inWallet.getRoleName() != UserRole.BOT_TRADER)
                 .filter(inWallet -> inWallet.getRoleName() != UserRole.OUTER_MARKET_BOT)
                 .map(InternalWalletBalancesDto::getTotalBalanceUSD)
-                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
 
         final BigDecimal deviation = exWalletSum.subtract(inWalletSum);
 
@@ -481,15 +482,15 @@ public class WalletServiceImpl implements WalletService {
                 .orElse(BigDecimal.ZERO);
 
         final int lowDeviationCount = (int) balancesSliceStatistic.stream()
-                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_LOW)
+                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.RED)
                 .count();
 
         final int highDeviationCount = (int) balancesSliceStatistic.stream()
-                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_HIGH)
+                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.GREEN)
                 .count();
 
         final int normalDeviationCount = (int) balancesSliceStatistic.stream()
-                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_NORMAL)
+                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.YELLOW)
                 .count();
 
         final int monitoredCurrenciesCount = lowDeviationCount + highDeviationCount + normalDeviationCount;
@@ -503,9 +504,9 @@ public class WalletServiceImpl implements WalletService {
                 .exWalletBalancesBTCSum(exWalletBalancesBTCSum)
                 .inWalletBalancesBTCSum(inWalletBalancesBTCSum)
                 .deviationBTC(deviationBTC)
-                .lowDeviationCount(lowDeviationCount)
-                .highDeviationCount(highDeviationCount)
-                .normalDeviationCount(normalDeviationCount)
+                .redDeviationCount(lowDeviationCount)
+                .greenDeviationCount(highDeviationCount)
+                .yellowDeviationCount(normalDeviationCount)
                 .activeCurrenciesCount(activeCurrenciesCount)
                 .monitoredCurrenciesCount(monitoredCurrenciesCount)
                 .build();

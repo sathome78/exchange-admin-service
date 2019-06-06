@@ -24,7 +24,7 @@ import static java.util.Objects.nonNull;
 
 @Log4j2
 @RestController
-@RequestMapping(value = "/api/financial-monitoring/externalWallets", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "/api/financial-monitoring", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class FinancialMonitoringController {
 
     private final WalletService walletService;
@@ -34,7 +34,7 @@ public class FinancialMonitoringController {
         this.walletService = walletService;
     }
 
-    @GetMapping("/retrieve")
+    @GetMapping("/retrieve/externalWallets")
     public ResponseEntity<List<ExternalWalletBalancesDto>> retrieveExternalWalletBalances() {
         return ResponseEntity.ok(walletService.getExternalWalletBalances());
     }
@@ -44,7 +44,7 @@ public class FinancialMonitoringController {
         return ResponseEntity.ok(walletService.getDashboardOne());
     }
 
-    @GetMapping("/retrieve/summary/{ticker}")
+    @GetMapping("/retrieve/externalWallets/summary/{ticker}")
     public ResponseEntity<BigDecimal> retrieveSummary(@PathVariable("ticker") String ticker) {
         BigDecimal summary;
         switch (ticker) {
@@ -120,7 +120,7 @@ public class FinancialMonitoringController {
         return ResponseEntity.ok(walletService.getReservedWalletsByCurrencyId(currencyId));
     }
 
-    @PutMapping("/save/accountingImbalance")
+    @PutMapping("/save/externalWallets/accountingImbalance")
     public ResponseEntity submitAccountingImbalance(@RequestParam String currencyName,
                                                     @RequestParam(defaultValue = "0") BigDecimal accountingProfit,
                                                     @RequestParam(defaultValue = "0") BigDecimal accountingManualBalanceChanges) {
