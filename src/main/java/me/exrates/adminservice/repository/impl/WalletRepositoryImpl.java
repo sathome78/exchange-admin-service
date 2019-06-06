@@ -318,7 +318,7 @@ public class WalletRepositoryImpl implements WalletRepository {
     }
 
     @Override
-    public boolean updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring) {
+    public void updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring) {
         final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.sign_of_monitoring = :sign_of_monitoring" +
                 " WHERE currency_id = :currency_id";
@@ -330,12 +330,12 @@ public class WalletRepositoryImpl implements WalletRepository {
             }
         };
 
-        return npJdbcTemplate.update(sql, params) > 0;
+        npJdbcTemplate.update(sql, params);
     }
 
     @Override
-    public boolean updateMonitoringRangeForCurrency(int currencyId, BigDecimal coinRange, boolean checkByCoinRange,
-                                                    BigDecimal usdRange, boolean checkByUsdRange) {
+    public void updateMonitoringRangeForCurrency(int currencyId, BigDecimal coinRange, boolean checkByCoinRange,
+                                                 BigDecimal usdRange, boolean checkByUsdRange) {
         final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.coin_range = :coin_range, cewb.check_coin_range = :check_coin_range," +
                 " cewb.usd_range = :usd_range, cewb.check_usd_range = :check_usd_range" +
@@ -351,6 +351,6 @@ public class WalletRepositoryImpl implements WalletRepository {
             }
         };
 
-        return npJdbcTemplate.update(sql, params) > 0;
+        npJdbcTemplate.update(sql, params);
     }
 }
