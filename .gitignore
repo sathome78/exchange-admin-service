@@ -26,9 +26,6 @@
 .factorypath
 admin-db
 admin-db*
-/target/maven-archiver*
-*/target
-*/target/*
 
 # dependencies
 .forntend/node_modules
