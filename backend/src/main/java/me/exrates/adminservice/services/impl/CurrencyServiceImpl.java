@@ -68,8 +68,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public List<String> getActiveCurrencyNames() {
-        return this.getCachedCurrencies().stream()
-                .filter(currency -> !currency.isHidden())
+        return this.getActiveCachedCurrencies().stream()
                 .map(CoreCurrencyDto::getName)
                 .collect(toList());
     }
