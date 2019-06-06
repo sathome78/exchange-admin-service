@@ -1,0 +1,29 @@
+<div class="row pb-4">
+  <app-fin-tabs
+    class="col"
+    [currTab]="currTab"
+    [tabs]="tabs"
+    (toggleTab)="toggleTab($event)"
+  ></app-fin-tabs>
+</div>
+
+<ng-container *ngIf="currTab === tabs.SUM; else diff" >
+  <div class="row mt-4 pb-4">
+    <app-fin-sum-cards class="col"></app-fin-sum-cards>
+  </div>
+
+  <div class="row mt-4 pb-4" >
+    <app-fin-sum-table class="col"></app-fin-sum-table>
+  </div>
+</ng-container>
+
+<ng-template #diff>
+  <div class="row mt-4 pb-4">
+    <app-fin-diff-cards class="col"></app-fin-diff-cards>
+  </div>
+  <div class="row mt-4 pb-4">
+    <app-fin-diff-table class="col">
+
+    </app-fin-diff-table>
+  </div>
+</ng-template>

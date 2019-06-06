@@ -1,0 +1,37 @@
+<div class="d-flex">
+  <div class="card border-success mr-3" style="max-width: 20rem;">
+    <div class="card-body">
+      <h5 class="card-title">На кошельках: </h5>
+      <p class="card-text h5">$234,000</p>
+    </div>
+  </div>
+  <div class="card border-success mr-3" style="max-width: 20rem;">
+    <div class="card-body">
+      <h5 class="card-title">Обязательств: </h5>
+      <p class="card-text h5">$234,000</p>
+    </div>
+  </div>
+  <div class="card border-success mr-3" style="max-width: 20rem;">
+    <div class="card-body">
+      <h5 class="card-title">Разница балансов: </h5>
+      <p
+        class="card-text h5"
+        [ngClass]="{
+          'text-danger': false,
+          'text-success': true
+        }"
+      >
+        +$4,000
+      </p>
+    </div>
+  </div>
+  <div class="card border-success mr-3" style="max-width: 20rem;">
+    <div class="card-body">
+      <h5 class="card-title">Активных монет: </h5>
+      <p class="card-text h5">
+        <span>200</span> /
+        <span>201</span>
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="btn-group" role="group" aria-label="Basic example">
+  <button
+    type="button"
+    class="btn btn-secondary"
+    (click)="toggleTab.emit(tabs.SUM)"
+    [ngClass]="{
+      'btn-secondary': currTab !== tabs.SUM,
+      'btn-success': currTab === tabs.SUM
+    }"
+  >
+    Сводка по кошелькам
+  </button>
+  <button
+    type="button"
+    class="btn btn-secondary"
+    (click)="toggleTab.emit(tabs.DIFF)"
+    [ngClass]="{
+      'btn-secondary': currTab !== tabs.DIFF,
+      'btn-success': currTab === tabs.DIFF
+    }"
+  >
+    Отклонения обязательств от балансов реальных кошельков
+  </button>
+</div>

@@ -1,0 +1,29 @@
+version: '3.0'
+services:
+  admin-mysql:
+    image: mysql:5.7
+    container_name: admin-mysql
+    volumes:
+      - $PWD/admin-db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: 'admin_db'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '5506:3306'
+    command: mysqld --character-set-server=utf8
+  admin-server:
+    container_name: admin-server
+    build: ./backend
+    entrypoint: java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=light -jar app.jar
+    depends_on:
+      - admin-mysql
+    ports:
+      - '7777:7777'
+  admin-client:
+    container_name: admin-client
+    build: ./frontend
+    ports:
+      - '80:80'
+    depends_on:
+      - admin-server
+
