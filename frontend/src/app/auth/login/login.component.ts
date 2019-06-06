@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UtilsService } from 'src/app/shared/utils.service';
+import {ApiService} from '../../services/api.service';
+import {HttpParams} from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +16,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     public utilsService: UtilsService,
+    private apiService: ApiService
   ) { }
 
   ngOnInit() {
@@ -29,6 +32,20 @@ export class LoginComponent implements OnInit {
 
   submitForm(e) {
     console.log(e.target.value);
+    if (this.loginForm.invalid) {
+      return;
+    }
+    const body = new HttpParams()
+      .set('username', this.loginForm.controls.email.value)
+      .set('password', this.loginForm.controls.password.value)
+      .set('grant_type', 'password');
+
+    this.apiService.login(body.toString()).subscribe(data => {
+      window.sessionStorage.setItem('token', JSON.stringify(data));
+      console.log(window.sessionStorage.getItem('token'));
+    }, error => {
+      alert(error.error);
+    });
   }
 
 }
