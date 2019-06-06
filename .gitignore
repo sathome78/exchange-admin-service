@@ -26,8 +26,7 @@
 .factorypath
 admin-db
 admin-db*
-target
-target/*
+/target/maven-archiver*
 */target
 */target/*
 
