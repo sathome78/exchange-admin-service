@@ -103,6 +103,7 @@ public class AdminLightDatasourceConfiguration extends DatabaseConfiguration {
     private void populateDefaultData(DataSource dataSource) throws SQLException {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("db/structure/structure.sql"));
+        populator.addScript(new ClassPathResource("db/structure/structure.sql"));
         // test data
 
 
