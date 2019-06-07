@@ -26,12 +26,8 @@
 .factorypath
 admin-db
 admin-db*
-backend/target/classes
-backend/target/generated-sources
-backend/target/generated-test-sources
-backend/target/maven-archiver
-backend/target/maven-status
-backend/target/test-classes
+*target
+*target/*
 
 
 # dependencies
