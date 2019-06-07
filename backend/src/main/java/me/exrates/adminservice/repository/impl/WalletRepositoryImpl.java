@@ -184,7 +184,10 @@ public class WalletRepositoryImpl implements WalletRepository {
                 put("balance", balance);
             }
         };
-        npJdbcTemplate.update(sql, params);
+        int updated = npJdbcTemplate.update(sql, params);
+        if (updated <= 0) {
+            throw new RuntimeException("External reserved wallet balance has not updated");
+        }
 
         sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
@@ -200,21 +203,30 @@ public class WalletRepositoryImpl implements WalletRepository {
                 put("last_updated_at", lastReservedBalanceUpdate);
             }
         };
-        npJdbcTemplate.update(sql, params);
+        updated = npJdbcTemplate.update(sql, params);
+        if (updated <= 0) {
+            throw new RuntimeException("External common wallet balance has not updated");
+        }
     }
 
     @Override
     public void createReservedWalletAddress(int currencyId) {
         final String sql = "INSERT INTO COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS (currency_id) VALUES (:currency_id)";
 
-        npJdbcTemplate.update(sql, singletonMap("currency_id", currencyId));
+        int updated = npJdbcTemplate.update(sql, singletonMap("currency_id", currencyId));
+        if (updated <= 0) {
+            throw new RuntimeException("External reserved wallet balance has not created");
+        }
     }
 
     @Override
     public void deleteReservedWalletAddress(int id, int currencyId) {
         String sql = "DELETE FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS WHERE id = :id";
 
-        npJdbcTemplate.update(sql, singletonMap("id", id));
+        int updated = npJdbcTemplate.update(sql, singletonMap("id", id));
+        if (updated <= 0) {
+            throw new RuntimeException("External reserved wallet balance has not deleted");
+        }
 
         sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
@@ -223,7 +235,10 @@ public class WalletRepositoryImpl implements WalletRepository {
                 "cewb.total_balance_btc = cewb.total_balance * cewb.btc_rate" +
                 " WHERE cewb.currency_id = :currency_id";
 
-        npJdbcTemplate.update(sql, singletonMap("currency_id", currencyId));
+        updated = npJdbcTemplate.update(sql, singletonMap("currency_id", currencyId));
+        if (updated <= 0) {
+            throw new RuntimeException("External common wallet balance has not updated");
+        }
     }
 
     @Override
@@ -245,7 +260,10 @@ public class WalletRepositoryImpl implements WalletRepository {
                 put("balance", externalReservedWalletAddressDto.getBalance());
             }
         };
-        npJdbcTemplate.update(sql, params);
+        int updated = npJdbcTemplate.update(sql, params);
+        if (updated <= 0) {
+            throw new RuntimeException("External reserved wallet balance has not updated");
+        }
 
         sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
                 " SET cewb.reserved_balance = IFNULL((SELECT SUM(cwera.balance) FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS cwera WHERE cwera.currency_id = :currency_id GROUP BY cwera.currency_id), 0), " +
@@ -255,7 +273,10 @@ public class WalletRepositoryImpl implements WalletRepository {
                 "cewb.last_updated_at = CURRENT_TIMESTAMP" +
                 " WHERE cewb.currency_id = :currency_id";
 
-        npJdbcTemplate.update(sql, Collections.singletonMap("currency_id", externalReservedWalletAddressDto.getCurrencyId()));
+        updated = npJdbcTemplate.update(sql, Collections.singletonMap("currency_id", externalReservedWalletAddressDto.getCurrencyId()));
+        if (updated <= 0) {
+            throw new RuntimeException("External common wallet balance has not updated");
+        }
     }
 
     @Override
@@ -314,7 +335,10 @@ public class WalletRepositoryImpl implements WalletRepository {
             }
         };
 
-        npJdbcTemplate.update(sql, params);
+        int updated = npJdbcTemplate.update(sql, params);
+        if (updated <= 0) {
+            throw new RuntimeException("Accounting imbalance has not updated");
+        }
     }
 
     @Override
@@ -330,7 +354,10 @@ public class WalletRepositoryImpl implements WalletRepository {
             }
         };
 
-        npJdbcTemplate.update(sql, params);
+        int updated = npJdbcTemplate.update(sql, params);
+        if (updated <= 0) {
+            throw new RuntimeException("Sign of monitoring has not updated");
+        }
     }
 
     @Override
@@ -351,6 +378,9 @@ public class WalletRepositoryImpl implements WalletRepository {
             }
         };
 
-        npJdbcTemplate.update(sql, params);
+        int updated = npJdbcTemplate.update(sql, params);
+        if (updated <= 0) {
+            throw new RuntimeException("Monitoring range has not updated");
+        }
     }
 }

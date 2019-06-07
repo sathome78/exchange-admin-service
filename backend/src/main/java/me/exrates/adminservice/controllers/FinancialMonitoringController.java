@@ -37,18 +37,18 @@ public class FinancialMonitoringController {
         this.walletService = walletService;
     }
 
-    @GetMapping("/retrieve/external-wallets")
+    @GetMapping("/external-wallets")
     public ResponseEntity<PagedResult<ExternalWalletBalancesDto>> retrieveExternalWalletBalances(@RequestParam(required = false, defaultValue = "20") Integer limit,
                                                                                                  @RequestParam(required = false, defaultValue = "0") Integer offset) {
         return ResponseEntity.ok(walletService.getExternalWalletBalances(limit, offset));
     }
 
-    @GetMapping("/retrieve/dashboard-one")
+    @GetMapping("/dashboard-one")
     public ResponseEntity<DashboardOneDto> retrieveDashboardOne() {
         return ResponseEntity.ok(walletService.getDashboardOne());
     }
 
-    @GetMapping("/retrieve/external-wallets/summary/{ticker}")
+    @GetMapping("/external-wallets/summary/{ticker}")
     public ResponseEntity<BigDecimal> retrieveSummary(@PathVariable("ticker") String ticker) {
         BigDecimal summary;
         switch (ticker) {
@@ -65,14 +65,14 @@ public class FinancialMonitoringController {
         return ResponseEntity.ok(summary);
     }
 
-    @PostMapping("/create/reserved-wallets")
+    @PostMapping("/reserved-wallets")
     public ResponseEntity createWalletAddress(@RequestParam int currencyId) {
         walletService.createWalletAddress(currencyId);
 
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/delete/reserved-wallets")
+    @DeleteMapping("/reserved-wallets")
     public ResponseEntity deleteWalletAddress(@RequestParam int id,
                                               @RequestParam int currencyId,
                                               @RequestParam String walletAddress) {
@@ -81,7 +81,7 @@ public class FinancialMonitoringController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/saveAsAddress/reserved-wallets")
+    @PutMapping("/reserved-wallets/as-address")
     public ResponseEntity submitWalletAddressAsAddress(@RequestParam int id,
                                                        @RequestParam int currencyId,
                                                        @RequestParam String walletAddress) {
@@ -101,7 +101,7 @@ public class FinancialMonitoringController {
         }
     }
 
-    @PutMapping("/saveAsName/reserved-wallets")
+    @PutMapping("/reserved-wallets/as-name")
     public ResponseEntity submitWalletAddressAsName(@RequestParam int id,
                                                     @RequestParam int currencyId,
                                                     @RequestParam(required = false) String name,
@@ -119,12 +119,12 @@ public class FinancialMonitoringController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/retrieve/reserved-wallets/{currency_id}")
+    @GetMapping("/reserved-wallets/{currency_id}")
     public ResponseEntity<List<ExternalReservedWalletAddressDto>> getReservedWallets(@PathVariable("currency_id") String currencyId) {
         return ResponseEntity.ok(walletService.getReservedWalletsByCurrencyId(currencyId));
     }
 
-    @PutMapping("/update/accounting-imbalance")
+    @PutMapping("/accounting-imbalance")
     public ResponseEntity submitAccountingImbalance(@RequestParam String currencyName,
                                                     @RequestParam(defaultValue = "0") BigDecimal accountingProfit,
                                                     @RequestParam(defaultValue = "0") BigDecimal accountingManualBalanceChanges) {
@@ -133,7 +133,7 @@ public class FinancialMonitoringController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/update/sign-of-monitoring")
+    @PutMapping("/sign-of-monitoring")
     public ResponseEntity updateSignOfMonitoringForCurrency(@RequestParam int currencyId,
                                                             @RequestParam boolean signOfMonitoring) {
         walletService.updateSignOfMonitoringForCurrency(currencyId, signOfMonitoring);
@@ -141,7 +141,7 @@ public class FinancialMonitoringController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/update/monitoring-range")
+    @PutMapping("/monitoring-range")
     public ResponseEntity updateMonitoringRangeForCurrency(@RequestParam int currencyId,
                                                            @RequestParam BigDecimal coinRange,
                                                            @RequestParam boolean checkByCoinRange,
@@ -152,7 +152,7 @@ public class FinancialMonitoringController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/retrieve/balances-slice")
+    @GetMapping("/balances-slice")
     public ResponseEntity<PagedResult<BalancesDto>> getBalancesSliceStatistic(@RequestParam(required = false) List<String> currencyNames,
                                                                               @RequestParam(required = false) BigDecimal minExBalance,
                                                                               @RequestParam(required = false) BigDecimal maxExBalance,
@@ -163,7 +163,7 @@ public class FinancialMonitoringController {
         return ResponseEntity.ok(walletService.getBalancesSliceStatistic(currencyNames, minExBalance, maxExBalance, minInBalance, maxInBalance, limit, offset));
     }
 
-    @GetMapping("/retrieve/dashboard-two")
+    @GetMapping("/dashboard-two")
     public ResponseEntity<DashboardTwoDto> getDashboardTwo(@RequestParam(required = false) List<String> currencyNames,
                                                            @RequestParam(required = false) BigDecimal minExBalance,
                                                            @RequestParam(required = false) BigDecimal maxExBalance,
