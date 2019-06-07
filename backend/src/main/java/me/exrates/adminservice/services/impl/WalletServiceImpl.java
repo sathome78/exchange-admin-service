@@ -9,8 +9,8 @@ import me.exrates.adminservice.domain.DashboardOneDto;
 import me.exrates.adminservice.domain.DashboardTwoDto;
 import me.exrates.adminservice.domain.ExternalReservedWalletAddressDto;
 import me.exrates.adminservice.domain.ExternalWalletBalancesDto;
-import me.exrates.adminservice.domain.FilterDto;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
+import me.exrates.adminservice.domain.PagedResult;
 import me.exrates.adminservice.domain.api.BalanceDto;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.domain.enums.DeviationStatus;
@@ -69,6 +69,54 @@ public class WalletServiceImpl implements WalletService {
         this.walletBalancesService = walletBalancesService;
         this.currencyService = currencyService;
         this.walletsApi = walletsApi;
+    }
+
+    @Override
+    public PagedResult<ExternalWalletBalancesDto> getExternalWalletBalances(Integer limit, Integer offset) {
+        final List<ExternalWalletBalancesDto> externalWalletBalances = this.getExternalWalletBalances();
+
+        int recordsCount = externalWalletBalances.size();
+
+        List<ExternalWalletBalancesDto> items = Collections.emptyList();
+        if (recordsCount > 0) {
+            items = externalWalletBalances.stream()
+                    .skip(offset)
+                    .limit(limit)
+                    .collect(toList());
+        }
+        PagedResult<ExternalWalletBalancesDto> pagedResult = new PagedResult<>();
+        pagedResult.setCount(recordsCount);
+        pagedResult.setItems(items);
+        return pagedResult;
+    }
+
+    @Override
+    public DashboardOneDto getDashboardOne() {
+        final BigDecimal exWalletSum = this.getExternalWalletBalances().stream()
+                .map(ExternalWalletBalancesDto::getTotalBalanceUSD)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        final BigDecimal inWalletSum = this.getInternalWalletBalances().stream()
+                .filter(inWallet -> inWallet.getRoleName() != UserRole.BOT_TRADER)
+                .filter(inWallet -> inWallet.getRoleName() != UserRole.OUTER_MARKET_BOT)
+                .map(InternalWalletBalancesDto::getTotalBalanceUSD)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        final BigDecimal deviation = exWalletSum.subtract(inWalletSum);
+
+        final int allCurrenciesCount = currencyService.getCachedCurrencies().size();
+
+        final int activeCurrenciesCount = currencyService.getActiveCachedCurrencies().size();
+
+        return DashboardOneDto.builder()
+                .exWalletBalancesUSDSum(exWalletSum)
+                .inWalletBalancesUSDSum(inWalletSum)
+                .deviationUSD(deviation)
+                .allCurrenciesCount(allCurrenciesCount)
+                .activeCurrenciesCount(activeCurrenciesCount)
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -318,17 +366,104 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public boolean updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring) {
-        return walletRepository.updateSignOfMonitoringForCurrency(currencyId, signOfMonitoring);
+    public void updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring) {
+        walletRepository.updateSignOfMonitoringForCurrency(currencyId, signOfMonitoring);
     }
 
     @Override
-    public boolean updateMonitoringRangeForCurrency(int currencyId, BigDecimal coinRange, boolean checkByCoinRange, BigDecimal usdRange, boolean checkByUsdRange) {
-        return walletRepository.updateMonitoringRangeForCurrency(currencyId, coinRange, checkByCoinRange, usdRange, checkByUsdRange);
+    public void updateMonitoringRangeForCurrency(int currencyId, BigDecimal coinRange, boolean checkByCoinRange, BigDecimal usdRange, boolean checkByUsdRange) {
+        walletRepository.updateMonitoringRangeForCurrency(currencyId, coinRange, checkByCoinRange, usdRange, checkByUsdRange);
     }
 
     @Override
-    public List<BalancesDto> getBalancesSliceStatistic(FilterDto filter) {
+    public PagedResult<BalancesDto> getBalancesSliceStatistic(List<String> currencyNames, BigDecimal minExBalance, BigDecimal maxExBalance,
+                                                              BigDecimal minInBalance, BigDecimal maxInBalance, Integer limit, Integer offset) {
+        final List<BalancesDto> balancesSliceStatistic = this.getBalancesSliceStatistic(currencyNames, minExBalance, maxExBalance, minInBalance, maxInBalance);
+
+        int recordsCount = balancesSliceStatistic.size();
+
+        List<BalancesDto> items = Collections.emptyList();
+        if (recordsCount > 0) {
+            items = balancesSliceStatistic.stream()
+                    .skip(offset)
+                    .limit(limit)
+                    .collect(toList());
+        }
+        PagedResult<BalancesDto> pagedResult = new PagedResult<>();
+        pagedResult.setCount(recordsCount);
+        pagedResult.setItems(items);
+        return pagedResult;
+    }
+
+    @Override
+    public DashboardTwoDto getDashboardTwo(List<String> currencyNames, BigDecimal minExBalance, BigDecimal maxExBalance,
+                                           BigDecimal minInBalance, BigDecimal maxInBalance) {
+        List<BalancesDto> balancesSliceStatistic = this.getBalancesSliceStatistic(currencyNames, minExBalance, maxExBalance, minInBalance, maxInBalance);
+
+        final BigDecimal exWalletBalancesUSDSum = balancesSliceStatistic.stream()
+                .map(BalancesDto::getTotalWalletBalanceUSD)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        final BigDecimal inWalletBalancesUSDSum = balancesSliceStatistic.stream()
+                .map(BalancesDto::getTotalExratesBalanceUSD)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        final BigDecimal deviationUSD = balancesSliceStatistic.stream()
+                .map(BalancesDto::getDeviationUSD)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        final BigDecimal exWalletBalancesBTCSum = balancesSliceStatistic.stream()
+                .map(BalancesDto::getTotalWalletBalanceBTC)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        final BigDecimal inWalletBalancesBTCSum = balancesSliceStatistic.stream()
+                .map(BalancesDto::getTotalExratesBalanceBTC)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        final BigDecimal deviationBTC = balancesSliceStatistic.stream()
+                .map(BalancesDto::getDeviationBTC)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        final int lowDeviationCount = (int) balancesSliceStatistic.stream()
+                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.RED)
+                .count();
+
+        final int highDeviationCount = (int) balancesSliceStatistic.stream()
+                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.GREEN)
+                .count();
+
+        final int normalDeviationCount = (int) balancesSliceStatistic.stream()
+                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.YELLOW)
+                .count();
+
+        final int monitoredCurrenciesCount = lowDeviationCount + highDeviationCount + normalDeviationCount;
+
+        final int activeCurrenciesCount = currencyService.getActiveCachedCurrencies().size();
+
+        return DashboardTwoDto.builder()
+                .exWalletBalancesUSDSum(exWalletBalancesUSDSum)
+                .inWalletBalancesUSDSum(inWalletBalancesUSDSum)
+                .deviationUSD(deviationUSD)
+                .exWalletBalancesBTCSum(exWalletBalancesBTCSum)
+                .inWalletBalancesBTCSum(inWalletBalancesBTCSum)
+                .deviationBTC(deviationBTC)
+                .redDeviationCount(lowDeviationCount)
+                .greenDeviationCount(highDeviationCount)
+                .yellowDeviationCount(normalDeviationCount)
+                .activeCurrenciesCount(activeCurrenciesCount)
+                .monitoredCurrenciesCount(monitoredCurrenciesCount)
+                .build();
+    }
+
+    @Override
+    public List<BalancesDto> getBalancesSliceStatistic(List<String> currencyNames, BigDecimal minExBalance, BigDecimal maxExBalance,
+                                                       BigDecimal minInBalance, BigDecimal maxInBalance) {
         final Map<String, List<InternalWalletBalancesDto>> internalWalletBalances = this.getInternalWalletBalances().stream()
                 .filter(inWallet -> inWallet.getRoleName() != UserRole.BOT_TRADER)
                 .filter(inWallet -> inWallet.getRoleName() != UserRole.OUTER_MARKET_BOT)
@@ -361,11 +496,11 @@ public class WalletServiceImpl implements WalletService {
                     final BigDecimal deviationUSD = externalTotalBalanceUSD.subtract(internalTotalBalanceUSD);
                     final BigDecimal deviationBTC = externalTotalBalanceBTC.subtract(internalTotalBalanceBTC);
 
-                    if (!filter.getCurrencyNames().contains(currencyName)
-                            || (nonNull(filter.getMinExBalance()) && externalTotalBalanceUSD.compareTo(filter.getMinExBalance()) < 0)
-                            || (nonNull(filter.getMaxExBalance()) && externalTotalBalanceUSD.compareTo(filter.getMaxExBalance()) > 0)
-                            || (nonNull(filter.getMinInBalance()) && internalTotalBalanceUSD.compareTo(filter.getMinInBalance()) < 0)
-                            || (nonNull(filter.getMaxInBalance()) && internalTotalBalanceUSD.compareTo(filter.getMaxInBalance()) > 0)) {
+                    if ((nonNull(currencyNames) && !currencyNames.contains(currencyName))
+                            || (nonNull(minExBalance) && externalTotalBalanceUSD.compareTo(minExBalance) < 0)
+                            || (nonNull(maxExBalance) && externalTotalBalanceUSD.compareTo(maxExBalance) > 0)
+                            || (nonNull(minInBalance) && internalTotalBalanceUSD.compareTo(minInBalance) < 0)
+                            || (nonNull(maxInBalance) && internalTotalBalanceUSD.compareTo(maxInBalance) > 0)) {
                         return null;
                     }
 
@@ -379,17 +514,21 @@ public class WalletServiceImpl implements WalletService {
                     if (signOfMonitoring) {
                         if (checkCoinRange) {
                             deviationStatus = deviation.compareTo(coinRange.negate()) >= 0 && deviation.compareTo(coinRange) <= 0
-                                    ? DeviationStatus.MONITORED_IN_RANGE
-                                    : DeviationStatus.MONITORED_OUT_RANGE;
+                                    ? DeviationStatus.YELLOW
+                                    : deviation.compareTo(coinRange.negate()) < 0
+                                    ? DeviationStatus.RED
+                                    : DeviationStatus.GREEN;
                         } else if (checkUsdRange) {
                             deviationStatus = deviationUSD.compareTo(usdRange.negate()) >= 0 && deviationUSD.compareTo(usdRange) <= 0
-                                    ? DeviationStatus.MONITORED_IN_RANGE
-                                    : DeviationStatus.MONITORED_OUT_RANGE;
+                                    ? DeviationStatus.YELLOW
+                                    : deviationUSD.compareTo(usdRange.negate()) < 0
+                                    ? DeviationStatus.RED
+                                    : DeviationStatus.GREEN;
                         } else {
-                            deviationStatus = DeviationStatus.MONITORED_WITHOUT_RANGE;
+                            deviationStatus = DeviationStatus.YELLOW;
                         }
                     } else {
-                        deviationStatus = DeviationStatus.NOT_MONITORED;
+                        deviationStatus = DeviationStatus.NONE;
                     }
 
                     return BalancesDto.builder()
@@ -412,98 +551,5 @@ public class WalletServiceImpl implements WalletService {
                 })
                 .filter(Objects::nonNull)
                 .collect(toList());
-    }
-
-    @Override
-    public DashboardOneDto getDashboardOne() {
-        final BigDecimal exWalletSum = this.getExternalWalletBalances().stream()
-                .map(ExternalWalletBalancesDto::getTotalBalanceUSD)
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        final BigDecimal inWalletSum = this.getInternalWalletBalances().stream()
-                .filter(inWallet -> inWallet.getRoleName() != UserRole.BOT_TRADER)
-                .filter(inWallet -> inWallet.getRoleName() != UserRole.OUTER_MARKET_BOT)
-                .map(InternalWalletBalancesDto::getTotalBalanceUSD)
-                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-
-        final BigDecimal deviation = exWalletSum.subtract(inWalletSum);
-
-        final int allCurrenciesCount = currencyService.getCachedCurrencies().size();
-
-        final int activeCurrenciesCount = currencyService.getActiveCachedCurrencies().size();
-
-        return DashboardOneDto.builder()
-                .exWalletBalancesUSDSum(exWalletSum)
-                .inWalletBalancesUSDSum(inWalletSum)
-                .deviationUSD(deviation)
-                .allCurrenciesCount(allCurrenciesCount)
-                .activeCurrenciesCount(activeCurrenciesCount)
-                .build();
-    }
-
-    @Override
-    public DashboardTwoDto getDashboardTwo(FilterDto filter) {
-        List<BalancesDto> balancesSliceStatistic = this.getBalancesSliceStatistic(filter);
-
-        final BigDecimal exWalletBalancesUSDSum = balancesSliceStatistic.stream()
-                .map(BalancesDto::getTotalWalletBalanceUSD)
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        final BigDecimal inWalletBalancesUSDSum = balancesSliceStatistic.stream()
-                .map(BalancesDto::getTotalExratesBalanceUSD)
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        final BigDecimal deviationUSD = balancesSliceStatistic.stream()
-                .map(BalancesDto::getDeviationUSD)
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        final BigDecimal exWalletBalancesBTCSum = balancesSliceStatistic.stream()
-                .map(BalancesDto::getTotalWalletBalanceBTC)
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        final BigDecimal inWalletBalancesBTCSum = balancesSliceStatistic.stream()
-                .map(BalancesDto::getTotalExratesBalanceBTC)
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        final BigDecimal deviationBTC = balancesSliceStatistic.stream()
-                .map(BalancesDto::getDeviationBTC)
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        final int inRangeCount = (int) balancesSliceStatistic.stream()
-                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_IN_RANGE)
-                .count();
-
-        final int outRangeCount = (int) balancesSliceStatistic.stream()
-                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_OUT_RANGE)
-                .count();
-
-        final int withoutRangeCount = (int) balancesSliceStatistic.stream()
-                .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.MONITORED_WITHOUT_RANGE)
-                .count();
-
-        final int monitoredCurrenciesCount = inRangeCount + outRangeCount + withoutRangeCount;
-
-        final int activeCurrenciesCount = currencyService.getActiveCachedCurrencies().size();
-
-        return DashboardTwoDto.builder()
-                .exWalletBalancesUSDSum(exWalletBalancesUSDSum)
-                .inWalletBalancesUSDSum(inWalletBalancesUSDSum)
-                .deviationUSD(deviationUSD)
-                .exWalletBalancesBTCSum(exWalletBalancesBTCSum)
-                .inWalletBalancesBTCSum(inWalletBalancesBTCSum)
-                .deviationBTC(deviationBTC)
-                .inRangeCount(inRangeCount)
-                .outRangeCount(outRangeCount)
-                .withoutRangeCount(withoutRangeCount)
-                .activeCurrenciesCount(activeCurrenciesCount)
-                .monitoredCurrenciesCount(monitoredCurrenciesCount)
-                .build();
     }
 }

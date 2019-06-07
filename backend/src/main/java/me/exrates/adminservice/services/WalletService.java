@@ -5,13 +5,17 @@ import me.exrates.adminservice.domain.DashboardOneDto;
 import me.exrates.adminservice.domain.DashboardTwoDto;
 import me.exrates.adminservice.domain.ExternalReservedWalletAddressDto;
 import me.exrates.adminservice.domain.ExternalWalletBalancesDto;
-import me.exrates.adminservice.domain.FilterDto;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
+import me.exrates.adminservice.domain.PagedResult;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface WalletService {
+
+    PagedResult<ExternalWalletBalancesDto> getExternalWalletBalances(Integer limit, Integer offset);
+
+    DashboardOneDto getDashboardOne();
 
     List<ExternalWalletBalancesDto> getExternalWalletBalances();
 
@@ -41,13 +45,16 @@ public interface WalletService {
 
     void updateAccountingImbalance(String currencyName, BigDecimal accountingProfit, BigDecimal accountingManualBalanceChanges);
 
-    boolean updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring);
+    void updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring);
 
-    boolean updateMonitoringRangeForCurrency(int currencyId, BigDecimal coinRange, boolean checkByCoinRange, BigDecimal usdRange, boolean checkByUsdRange);
+    void updateMonitoringRangeForCurrency(int currencyId, BigDecimal coinRange, boolean checkByCoinRange, BigDecimal usdRange, boolean checkByUsdRange);
 
-    List<BalancesDto> getBalancesSliceStatistic(FilterDto filter);
+    PagedResult<BalancesDto> getBalancesSliceStatistic(List<String> currencyNames, BigDecimal minExBalance, BigDecimal maxExBalance,
+                                                       BigDecimal minInBalance, BigDecimal maxInBalance, Integer limit, Integer offset);
 
-    DashboardOneDto getDashboardOne();
+    DashboardTwoDto getDashboardTwo(List<String> currencyNames, BigDecimal minExBalance, BigDecimal maxExBalance,
+                                    BigDecimal minInBalance, BigDecimal maxInBalance);
 
-    DashboardTwoDto getDashboardTwo(FilterDto filter);
+    List<BalancesDto> getBalancesSliceStatistic(List<String> currencyNames, BigDecimal minExBalance, BigDecimal maxExBalance,
+                                                BigDecimal minInBalance, BigDecimal maxInBalance);
 }
