@@ -35,6 +35,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
     private RowMapper<CoreUser> getCoreUserRowMapper() {
         return (rs, i) -> CoreUser.builder()
                 .userId(rs.getInt(CoreUserRepository.COL_USER_ID))
+                .publicId(rs.getString(COL_PUBLIC_ID))
                 .email(rs.getString(COL_EMAIL))
                 .password(rs.getString(COL_PASSWORD))
                 .regdate(Objects.isNull(rs.getTimestamp(COL_REG_DATE)) ? null : rs.getTimestamp(COL_REG_DATE).toLocalDateTime())

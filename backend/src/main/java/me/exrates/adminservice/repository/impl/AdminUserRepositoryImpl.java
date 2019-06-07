@@ -65,21 +65,22 @@ public class AdminUserRepositoryImpl implements AdminUserRepository {
 
     @Override
     public boolean batchUpdate(List<CoreUser> users) {
-        final String sql = "REPLACE INTO " + TABLE + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "REPLACE INTO " + TABLE + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         final int[] rows = jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 CoreUser user = users.get(i);
                 ps.setInt(1, user.getUserId());
-                ps.setString(2, user.getEmail());
-                ps.setString(3, user.getPassword());
-                ps.setTimestamp(4, Timestamp.valueOf(user.getRegdate()));
-                ps.setString(5, user.getPhone());
-                ps.setString(6, user.getUserStatus());
-                ps.setString(7, user.getUserRole());
-                ps.setBoolean(8, user.isUse2fa());
-                ps.setString(9, user.getKycStatus());
+                ps.setString(2, user.getPublicId());
+                ps.setString(3, user.getEmail());
+                ps.setString(4, user.getPassword());
+                ps.setTimestamp(5, Timestamp.valueOf(user.getRegdate()));
+                ps.setString(6, user.getPhone());
+                ps.setString(7, user.getUserStatus());
+                ps.setString(8, user.getUserRole());
+                ps.setBoolean(9, user.isUse2fa());
+                ps.setString(10, user.getKycStatus());
             }
 
             @Override
