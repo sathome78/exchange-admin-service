@@ -3,9 +3,11 @@ package me.exrates.adminservice.configurations;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
+import me.exrates.adminservice.utils.LogUtils;
 
 import java.util.concurrent.TimeUnit;
 
+@Log4j2
 public abstract class DatabaseConfiguration {
 
     protected abstract String getDatabaseUrl();
@@ -17,6 +19,7 @@ public abstract class DatabaseConfiguration {
     protected abstract String getDatabaseDriverClassName();
 
     protected HikariDataSource createDataSource() {
+        log.debug("Creating datasource with -h: {}, -u: {}, -p: {}", LogUtils.stripDbUrl(getDatabaseUrl()), getDatabaseUsername(), getDatabasePassword());
         HikariConfig config = new HikariConfig();
         config.setInitializationFailTimeout(-1);
         config.setJdbcUrl(getDatabaseUrl());

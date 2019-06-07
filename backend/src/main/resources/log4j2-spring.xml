@@ -31,7 +31,7 @@
         </Root>
 
         <!-- LOG "me.exrates.adminservice*" at DEBUG level -->
-        <Logger name="me.exrates.adminservice" level="debug">
+        <Logger name="me.exrates.adminservice" level="debug" additivity="false">
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
         </Logger>
