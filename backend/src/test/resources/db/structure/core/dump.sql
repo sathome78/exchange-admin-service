@@ -1,7 +1,7 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `2FA_GOOGLE_AUTHENTICATOR`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `2FA_GOOGLE_AUTHENTICATOR` (
   `user_id` int(11) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE `2FA_GOOGLE_AUTHENTICATOR` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `2FA_NOTIFICATION_MESSAGES`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `2FA_NOTIFICATION_MESSAGES` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -24,7 +24,7 @@ CREATE TABLE `2FA_NOTIFICATION_MESSAGES` (
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `2FA_NOTIFICATION_PRICE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `2FA_NOTIFICATION_PRICE` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -46,7 +46,7 @@ CREATE TABLE `2FA_NOTIFICATION_PRICE` (
 --
 
 DROP TABLE IF EXISTS `2FA_NOTIFICATOR`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `2FA_NOTIFICATOR` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -62,7 +62,7 @@ CREATE TABLE `2FA_NOTIFICATOR` (
 --
 
 DROP TABLE IF EXISTS `2FA_USER_NOTIFICATION_MESSAGE_SETTINGS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `2FA_USER_NOTIFICATION_MESSAGE_SETTINGS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -83,7 +83,7 @@ CREATE TABLE `2FA_USER_NOTIFICATION_MESSAGE_SETTINGS` (
 --
 
 DROP TABLE IF EXISTS `ADMIN_AUTHORITY`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ADMIN_AUTHORITY` (
   `id` int(11) NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE `ADMIN_AUTHORITY` (
 --
 
 DROP TABLE IF EXISTS `ADMIN_AUTHORITY_ROLE_DEFAULTS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ADMIN_AUTHORITY_ROLE_DEFAULTS` (
   `role_id` int(11) NOT NULL,
@@ -118,7 +118,7 @@ CREATE TABLE `ADMIN_AUTHORITY_ROLE_DEFAULTS` (
 --
 
 DROP TABLE IF EXISTS `API_AUTH_TOKEN`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `API_AUTH_TOKEN` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -134,7 +134,7 @@ CREATE TABLE `API_AUTH_TOKEN` (
 --
 
 DROP TABLE IF EXISTS `API_PARAMS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `API_PARAMS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -150,7 +150,7 @@ CREATE TABLE `API_PARAMS` (
 --
 
 DROP TABLE IF EXISTS `API_TEMP_PASSWORD`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `API_TEMP_PASSWORD` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -171,7 +171,7 @@ CREATE TABLE `API_TEMP_PASSWORD` (
 --
 
 DROP TABLE IF EXISTS `BALANCES_REPORT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `BALANCES_REPORT` (
   `id` int(40) unsigned NOT NULL AUTO_INCREMENT,
@@ -187,7 +187,7 @@ CREATE TABLE `BALANCES_REPORT` (
 --
 
 DROP TABLE IF EXISTS `BCH_HARD_FORK_BALANCE_SNAPSHOT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `BCH_HARD_FORK_BALANCE_SNAPSHOT` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -205,7 +205,7 @@ CREATE TABLE `BCH_HARD_FORK_BALANCE_SNAPSHOT` (
 --
 
 DROP TABLE IF EXISTS `BOT_LAUNCH_SETTINGS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `BOT_LAUNCH_SETTINGS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -229,7 +229,7 @@ CREATE TABLE `BOT_LAUNCH_SETTINGS` (
 --
 
 DROP TABLE IF EXISTS `BOT_TRADER`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `BOT_TRADER` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -245,7 +245,7 @@ CREATE TABLE `BOT_TRADER` (
 --
 
 DROP TABLE IF EXISTS `BOT_TRADING_SETTINGS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `BOT_TRADING_SETTINGS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -274,7 +274,7 @@ CREATE TABLE `BOT_TRADING_SETTINGS` (
 --
 
 DROP TABLE IF EXISTS `CALLBACK_LOGS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CALLBACK_LOGS` (
   `REQUEST_ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -295,7 +295,7 @@ CREATE TABLE `CALLBACK_LOGS` (
 --
 
 DROP TABLE IF EXISTS `CALLBACK_SETTINGS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CALLBACK_SETTINGS` (
   `USER_ID` int(11) NOT NULL,
@@ -313,7 +313,7 @@ CREATE TABLE `CALLBACK_SETTINGS` (
 --
 
 DROP TABLE IF EXISTS `CHAT_AR`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CHAT_AR` (
   `id` int(11) NOT NULL,
@@ -331,7 +331,7 @@ CREATE TABLE `CHAT_AR` (
 --
 
 DROP TABLE IF EXISTS `CHAT_CN`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CHAT_CN` (
   `id` int(11) NOT NULL,
@@ -349,7 +349,7 @@ CREATE TABLE `CHAT_CN` (
 --
 
 DROP TABLE IF EXISTS `CHAT_EN`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CHAT_EN` (
   `id` int(11) NOT NULL,
@@ -367,7 +367,7 @@ CREATE TABLE `CHAT_EN` (
 --
 
 DROP TABLE IF EXISTS `CHAT_IN`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CHAT_IN` (
   `id` int(11) NOT NULL,
@@ -385,7 +385,7 @@ CREATE TABLE `CHAT_IN` (
 --
 
 DROP TABLE IF EXISTS `CHAT_KO`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CHAT_KO` (
   `id` int(11) NOT NULL,
@@ -403,7 +403,7 @@ CREATE TABLE `CHAT_KO` (
 --
 
 DROP TABLE IF EXISTS `CHAT_RU`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CHAT_RU` (
   `id` int(11) NOT NULL,
@@ -421,7 +421,7 @@ CREATE TABLE `CHAT_RU` (
 --
 
 DROP TABLE IF EXISTS `CLIENT_BANK`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CLIENT_BANK` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -439,7 +439,7 @@ CREATE TABLE `CLIENT_BANK` (
 --
 
 DROP TABLE IF EXISTS `COMMISSION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `COMMISSION` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -462,7 +462,7 @@ CREATE TABLE `COMMISSION` (
 --
 
 DROP TABLE IF EXISTS `COMMON_REFERRAL_ROOT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `COMMON_REFERRAL_ROOT` (
   `user_id` int(11) DEFAULT NULL,
@@ -476,7 +476,7 @@ CREATE TABLE `COMMON_REFERRAL_ROOT` (
 --
 
 DROP TABLE IF EXISTS `COMPANY_EXTERNAL_WALLET_BALANCES`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `COMPANY_EXTERNAL_WALLET_BALANCES` (
   `id` int(40) unsigned NOT NULL AUTO_INCREMENT,
@@ -501,7 +501,7 @@ CREATE TABLE `COMPANY_EXTERNAL_WALLET_BALANCES` (
 --
 
 DROP TABLE IF EXISTS `COMPANY_WALLET`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `COMPANY_WALLET` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -519,7 +519,7 @@ CREATE TABLE `COMPANY_WALLET` (
 --
 
 DROP TABLE IF EXISTS `COMPANY_WALLET_EXTERNAL`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `COMPANY_WALLET_EXTERNAL` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -540,7 +540,7 @@ CREATE TABLE `COMPANY_WALLET_EXTERNAL` (
 --
 
 DROP TABLE IF EXISTS `COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -559,7 +559,7 @@ CREATE TABLE `COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS` (
 --
 
 DROP TABLE IF EXISTS `CRYPTO_CORE_WALLET`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CRYPTO_CORE_WALLET` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -581,7 +581,7 @@ CREATE TABLE `CRYPTO_CORE_WALLET` (
 --
 
 DROP TABLE IF EXISTS `CURRENCY`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CURRENCY` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -604,7 +604,7 @@ CREATE TABLE `CURRENCY` (
 --
 
 DROP TABLE IF EXISTS `CURRENCY_LIMIT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CURRENCY_LIMIT` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -633,7 +633,7 @@ CREATE TABLE `CURRENCY_LIMIT` (
 --
 
 DROP TABLE IF EXISTS `CURRENCY_PAIR`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CURRENCY_PAIR` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -657,7 +657,7 @@ CREATE TABLE `CURRENCY_PAIR` (
 --
 
 DROP TABLE IF EXISTS `CURRENCY_PAIR_LIMIT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CURRENCY_PAIR_LIMIT` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -684,7 +684,7 @@ CREATE TABLE `CURRENCY_PAIR_LIMIT` (
 --
 
 DROP TABLE IF EXISTS `CURRENT_CURRENCY_BALANCES`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CURRENT_CURRENCY_BALANCES` (
   `id` int(40) unsigned NOT NULL AUTO_INCREMENT,
@@ -705,7 +705,7 @@ CREATE TABLE `CURRENT_CURRENCY_BALANCES` (
 --
 
 DROP TABLE IF EXISTS `CURRENT_CURRENCY_RATES`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `CURRENT_CURRENCY_RATES` (
   `id` int(40) unsigned NOT NULL AUTO_INCREMENT,
@@ -726,7 +726,7 @@ CREATE TABLE `CURRENT_CURRENCY_RATES` (
 --
 
 DROP TABLE IF EXISTS `EXORDERS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `EXORDERS` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -772,7 +772,7 @@ CREATE TABLE `EXORDERS` (
 --
 
 DROP TABLE IF EXISTS `GTAG_REFILL_REQUESTS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `GTAG_REFILL_REQUESTS` (
   `USER_ID` int(11) NOT NULL,
@@ -786,24 +786,24 @@ CREATE TABLE `GTAG_REFILL_REQUESTS` (
 --
 
 DROP TABLE IF EXISTS `IEO_CLAIM`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 create table IEO_CLAIM
 (
-idint auto_increment
-primary key,
-ieo_idint not null,
-currency_name varchar(64) not null,
-maker_id  int not null,
-user_id int not null,
-amountdouble(40, 9) not null,
-rate  double(40, 9) not null,
-price_in_btc  double(40, 9) not null,
-created timestamp default CURRENT_TIMESTAMP not null,
-statusenum ('SUCCESS', 'FAILED', 'NONE', 'REVOKED') default 'NONE'null,
-constraint IEO_CLAIM_ibfk_1 foreign key (user_id) references USER (id),
-constraint IEO_CLAIM_ibfk_2 foreign key (maker_id) references USER (id),
-constraint IEO_CLAIM_ibfk_3 foreign key (ieo_id) references IEO_DETAILS (id)
+    id            int auto_increment
+        primary key,
+    ieo_id        int                                                                     not null,
+    currency_name varchar(64)                                                             not null,
+    maker_id      int                                                                     not null,
+    user_id       int                                                                     not null,
+    amount        double(40, 9)                                                           not null,
+    rate          double(40, 9)                                                           not null,
+    price_in_btc  double(40, 9)                                                           not null,
+    created       timestamp                                     default CURRENT_TIMESTAMP not null,
+    status        enum ('SUCCESS', 'FAILED', 'NONE', 'REVOKED') default 'NONE'            null,
+    constraint IEO_CLAIM_ibfk_1 foreign key (user_id) references USER (id),
+    constraint IEO_CLAIM_ibfk_2 foreign key (maker_id) references USER (id),
+    constraint IEO_CLAIM_ibfk_3 foreign key (ieo_id) references IEO_DETAILS (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 
 
@@ -812,27 +812,27 @@ constraint IEO_CLAIM_ibfk_3 foreign key (ieo_id) references IEO_DETAILS (id)
 --
 
 DROP TABLE IF EXISTS `IEO_DETAILS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 create table IEO_DETAILS
 (
-id int auto_increment
-primary key,
-currency_namevarchar(10) not null,
-currency_description varchar(255)  null,
-maker_id int not null,
-rate doublenot null,
-amount doublenot null,
-available_amount double  default 0 null,
-contributors int default 0 null,
-status enum ('PENDING', 'RUNNING', 'SUCCEEDED', 'FAILED', 'PROCESSING_FAIL', 'TERMINATED') default 'PENDING' null,
-min_amount double  default 0 null,
-max_amount_per_claim double  default 0 null,
-max_amount_per_user  double  default 0 null,
-starts_atdatetime  not null,
-terminates_atdatetime  not null,
-created_at timestamp default CURRENT_TIMESTAMP not null,
-created_by int not null
+    id                   int auto_increment
+        primary key,
+    currency_name        varchar(10)                                                                                                   not null,
+    currency_description varchar(255)                                                                                                  null,
+    maker_id             int                                                                                                           not null,
+    rate                 double                                                                                                        not null,
+    amount               double                                                                                                        not null,
+    available_amount     double                                                                              default 0                 null,
+    contributors         int                                                                                 default 0                 null,
+    status               enum ('PENDING', 'RUNNING', 'SUCCEEDED', 'FAILED', 'PROCESSING_FAIL', 'TERMINATED') default 'PENDING'         null,
+    min_amount           double                                                                              default 0                 null,
+    max_amount_per_claim double                                                                              default 0                 null,
+    max_amount_per_user  double                                                                              default 0                 null,
+    starts_at            datetime                                                                                                      not null,
+    terminates_at        datetime                                                                                                      not null,
+    created_at           timestamp                                                                           default CURRENT_TIMESTAMP not null,
+    created_by           int                                                                                                           not null
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 
@@ -841,16 +841,16 @@ created_by int not null
 --
 
 DROP TABLE IF EXISTS `IEO_RESTRICTED_COUNTRY`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 create table IEO_RESTRICTED_COUNTRY
 (
-ieo_id int not null,
-country_code varchar(64) not null,
-constraint ieo_id
-unique (ieo_id, country_code),
-constraint IEO_RESTRICTED_COUNTRY_ibfk_1
-foreign key (ieo_id) references IEO_DETAILS (id)
+    ieo_id       int         not null,
+    country_code varchar(64) not null,
+    constraint ieo_id
+        unique (ieo_id, country_code),
+    constraint IEO_RESTRICTED_COUNTRY_ibfk_1
+        foreign key (ieo_id) references IEO_DETAILS (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -859,16 +859,16 @@ foreign key (ieo_id) references IEO_DETAILS (id)
 --
 
 DROP TABLE IF EXISTS `IEO_RESULT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 create table IEO_RESULT
 (
-claim_id intnull,
-ieo_id intnot null,
-available_amount double(40, 9)  default 0.000000000 null,
-status enum ('SUCCESS', 'FAILED', 'NONE') default 'NONE'  not null,
-constraint IEO_RESULT_ibfk_1
-foreign key (ieo_id) references IEO_DETAILS (id)
+    claim_id         int                                                    null,
+    ieo_id           int                                                    not null,
+    available_amount double(40, 9)                      default 0.000000000 null,
+    status           enum ('SUCCESS', 'FAILED', 'NONE') default 'NONE'      not null,
+    constraint IEO_RESULT_ibfk_1
+        foreign key (ieo_id) references IEO_DETAILS (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
@@ -877,7 +877,7 @@ foreign key (ieo_id) references IEO_DETAILS (id)
 --
 
 DROP TABLE IF EXISTS `INPUT_OUTPUT_REPORT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `INPUT_OUTPUT_REPORT` (
   `id` int(40) unsigned NOT NULL AUTO_INCREMENT,
@@ -893,7 +893,7 @@ CREATE TABLE `INPUT_OUTPUT_REPORT` (
 --
 
 DROP TABLE IF EXISTS `INTERNAL_WALLET_BALANCES`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `INTERNAL_WALLET_BALANCES` (
   `id` int(40) unsigned NOT NULL AUTO_INCREMENT,
@@ -918,7 +918,7 @@ CREATE TABLE `INTERNAL_WALLET_BALANCES` (
 --
 
 DROP TABLE IF EXISTS `INVOICE_BANK`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `INVOICE_BANK` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -939,7 +939,7 @@ CREATE TABLE `INVOICE_BANK` (
 --
 
 DROP TABLE IF EXISTS `INVOICE_OPERATION_DIRECTION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `INVOICE_OPERATION_DIRECTION` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -954,7 +954,7 @@ CREATE TABLE `INVOICE_OPERATION_DIRECTION` (
 --
 
 DROP TABLE IF EXISTS `INVOICE_OPERATION_PERMISSION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `INVOICE_OPERATION_PERMISSION` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -968,7 +968,7 @@ CREATE TABLE `INVOICE_OPERATION_PERMISSION` (
 --
 
 DROP TABLE IF EXISTS `IP_Log`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `IP_Log` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -987,7 +987,7 @@ CREATE TABLE `IP_Log` (
 --
 
 DROP TABLE IF EXISTS `KYC_COUNTRY_CODES`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `KYC_COUNTRY_CODES` (
   `id` int(40) unsigned NOT NULL AUTO_INCREMENT,
@@ -1002,7 +1002,7 @@ CREATE TABLE `KYC_COUNTRY_CODES` (
 --
 
 DROP TABLE IF EXISTS `KYC_LANGUAGE_CODES`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `KYC_LANGUAGE_CODES` (
   `id` int(40) unsigned NOT NULL AUTO_INCREMENT,
@@ -1017,7 +1017,7 @@ CREATE TABLE `KYC_LANGUAGE_CODES` (
 --
 
 DROP TABLE IF EXISTS `MERCHANT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `MERCHANT` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1040,7 +1040,7 @@ CREATE TABLE `MERCHANT` (
 --
 
 DROP TABLE IF EXISTS `MERCHANT_CURRENCY`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `MERCHANT_CURRENCY` (
   `merchant_id` int(11) NOT NULL,
@@ -1080,7 +1080,7 @@ CREATE TABLE `MERCHANT_CURRENCY` (
 --
 
 DROP TABLE IF EXISTS `MERCHANT_IMAGE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `MERCHANT_IMAGE` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1101,7 +1101,7 @@ CREATE TABLE `MERCHANT_IMAGE` (
 --
 
 DROP TABLE IF EXISTS `MERCHANT_SPEC_PARAMETERS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `MERCHANT_SPEC_PARAMETERS` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -1119,7 +1119,7 @@ CREATE TABLE `MERCHANT_SPEC_PARAMETERS` (
 --
 
 DROP TABLE IF EXISTS `NEWS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `NEWS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1135,7 +1135,7 @@ CREATE TABLE `NEWS` (
 --
 
 DROP TABLE IF EXISTS `NEWS_EXT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `NEWS_EXT` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1156,7 +1156,7 @@ CREATE TABLE `NEWS_EXT` (
 --
 
 DROP TABLE IF EXISTS `NEWS_TYPE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `NEWS_TYPE` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1170,7 +1170,7 @@ CREATE TABLE `NEWS_TYPE` (
 --
 
 DROP TABLE IF EXISTS `NEWS_VARIANTS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `NEWS_VARIANTS` (
   `news_id` int(11) NOT NULL,
@@ -1190,7 +1190,7 @@ CREATE TABLE `NEWS_VARIANTS` (
 --
 
 DROP TABLE IF EXISTS `NEWS_VARIANTS_EXT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `NEWS_VARIANTS_EXT` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1216,7 +1216,7 @@ CREATE TABLE `NEWS_VARIANTS_EXT` (
 --
 
 DROP TABLE IF EXISTS `NOTIFICATION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `NOTIFICATION` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -1239,7 +1239,7 @@ CREATE TABLE `NOTIFICATION` (
 --
 
 DROP TABLE IF EXISTS `NOTIFICATION_EVENT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `NOTIFICATION_EVENT` (
   `id` int(11) NOT NULL,
@@ -1257,7 +1257,7 @@ CREATE TABLE `NOTIFICATION_EVENT` (
 --
 
 DROP TABLE IF EXISTS `NOTIFICATION_OPTIONS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `NOTIFICATION_OPTIONS` (
   `notification_event_id` int(11) NOT NULL,
@@ -1277,7 +1277,7 @@ CREATE TABLE `NOTIFICATION_OPTIONS` (
 --
 
 DROP TABLE IF EXISTS `OPEN_API_USER_TOKEN`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `OPEN_API_USER_TOKEN` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -1303,7 +1303,7 @@ CREATE TABLE `OPEN_API_USER_TOKEN` (
 --
 
 DROP TABLE IF EXISTS `OPERATION_TYPE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `OPERATION_TYPE` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -1319,7 +1319,7 @@ CREATE TABLE `OPERATION_TYPE` (
 --
 
 DROP TABLE IF EXISTS `OPERATION_TYPE_DIRECTION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `OPERATION_TYPE_DIRECTION` (
   `operation_type_id` int(11) NOT NULL,
@@ -1336,7 +1336,7 @@ CREATE TABLE `OPERATION_TYPE_DIRECTION` (
 --
 
 DROP TABLE IF EXISTS `ORDER_STATUS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ORDER_STATUS` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -1352,7 +1352,7 @@ CREATE TABLE `ORDER_STATUS` (
 --
 
 DROP TABLE IF EXISTS `ORDER_TYPE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ORDER_TYPE` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1367,7 +1367,7 @@ CREATE TABLE `ORDER_TYPE` (
 --
 
 DROP TABLE IF EXISTS `PHRASE_TEMPLATE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `PHRASE_TEMPLATE` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1384,7 +1384,7 @@ CREATE TABLE `PHRASE_TEMPLATE` (
 --
 
 DROP TABLE IF EXISTS `POLICY`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `POLICY` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1401,7 +1401,7 @@ CREATE TABLE `POLICY` (
 --
 
 DROP TABLE IF EXISTS `QUBERA_RESPONSE_LOG`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `QUBERA_RESPONSE_LOG` (
   `paymentId` int(11) NOT NULL,
@@ -1424,7 +1424,7 @@ CREATE TABLE `QUBERA_RESPONSE_LOG` (
 --
 
 DROP TABLE IF EXISTS `QUBERA_USER_DETAILS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `QUBERA_USER_DETAILS` (
   `user_id` int(11) NOT NULL,
@@ -1443,7 +1443,7 @@ CREATE TABLE `QUBERA_USER_DETAILS` (
 --
 
 DROP TABLE IF EXISTS `REFERRAL_LEVEL`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `REFERRAL_LEVEL` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1459,7 +1459,7 @@ CREATE TABLE `REFERRAL_LEVEL` (
 --
 
 DROP TABLE IF EXISTS `REFERRAL_TRANSACTION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `REFERRAL_TRANSACTION` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1486,7 +1486,7 @@ CREATE TABLE `REFERRAL_TRANSACTION` (
 --
 
 DROP TABLE IF EXISTS `REFERRAL_USER_GRAPH`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `REFERRAL_USER_GRAPH` (
   `child` int(11) NOT NULL DEFAULT '0',
@@ -1503,7 +1503,7 @@ CREATE TABLE `REFERRAL_USER_GRAPH` (
 --
 
 DROP TABLE IF EXISTS `REFILL_REQUEST`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `REFILL_REQUEST` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1553,7 +1553,7 @@ CREATE TABLE `REFILL_REQUEST` (
 --
 
 DROP TABLE IF EXISTS `REFILL_REQUEST_ADDRESS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `REFILL_REQUEST_ADDRESS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1585,7 +1585,7 @@ CREATE TABLE `REFILL_REQUEST_ADDRESS` (
 --
 
 DROP TABLE IF EXISTS `REFILL_REQUEST_CONFIRMATION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `REFILL_REQUEST_CONFIRMATION` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1605,7 +1605,7 @@ CREATE TABLE `REFILL_REQUEST_CONFIRMATION` (
 --
 
 DROP TABLE IF EXISTS `REFILL_REQUEST_PARAM`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `REFILL_REQUEST_PARAM` (
   `id` int(11) NOT NULL,
@@ -1629,7 +1629,7 @@ CREATE TABLE `REFILL_REQUEST_PARAM` (
 --
 
 DROP TABLE IF EXISTS `REFILL_REQUEST_STATUS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `REFILL_REQUEST_STATUS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1643,7 +1643,7 @@ CREATE TABLE `REFILL_REQUEST_STATUS` (
 --
 
 DROP TABLE IF EXISTS `REPORT_MAILING_PARAMS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `REPORT_MAILING_PARAMS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1659,7 +1659,7 @@ CREATE TABLE `REPORT_MAILING_PARAMS` (
 --
 
 DROP TABLE IF EXISTS `REPORT_SUBSCRIBERS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `REPORT_SUBSCRIBERS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1674,7 +1674,7 @@ CREATE TABLE `REPORT_SUBSCRIBERS` (
 --
 
 DROP TABLE IF EXISTS `SERVICE_ALERTS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `SERVICE_ALERTS` (
   `alert_type` enum('UPDATE','TECHNICAL_WORKS') NOT NULL,
@@ -1690,7 +1690,7 @@ CREATE TABLE `SERVICE_ALERTS` (
 --
 
 DROP TABLE IF EXISTS `SESSION_LIFE_TIME_TYPE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `SESSION_LIFE_TIME_TYPE` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1706,7 +1706,7 @@ CREATE TABLE `SESSION_LIFE_TIME_TYPE` (
 --
 
 DROP TABLE IF EXISTS `SESSION_PARAMS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `SESSION_PARAMS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1727,7 +1727,7 @@ CREATE TABLE `SESSION_PARAMS` (
 --
 
 DROP TABLE IF EXISTS `SMS_SUBSCRIPTION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `SMS_SUBSCRIPTION` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1750,7 +1750,7 @@ CREATE TABLE `SMS_SUBSCRIPTION` (
 --
 
 DROP TABLE IF EXISTS `STOCK_CURRENCY_PAIR`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `STOCK_CURRENCY_PAIR` (
   `stock_exchange_id` int(11) NOT NULL,
@@ -1767,7 +1767,7 @@ CREATE TABLE `STOCK_CURRENCY_PAIR` (
 --
 
 DROP TABLE IF EXISTS `STOCK_EXCHANGE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `STOCK_EXCHANGE` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1789,7 +1789,7 @@ CREATE TABLE `STOCK_EXCHANGE` (
 --
 
 DROP TABLE IF EXISTS `STOCK_EXCHANGE_CURRENCY_ALIAS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `STOCK_EXCHANGE_CURRENCY_ALIAS` (
   `stock_exchange_id` int(11) NOT NULL,
@@ -1807,7 +1807,7 @@ CREATE TABLE `STOCK_EXCHANGE_CURRENCY_ALIAS` (
 --
 
 DROP TABLE IF EXISTS `STOCK_EXRATE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `STOCK_EXRATE` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -1834,7 +1834,7 @@ CREATE TABLE `STOCK_EXRATE` (
 --
 
 DROP TABLE IF EXISTS `STOP_ORDERS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `STOP_ORDERS` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -1872,7 +1872,7 @@ CREATE TABLE `STOP_ORDERS` (
 --
 
 DROP TABLE IF EXISTS `SURVEY`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `SURVEY` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1889,7 +1889,7 @@ CREATE TABLE `SURVEY` (
 --
 
 DROP TABLE IF EXISTS `SURVEY_ITEM`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `SURVEY_ITEM` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1908,7 +1908,7 @@ CREATE TABLE `SURVEY_ITEM` (
 --
 
 DROP TABLE IF EXISTS `SURVEY_LANG_PARAM`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `SURVEY_LANG_PARAM` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1926,7 +1926,7 @@ CREATE TABLE `SURVEY_LANG_PARAM` (
 --
 
 DROP TABLE IF EXISTS `TELEGRAM_CHAT_EN`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `TELEGRAM_CHAT_EN` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1950,7 +1950,7 @@ CREATE TABLE `TELEGRAM_CHAT_EN` (
 --
 
 DROP TABLE IF EXISTS `TELEGRAM_SUBSCRIPTION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `TELEGRAM_SUBSCRIPTION` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1971,7 +1971,7 @@ CREATE TABLE `TELEGRAM_SUBSCRIPTION` (
 --
 
 DROP TABLE IF EXISTS `TEMPORAL_TOKEN`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `TEMPORAL_TOKEN` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -1995,7 +1995,7 @@ CREATE TABLE `TEMPORAL_TOKEN` (
 --
 
 DROP TABLE IF EXISTS `TOKEN_TYPE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `TOKEN_TYPE` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -2009,7 +2009,7 @@ CREATE TABLE `TOKEN_TYPE` (
 --
 
 DROP TABLE IF EXISTS `TRANSACTION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `TRANSACTION` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -2067,7 +2067,7 @@ CREATE TABLE `TRANSACTION` (
 --
 
 DROP TABLE IF EXISTS `TRANSACTION_SOURCE_TYPE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `TRANSACTION_SOURCE_TYPE` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -2082,7 +2082,7 @@ CREATE TABLE `TRANSACTION_SOURCE_TYPE` (
 --
 
 DROP TABLE IF EXISTS `TRANSACTION_STATUS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `TRANSACTION_STATUS` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -2098,7 +2098,7 @@ CREATE TABLE `TRANSACTION_STATUS` (
 --
 
 DROP TABLE IF EXISTS `TRANSFER_REQUEST`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `TRANSFER_REQUEST` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2135,7 +2135,7 @@ CREATE TABLE `TRANSFER_REQUEST` (
 --
 
 DROP TABLE IF EXISTS `TRANSFER_REQUEST_STATUS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `TRANSFER_REQUEST_STATUS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2149,7 +2149,7 @@ CREATE TABLE `TRANSFER_REQUEST_STATUS` (
 --
 
 DROP TABLE IF EXISTS `USER`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -2200,7 +2200,7 @@ CREATE TABLE `USER` (
 --
 
 DROP TABLE IF EXISTS `USER_ADMIN_AUTHORITY`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_ADMIN_AUTHORITY` (
   `user_id` int(11) NOT NULL,
@@ -2218,7 +2218,7 @@ CREATE TABLE `USER_ADMIN_AUTHORITY` (
 --
 
 DROP TABLE IF EXISTS `USER_ADMIN_AUTHORITY_ROLE_APPLICATION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_ADMIN_AUTHORITY_ROLE_APPLICATION` (
   `user_id` int(11) NOT NULL,
@@ -2239,7 +2239,7 @@ CREATE TABLE `USER_ADMIN_AUTHORITY_ROLE_APPLICATION` (
 --
 
 DROP TABLE IF EXISTS `USER_COMMENT`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_COMMENT` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -2265,7 +2265,7 @@ CREATE TABLE `USER_COMMENT` (
 --
 
 DROP TABLE IF EXISTS `USER_COMMENT_TOPIC`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_COMMENT_TOPIC` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2279,7 +2279,7 @@ CREATE TABLE `USER_COMMENT_TOPIC` (
 --
 
 DROP TABLE IF EXISTS `USER_CURRENCY_INVOICE_OPERATION_PERMISSION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_CURRENCY_INVOICE_OPERATION_PERMISSION` (
   `user_id` int(11) NOT NULL,
@@ -2300,7 +2300,7 @@ CREATE TABLE `USER_CURRENCY_INVOICE_OPERATION_PERMISSION` (
 --
 
 DROP TABLE IF EXISTS `USER_DOC`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_DOC` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2318,7 +2318,7 @@ CREATE TABLE `USER_DOC` (
 --
 
 DROP TABLE IF EXISTS `USER_FAVORITE_CURRENCY_PAIRS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_FAVORITE_CURRENCY_PAIRS` (
   `user_id` int(11) NOT NULL,
@@ -2336,7 +2336,7 @@ CREATE TABLE `USER_FAVORITE_CURRENCY_PAIRS` (
 --
 
 DROP TABLE IF EXISTS `USER_INITIAL_EXCHANGE_OFFERINGS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_INITIAL_EXCHANGE_OFFERINGS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2352,7 +2352,7 @@ CREATE TABLE `USER_INITIAL_EXCHANGE_OFFERINGS` (
 --
 
 DROP TABLE IF EXISTS `USER_IP`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_IP` (
   `user_id` int(40) NOT NULL,
@@ -2375,7 +2375,7 @@ CREATE TABLE `USER_IP` (
 --
 
 DROP TABLE IF EXISTS `USER_OPERATION`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_OPERATION` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2392,7 +2392,7 @@ CREATE TABLE `USER_OPERATION` (
 --
 
 DROP TABLE IF EXISTS `USER_OPERATION_AUTHORITY`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_OPERATION_AUTHORITY` (
   `user_id` int(11) NOT NULL,
@@ -2409,7 +2409,7 @@ CREATE TABLE `USER_OPERATION_AUTHORITY` (
 --
 
 DROP TABLE IF EXISTS `USER_POLICES`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_POLICES` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2428,7 +2428,7 @@ CREATE TABLE `USER_POLICES` (
 --
 
 DROP TABLE IF EXISTS `USER_ROLE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_ROLE` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -2451,7 +2451,7 @@ CREATE TABLE `USER_ROLE` (
 --
 
 DROP TABLE IF EXISTS `USER_ROLE_BUSINESS_FEATURE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_ROLE_BUSINESS_FEATURE` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2465,7 +2465,7 @@ CREATE TABLE `USER_ROLE_BUSINESS_FEATURE` (
 --
 
 DROP TABLE IF EXISTS `USER_ROLE_GROUP_FEATURE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_ROLE_GROUP_FEATURE` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2479,7 +2479,7 @@ CREATE TABLE `USER_ROLE_GROUP_FEATURE` (
 --
 
 DROP TABLE IF EXISTS `USER_ROLE_REPORT_GROUP_FEATURE`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_ROLE_REPORT_GROUP_FEATURE` (
   `id` int(11) NOT NULL,
@@ -2494,7 +2494,7 @@ CREATE TABLE `USER_ROLE_REPORT_GROUP_FEATURE` (
 --
 
 DROP TABLE IF EXISTS `USER_ROLE_SETTINGS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_ROLE_SETTINGS` (
   `user_role_id` int(11) NOT NULL,
@@ -2513,7 +2513,7 @@ CREATE TABLE `USER_ROLE_SETTINGS` (
 --
 
 DROP TABLE IF EXISTS `USER_STATUS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_STATUS` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -2528,7 +2528,7 @@ CREATE TABLE `USER_STATUS` (
 --
 
 DROP TABLE IF EXISTS `USER_TRANSFER`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_TRANSFER` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2553,7 +2553,7 @@ CREATE TABLE `USER_TRANSFER` (
 --
 
 DROP TABLE IF EXISTS `USER_VERIFICATION_INFO`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `USER_VERIFICATION_INFO` (
   `user_id` int(11) NOT NULL,
@@ -2568,7 +2568,7 @@ CREATE TABLE `USER_VERIFICATION_INFO` (
 --
 
 DROP TABLE IF EXISTS `WALLET`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `WALLET` (
   `id` int(40) NOT NULL AUTO_INCREMENT,
@@ -2592,7 +2592,7 @@ CREATE TABLE `WALLET` (
 --
 
 DROP TABLE IF EXISTS `WITHDRAW_REQUEST`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `WITHDRAW_REQUEST` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2644,7 +2644,7 @@ CREATE TABLE `WITHDRAW_REQUEST` (
 --
 
 DROP TABLE IF EXISTS `WITHDRAW_REQUEST_STATUS`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `WITHDRAW_REQUEST_STATUS` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2658,7 +2658,7 @@ CREATE TABLE `WITHDRAW_REQUEST_STATUS` (
 --
 
 DROP TABLE IF EXISTS `authority`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `authority` (
   `id` int(11) NOT NULL,
@@ -2672,7 +2672,7 @@ CREATE TABLE `authority` (
 --
 
 DROP TABLE IF EXISTS `credentials`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `credentials` (
   `id` int(11) NOT NULL,
@@ -2689,7 +2689,7 @@ CREATE TABLE `credentials` (
 --
 
 DROP TABLE IF EXISTS `credentials_authorities`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `credentials_authorities` (
   `credentials_id` bigint(20) NOT NULL,
@@ -2702,7 +2702,7 @@ CREATE TABLE `credentials_authorities` (
 --
 
 DROP TABLE IF EXISTS `oauth_access_token`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `oauth_access_token` (
   `token_id` varchar(255) DEFAULT NULL,
@@ -2720,7 +2720,7 @@ CREATE TABLE `oauth_access_token` (
 --
 
 DROP TABLE IF EXISTS `oauth_approvals`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `oauth_approvals` (
   `userId` varchar(255) DEFAULT NULL,
@@ -2737,7 +2737,7 @@ CREATE TABLE `oauth_approvals` (
 --
 
 DROP TABLE IF EXISTS `oauth_client_details`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `oauth_client_details` (
   `client_id` varchar(255) NOT NULL,
@@ -2759,7 +2759,7 @@ CREATE TABLE `oauth_client_details` (
 --
 
 DROP TABLE IF EXISTS `oauth_client_token`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `oauth_client_token` (
   `token_id` varchar(255) DEFAULT NULL,
@@ -2775,7 +2775,7 @@ CREATE TABLE `oauth_client_token` (
 --
 
 DROP TABLE IF EXISTS `oauth_code`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `oauth_code` (
   `code` varchar(255) DEFAULT NULL,
@@ -2788,7 +2788,7 @@ CREATE TABLE `oauth_code` (
 --
 
 DROP TABLE IF EXISTS `oauth_refresh_token`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `oauth_refresh_token` (
   `token_id` varchar(255) DEFAULT NULL,
@@ -2801,7 +2801,7 @@ CREATE TABLE `oauth_refresh_token` (
 --
 
 DROP TABLE IF EXISTS `schema_version`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `schema_version` (
   `installed_rank` int(11) NOT NULL,
@@ -2818,9 +2818,6 @@ CREATE TABLE `schema_version` (
   KEY `schema_version_s_idx` (`success`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
--- INSERT DATA
-
 INSERT INTO USER_ROLE (id, name, user_role_business_feature_id, user_role_group_feature_id, user_role_report_group_feature_id) VALUES 
   (1, 'ADMINISTRATOR', 1, 1, 1), 
   (2, 'ACCOUNTANT', 1, 1, 1), 
@@ -2835,6 +2832,7 @@ INSERT INTO USER_ROLE (id, name, user_role_business_feature_id, user_role_group_
   (11, 'ICO_MARKET_MAKER', 7, 2, 2), 
   (12, 'OUTER_MARKET_BOT', 9, 3, 4);
 
-INSERT INTO USER (id, pub_id, nickname, email, password, regdate, phone, finpassword, status, ipaddress, roleid, preferred_lang, avatar_path, tmp_poll_passed, login_pin, use2fa, `2fa_last_notify_date`, withdraw_pin, transfer_pin, temporary_banned, change_2fa_setting_pin, api_token_setting_pin, GA, kyc_verification_step, kyc_status, kyc_reference, country, firstName, lastName, birthDay) VALUES
-  (1, 'HJGFJHFGSDASDGFSD','admin','admin@exrates.me', '$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.', '2019-04-16 10:05:29', null, null, 2, null, 1, 'en', null, 1, '$2a$10$1t7zh3Ntatkrvdcwo.G4t.MmaGcZDNk/DTyi5jUkDTer5xXdP/SMm', 0, null, null, null, 0, '$2a$10$oyFeDvhk55fpvUKxvtcsI.zrUC669qcnN1iB4QMjY2obPgxLSQOR.', null, 'GA1.2.1627413492.1555445430', 0, 'success','none', 'UK', 'Charles', 'James',  null);
+INSERT INTO USER (id, pub_id, nickname, email, password, regdate, phone, finpassword, status, ipaddress, roleid, preferred_lang, avatar_path, tmp_poll_passed, login_pin, use2fa, 2fa_last_notify_date, withdraw_pin, transfer_pin, temporary_banned, change_2fa_setting_pin, api_token_setting_pin, GA, kyc_verification_step, kyc_status, kyc_reference, country, firstName, lastName, birthDay)
+VALUE
+  (1, 'HJGFJHFGSDASDGFSD','admin','admin@exrates.me', '$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.', '2019-04-16 10:05:29', '+380672223344', null, 2, '127.0.0.1', 1, 'en', null, 1, null, 0, null, null, null, 0, '$2a$10$oyFeDvhk55fpvUKxvtcsI.zrUC669qcnN1iB4QMjY2obPgxLSQOR.', null, 'GA1.2.1627413492.1555445430', 0, 'success','none', 'UK', 'Charles', 'James',  null);
 

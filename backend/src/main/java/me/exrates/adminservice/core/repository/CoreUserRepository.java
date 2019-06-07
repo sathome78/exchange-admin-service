@@ -8,6 +8,7 @@ public interface CoreUserRepository {
 
     String TABLE = "USERS";
     String COL_USER_ID = "user_id";
+    String COL_PUBLIC_ID = "pub_id";
     String COL_EMAIL = "email";
     String COL_PASSWORD = "password";
     String COL_REG_DATE = "regdate";
