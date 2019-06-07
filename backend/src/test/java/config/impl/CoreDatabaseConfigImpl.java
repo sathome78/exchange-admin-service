@@ -1,12 +1,14 @@
-package config;
+package config.impl;
 
+import config.DatabaseConfig;
+import me.exrates.adminservice.utils.LogUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
 @Profile(value = {"test"})
-public final class DatabaseConfigImpl implements DatabaseConfig {
+public class CoreDatabaseConfigImpl implements DatabaseConfig {
 
     @Value("${spring.datasource.url}")
     private String dbUrl;
@@ -25,11 +27,11 @@ public final class DatabaseConfigImpl implements DatabaseConfig {
 
     private final String dbScheme;
 
-    DatabaseConfigImpl(String schemaName) {
-        this.dbScheme = schemaName;
+    public CoreDatabaseConfigImpl(String schemaName) {
+        this.dbScheme = CORE_PREFIX + schemaName;
     }
 
-    DatabaseConfigImpl(DatabaseConfig config) {
+    public CoreDatabaseConfigImpl(DatabaseConfig config) {
         this.dbScheme = config.getSchemaName();
         this.dbUrl = config.getUrl();
         this.dbDriverClassname = config.getDriverClassName();
@@ -68,4 +70,14 @@ public final class DatabaseConfigImpl implements DatabaseConfig {
         return this.rootSchemeName;
     }
 
+    @Override
+    public String getTestTable() {
+        return "USER";
+    }
+
+    @Override
+    public String toString() {
+        return String.format("dbUrl: %s, schema: %s,  dbUsername: %s, pass: %s, root-schema: %s, test-table: %s", LogUtils.stripDbUrl(dbUrl),
+                this.dbScheme, this.dbUsername, this.dbPassword, this.rootSchemeName, getTestTable());
+    }
 }

@@ -17,5 +17,5 @@ public interface CoreUserRepository {
     String COL_IS_2FA_ENABLED = "use2fa";
     String COL_KYC_STATUS = "kyc_status";
 
-    List<CoreUser> findAllAfterIdLimited(long lastUserId, int limit);
+    List<CoreUser> findAllAdmins();
 }

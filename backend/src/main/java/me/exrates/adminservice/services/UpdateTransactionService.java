@@ -1,4 +1,4 @@
-package me.exrates.adminservice.service;
+package me.exrates.adminservice.services;
 
 public interface UpdateTransactionService {
 

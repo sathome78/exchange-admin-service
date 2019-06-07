@@ -1,7 +1,7 @@
-package me.exrates.adminservice.service.impl;
+package me.exrates.adminservice.services.impl;
 
 import lombok.extern.log4j.Log4j2;
-import me.exrates.adminservice.service.UpdateTransactionService;
+import me.exrates.adminservice.services.UpdateTransactionService;
 import org.springframework.stereotype.Service;
 
 @Service

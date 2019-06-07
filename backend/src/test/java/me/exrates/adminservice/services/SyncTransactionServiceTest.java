@@ -1,24 +1,20 @@
-package me.exrates.adminservice.service;
+package me.exrates.adminservice.services;
 
+import config.AbstractDatabaseContextTest;
 import config.AsyncTransactionsTestConfig;
+import config.DataComparisonTest;
 import config.HSQLConfiguration;
-import me.exrates.adminservice.AdminServiceApplication;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.core.repository.impl.CoreTransactionRepositoryImpl;
 import me.exrates.adminservice.domain.api.RateDto;
-import me.exrates.adminservice.events.TransactionsUpdateEvent;
-import me.exrates.adminservice.events.listeners.TransactionsUpdateEventListener;
 import me.exrates.adminservice.repository.AdminTransactionRepository;
 import me.exrates.adminservice.repository.CursorRepository;
 import me.exrates.adminservice.repository.impl.CursorRepositoryImpl;
 import me.exrates.adminservice.services.impl.SyncTransactionServiceImpl;
-import me.exrates.adminservice.services.ExchangeRatesService;
-import me.exrates.adminservice.services.SyncTransactionService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,12 +36,10 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +50,7 @@ import static org.mockito.Mockito.when;
         AsyncTransactionsTestConfig.class,
         SyncTransactionServiceTest.InnerConfig.class
 })
-public class SyncTransactionServiceTest {
+public class SyncTransactionServiceTest extends DataComparisonTest {
 
     @Autowired
     private SyncTransactionService syncTransactionService;
@@ -98,15 +92,19 @@ public class SyncTransactionServiceTest {
     @Import({
             HSQLConfiguration.class
     })
-    static class InnerConfig {
+    static class InnerConfig extends AbstractDatabaseContextTest.AppContextConfig {
 
         @Autowired
-        @Qualifier("testInMemoJdbcTemplate")
-        private NamedParameterJdbcOperations namedParameterJdbcOperations;
+        @Qualifier(TEST_CORE_NP_TEMPLATE)
+        private NamedParameterJdbcOperations coreNPJdbcOperations;
 
         @Autowired
-        @Qualifier("testInMemoDataSource")
-        public DataSource dataSource;
+        @Qualifier(TEST_ADMIN_NP_TEMPLATE)
+        private NamedParameterJdbcOperations adminNPJdbcOperations;
+
+//        @Autowired
+//        @Qualifier(TEST_CORE_DATASOURCE)
+//        public DataSource dataSource;
 
         @Autowired
         private ApplicationEventPublisher applicationEventPublisher;
@@ -118,7 +116,7 @@ public class SyncTransactionServiceTest {
 
         @Bean
         public CursorRepository testCursorRepository() {
-            return new CursorRepositoryImpl(namedParameterJdbcOperations);
+            return new CursorRepositoryImpl(adminNPJdbcOperations);
         }
 
         @Bean
@@ -128,7 +126,7 @@ public class SyncTransactionServiceTest {
 
         @Bean
         public CoreTransactionRepository testCoreTransactionRepository() {
-            return new CoreTransactionRepositoryImpl(namedParameterJdbcOperations);
+            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations);
         }
 
         @Bean
@@ -138,16 +136,13 @@ public class SyncTransactionServiceTest {
         }
 
         @Bean
-        public me.exrates.adminservice.service.UpdateTransactionService updateTransactionService() {
-            return Mockito.mock(me.exrates.adminservice.service.UpdateTransactionService.class);
+        public UpdateTransactionService updateTransactionService() {
+            return Mockito.mock(UpdateTransactionService.class);
         }
 
-        @PostConstruct
-        public void prepareTestData() throws SQLException {
-            ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-            populator.addScript(new ClassPathResource("SyncTransactionServiceTest/db_tables.sql"));
-            populator.populate(dataSource.getConnection());
+        @Override
+        protected String getSchema() {
+            return "SyncTransactionServiceTest";
         }
-
     }
 }

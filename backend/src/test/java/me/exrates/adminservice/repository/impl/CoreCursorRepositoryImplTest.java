@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -102,8 +103,8 @@ public class CoreCursorRepositoryImplTest extends DataComparisonTest {
     static class InnerConfig extends AbstractDatabaseContextTest.AppContextConfig {
 
         @Autowired
-        @Qualifier("testAdminTemplate")
-        private NamedParameterJdbcTemplate jdbcTemplate;
+        @Qualifier(TEST_ADMIN_NP_TEMPLATE)
+        protected NamedParameterJdbcOperations adminNPJdbcOperations;
 
         @Override
         protected String getSchema() {
@@ -112,7 +113,7 @@ public class CoreCursorRepositoryImplTest extends DataComparisonTest {
 
         @Bean("testCoreCursorRepository")
         public CursorRepository coreCursorRepository() {
-            return new CursorRepositoryImpl(jdbcTemplate);
+            return new CursorRepositoryImpl(adminNPJdbcOperations);
         }
     }
 }

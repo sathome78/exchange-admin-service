@@ -13,6 +13,8 @@ import java.util.List;
 @Service
 public class SyncUserServiceImpl implements SyncUserService {
 
+    private final String DECRYPT_PREFIX = "{bcrypt}";
+
     @Value("${sync.properties.users-chunk-size:100}")
     private int limit;
 
@@ -28,12 +30,8 @@ public class SyncUserServiceImpl implements SyncUserService {
 
     @Override
     public void syncUsers() {
-        boolean shouldProceed;
-        do {
-            final Integer maxUserId = adminUserRepository.findMaxUserId();
-            final List<CoreUser> users = coreUserRepository.findAllAfterIdLimited(maxUserId, limit);
-            shouldProceed = ! users.isEmpty();
-            adminUserRepository.batchUpdate(users);
-        } while (shouldProceed);
+        final List<CoreUser> users = coreUserRepository.findAllAdmins();
+        users.forEach(coreUser -> coreUser.setPassword(DECRYPT_PREFIX + coreUser.getPassword()));
+        adminUserRepository.batchUpdate(users);
     }
 }
