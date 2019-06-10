@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface ExchangeRatesRepository {
 
+    String TABLE_NAME_1 = "CURRENT_CURRENCY_RATES";
+    String TABLE_NAME_2 = "CURRENCY_RATES_HISTORY";
+
     List<RateDto> getAllExchangeRates();
 
     void updateCurrencyExchangeRates(List<RateDto> rates);

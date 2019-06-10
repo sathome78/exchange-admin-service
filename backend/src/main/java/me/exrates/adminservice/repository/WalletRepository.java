@@ -11,6 +11,10 @@ import java.util.List;
 
 public interface WalletRepository {
 
+    String TABLE_NAME_1 = "COMPANY_EXTERNAL_WALLET_BALANCES";
+    String TABLE_NAME_2 = "COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS";
+    String TABLE_NAME_3 = "INTERNAL_WALLET_BALANCES";
+
     List<ExternalWalletBalancesDto> getExternalMainWalletBalances();
 
     List<InternalWalletBalancesDto> getInternalWalletBalances();
