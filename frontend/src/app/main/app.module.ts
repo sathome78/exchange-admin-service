@@ -11,6 +11,8 @@ import { UsersModule } from '../users/users.module';
 import { LiquidityModule } from '../liquidity/liquidity.module';
 import { AuthModule } from '../auth/auth.module';
 import { SharedModule } from '../shared/shared.module';
+import { AuthInterceptor } from '../services/auth.interceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,11 @@ import { SharedModule } from '../shared/shared.module';
     LiquidityModule,
     AuthModule,
   ],
-  providers: [],
+  providers: [ {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
