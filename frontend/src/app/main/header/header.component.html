@@ -20,8 +20,8 @@
       </li>
     </ul>
     <div>
-      <button type="button" class="btn btn-success"  routerLink="/login">Login</button>
-      <button type="button" class="btn btn-danger">Logout</button>
+      <button type="button" class="btn btn-success" *ngIf="!isUserLoggedIn" routerLink="/login">Login</button>
+      <button type="button" class="btn btn-danger" *ngIf="isUserLoggedIn" (click)="logout()">Logout</button>
     </div>
   </div>
 </nav>

@@ -22,6 +22,7 @@ export class ApiService {
   //   return this.http.get(this.baseUrl + 'user?access_token=' + JSON.parse(window.sessionStorage.getItem('token')).access_token);
   // }
   //
+  
   // getUserById(id: number) {
   //   return this.http.get(this.baseUrl + 'user/' + id + '?access_token=' + JSON.parse(window.sessionStorage.getItem('token')).access_token);
   // }

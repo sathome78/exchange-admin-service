@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-
+  
   constructor() { }
 
   ngOnInit() {
@@ -14,5 +14,13 @@ export class HeaderComponent implements OnInit {
 
   get isLogin() {
     return window.location.pathname.indexOf('login') >= 0;
+  }
+
+  get isUserLoggedIn() {
+    return !!window.localStorage.getItem('token');
+  }
+
+  logout(){
+    window.localStorage.removeItem('token');
   }
 }
