@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface WalletBalancesRepository {
 
+    String TABLE_NAME = "CURRENT_CURRENCY_BALANCES";
+
     List<BalanceDto> getAllWalletBalances();
 
     void updateCurrencyWalletBalances(List<BalanceDto> balances);

@@ -430,19 +430,19 @@ public class WalletServiceImpl implements WalletService {
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
 
-        final int lowDeviationCount = (int) balancesSliceStatistic.stream()
+        final int redDeviationCount = (int) balancesSliceStatistic.stream()
                 .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.RED)
                 .count();
 
-        final int highDeviationCount = (int) balancesSliceStatistic.stream()
+        final int greenDeviationCount = (int) balancesSliceStatistic.stream()
                 .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.GREEN)
                 .count();
 
-        final int normalDeviationCount = (int) balancesSliceStatistic.stream()
+        final int yellowDeviationCount = (int) balancesSliceStatistic.stream()
                 .filter(statistic -> statistic.getDeviationStatus() == DeviationStatus.YELLOW)
                 .count();
 
-        final int monitoredCurrenciesCount = lowDeviationCount + highDeviationCount + normalDeviationCount;
+        final int monitoredCurrenciesCount = redDeviationCount + greenDeviationCount + yellowDeviationCount;
 
         final int activeCurrenciesCount = currencyService.getActiveCachedCurrencies().size();
 
@@ -453,9 +453,9 @@ public class WalletServiceImpl implements WalletService {
                 .exWalletBalancesBTCSum(exWalletBalancesBTCSum)
                 .inWalletBalancesBTCSum(inWalletBalancesBTCSum)
                 .deviationBTC(deviationBTC)
-                .redDeviationCount(lowDeviationCount)
-                .greenDeviationCount(highDeviationCount)
-                .yellowDeviationCount(normalDeviationCount)
+                .redDeviationCount(redDeviationCount)
+                .greenDeviationCount(greenDeviationCount)
+                .yellowDeviationCount(yellowDeviationCount)
                 .activeCurrenciesCount(activeCurrenciesCount)
                 .monitoredCurrenciesCount(monitoredCurrenciesCount)
                 .build();

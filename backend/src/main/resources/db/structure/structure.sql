@@ -27,90 +27,6 @@ CREATE TABLE IF NOT EXISTS USER_ANNUAL_INSIGHTS
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
-DROP TABLE IF EXISTS CURRENT_CURRENCY_RATES;
-CREATE TABLE IF NOT EXISTS CURRENT_CURRENCY_RATES
-(
-    id                       INT(40) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    currency_id              INT(40)                      NOT NULL UNIQUE,
-    currency_name            VARCHAR(45)                  NOT NULL UNIQUE,
-    usd_rate                 NUMERIC(19, 8)                    DEFAULT 0,
-    btc_rate                 NUMERIC(19, 8)                    DEFAULT 0,
-    schedule_last_updated_at TIMESTAMP                    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-# INSERT IGNORE INTO CURRENT_CURRENCY_RATES (currency_id, currency_name)
-# SELECT cur.id, cur.name
-# FROM birzha.CURRENCY cur;
-
-
-DROP TABLE IF EXISTS CURRENT_CURRENCY_RATES;
-CREATE TABLE IF NOT EXISTS CURRENT_CURRENCY_BALANCES
-(
-    id                       INT(40) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    currency_id              INT(40)                      NOT NULL UNIQUE,
-    currency_name            VARCHAR(45)                  NOT NULL UNIQUE,
-    balance                  NUMERIC(30, 8)                    DEFAULT 0,
-    last_updated_at          TIMESTAMP                    NULL DEFAULT CURRENT_TIMESTAMP,
-    schedule_last_updated_at TIMESTAMP                    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-# INSERT IGNORE INTO CURRENT_CURRENCY_BALANCES (currency_id, currency_name)
-# SELECT cur.id, cur.name
-# FROM birzha.CURRENCY cur;
-
-
-DROP TABLE IF EXISTS CURRENT_CURRENCY_RATES;
-CREATE TABLE IF NOT EXISTS COMPANY_EXTERNAL_WALLET_BALANCES
-(
-    id                INT(40) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    currency_id       INT(40)                      NOT NULL UNIQUE,
-    currency_name     VARCHAR(45)                  NOT NULL UNIQUE,
-    usd_rate          NUMERIC(19, 8)                    DEFAULT 0,
-    btc_rate          NUMERIC(19, 8)                    DEFAULT 0,
-    main_balance      NUMERIC(30, 8)                    DEFAULT 0,
-    reserved_balance  NUMERIC(30, 8)                    DEFAULT 0,
-    total_balance     NUMERIC(30, 8)                    DEFAULT 0,
-    total_balance_usd NUMERIC(30, 8)                    DEFAULT 0,
-    total_balance_btc NUMERIC(30, 8)                    DEFAULT 0,
-    last_updated_at   TIMESTAMP                    NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-# INSERT IGNORE INTO COMPANY_EXTERNAL_WALLET_BALANCES (currency_id, currency_name)
-# SELECT cur.id, cur.name
-# FROM birzha.CURRENCY cur;
-
-
-DROP TABLE IF EXISTS COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS;
-CREATE TABLE IF NOT EXISTS COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS
-(
-    id             INT UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    currency_id    INT(40)                  NOT NULL,
-    name           VARCHAR(200)             NULL,
-    wallet_address VARCHAR(128),
-    balance        NUMERIC(30, 8) DEFAULT 0
-);
-
-DROP TABLE IF EXISTS INTERNAL_WALLET_BALANCES;
-CREATE TABLE IF NOT EXISTS INTERNAL_WALLET_BALANCES
-(
-    id                INT(40) UNSIGNED PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    currency_id       INT(40)                      NOT NULL,
-    currency_name     VARCHAR(45)                  NOT NULL,
-    role_id           INT(40)                      NOT NULL,
-    role_name         VARCHAR(45)                  NOT NULL,
-    usd_rate          NUMERIC(19, 12)                   DEFAULT 0,
-    btc_rate          NUMERIC(19, 12)                   DEFAULT 0,
-    total_balance     NUMERIC(30, 8)                    DEFAULT 0,
-    total_balance_usd NUMERIC(30, 8)                    DEFAULT 0,
-    total_balance_btc NUMERIC(30, 8)                    DEFAULT 0,
-    last_updated_at   TIMESTAMP                    NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-# INSERT IGNORE INTO INTERNAL_WALLET_BALANCES (currency_id, currency_name, role_id, role_name)
-# SELECT cur.id AS currency_id, cur.name AS currency_name, ur.id AS role_id, ur.name AS role_name
-# FROM birzha.CURRENCY cur CROSS JOIN birzha.USER_ROLE ur
-# ORDER BY cur.id, ur.id
-
 DROP TABLE IF EXISTS USERS;
 CREATE TABLE IF NOT EXISTS USERS
 (
@@ -125,4 +41,78 @@ CREATE TABLE IF NOT EXISTS USERS
     use2fa      BOOLEAN DEFAULT FALSE,
     kyc_status  VARCHAR(50),
     PRIMARY KEY (user_id)
+);
+
+CREATE TABLE IF NOT EXISTS CURRENT_CURRENCY_RATES
+(
+    id                          INT(40) UNSIGNED PRIMARY KEY   NOT NULL AUTO_INCREMENT,
+    currency_id                 INT(40)                        NOT NULL UNIQUE,
+    currency_name               VARCHAR (45)                   NOT NULL UNIQUE,
+    usd_rate                    NUMERIC(19, 8)                          DEFAULT 0,
+    btc_rate                    NUMERIC(19, 8)                          DEFAULT 0,
+    schedule_last_updated_at    TIMESTAMP                      NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS CURRENT_CURRENCY_BALANCES
+(
+    id                          INT(40) UNSIGNED PRIMARY KEY   NOT NULL AUTO_INCREMENT,
+    currency_id                 INT(40)                        NOT NULL UNIQUE,
+    currency_name               VARCHAR (45)                   NOT NULL UNIQUE,
+    balance                     NUMERIC(30, 8)                          DEFAULT 0,
+    last_updated_at             TIMESTAMP                      NULL     DEFAULT CURRENT_TIMESTAMP,
+    schedule_last_updated_at    TIMESTAMP                      NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS COMPANY_EXTERNAL_WALLET_BALANCES
+(
+    id                    INT(40) UNSIGNED PRIMARY KEY   NOT NULL AUTO_INCREMENT,
+    currency_id           INT(40)                        NOT NULL UNIQUE,
+    currency_name         VARCHAR (45)                   NOT NULL UNIQUE,
+    usd_rate              NUMERIC(19, 8)                          DEFAULT 0,
+    btc_rate              NUMERIC(19, 8)                          DEFAULT 0,
+    main_balance          NUMERIC(30, 8)                          DEFAULT 0,
+    reserved_balance      NUMERIC(30, 8)                          DEFAULT 0,
+    accounting_imbalance  NUMERIC(30, 8)                          DEFAULT 0,
+    total_balance         NUMERIC(30, 8)                          DEFAULT 0,
+    total_balance_usd     NUMERIC(30, 8)                          DEFAULT 0,
+    total_balance_btc     NUMERIC(30, 8)                          DEFAULT 0,
+    last_updated_at       TIMESTAMP                      NULL     DEFAULT CURRENT_TIMESTAMP,
+    sign_of_monitoring    TINYINT(1)                     NOT NULL DEFAULT 0,
+    coin_range            NUMERIC(30, 8)                          DEFAULT 0,
+    check_coin_range      TINYINT(1)                     NOT NULL DEFAULT 0,
+    usd_range             NUMERIC(30, 8)                          DEFAULT 0,
+    check_usd_range       TINYINT(1)                     NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS
+(
+    id             INT UNSIGNED PRIMARY KEY   NOT NULL AUTO_INCREMENT,
+    currency_id    INT(40)                    NOT NULL,
+    name           VARCHAR(200)               NULL,
+    wallet_address VARCHAR(128),
+    balance        NUMERIC(30, 8)                      DEFAULT 0
+);
+
+
+CREATE TABLE IF NOT EXISTS INTERNAL_WALLET_BALANCES
+(
+    id                INT(40) UNSIGNED PRIMARY KEY   NOT NULL AUTO_INCREMENT,
+    currency_id       INT(40)                        NOT NULL,
+    currency_name     VARCHAR (45)                   NOT NULL,
+    role_id           INT(40)                        NOT NULL,
+    role_name         VARCHAR (45)                   NOT NULL,
+    usd_rate          NUMERIC(19, 12)                           DEFAULT 0,
+    btc_rate          NUMERIC(19, 12)                           DEFAULT 0,
+    total_balance     NUMERIC(30, 8)                            DEFAULT 0,
+    total_balance_usd NUMERIC(30, 8)                            DEFAULT 0,
+    total_balance_btc NUMERIC(30, 8)                            DEFAULT 0,
+    last_updated_at   TIMESTAMP                      NULL       DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY INTERNAL_WALLET_BALANCES_currency_id_role_id_uindex (currency_id, role_id)
+);
+
+CREATE TABLE IF NOT EXISTS CURRENCY_RATES_HISTORY
+(
+    id                INT(40) UNSIGNED PRIMARY KEY   NOT NULL AUTO_INCREMENT,
+    content           BLOB                           NOT NULL,
+    created_at        TIMESTAMP                      NOT NULL
 );
