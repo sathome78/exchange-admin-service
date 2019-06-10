@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AdminTransactionRepository {
 
-    String TABLE = "USER_ANNUAL_INSIGHTS";
+    String TABLE = "TRANSACTIONS";
     String COL_ID = "id";
     String COL_USER_ID = "user_id";
     String COL_CURRENCY_NAME = "user_id";
@@ -17,6 +17,7 @@ public interface AdminTransactionRepository {
     String COL_DATETIME = "datetime";
     String COL_RATE_IN_USD = "rate_in_usd";
     String COL_RATE_IN_BTC = "rate_in_btc";
+    String COL_SOURCE_ID = "rate_in_btc";
 
     boolean batchInsert(List<CoreTransaction> transactions);
 }

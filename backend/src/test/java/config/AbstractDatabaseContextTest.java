@@ -9,6 +9,7 @@ import config.impl.CoreDatabaseConfigImpl;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,9 +43,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.io.File.separator;
 
@@ -100,15 +105,21 @@ public abstract class AbstractDatabaseContextTest {
     }
 
     @PostConstruct
-    public void prepareTestSchema() throws SQLException {
-        List<String> adminPaths = ImmutableList.of("db/structure/admin/structure.sql");
-        initSchema(new AdminDatabaseConfigImpl(adminDbConfig), adminPaths);
+    public void prepareTestSchema() throws SQLException, IOException {
+        List<String> adminPaths = ImmutableList.of("db/structure/admin/structure.sql",
+                "db/structure/admin/insert-data.sql");
+
+        List<String> adminRowSqls = ImmutableList.of("db/structure/admin/trans-trigger-1.sql",
+//                "db/structure/admin/trans-trigger-2.sql",
+                "db/structure/admin/trans-trigger-3.sql");
+//                "db/structure/admin/trans-trigger-4.sql");
+        initSchema(new AdminDatabaseConfigImpl(adminDbConfig), adminPaths, adminRowSqls);
 
         List<String> corePaths = ImmutableList.of("db/structure/core/dump.sql");
-        initSchema(new CoreDatabaseConfigImpl(coreDbConfig), corePaths);
+        initSchema(new CoreDatabaseConfigImpl(coreDbConfig), corePaths, Collections.emptyList());
     }
 
-    private void initSchema(DatabaseConfig databaseConfig, List<String> resourcePaths) throws SQLException {
+    private void initSchema(DatabaseConfig databaseConfig, List<String> resourcePaths, List<String> sourceFiles) throws SQLException {
         Preconditions.checkNotNull(databaseConfig.getSchemaName(), "Admin Scheme name must be defined");
         schemas.putIfAbsent(databaseConfig.getSchemaName(), databaseConfig);
 
@@ -126,6 +137,8 @@ public abstract class AbstractDatabaseContextTest {
             DataSource rootDataSource = createRootDataSource(databaseConfig, testSchemaUrl);
 
             populateSchema(rootDataSource, resourcePaths);
+
+            pupulateFromRawSql(rootDataSource, sourceFiles);
 
             if (!isSchemeValid(rootDataSource, databaseConfig)) {
                 throw new RuntimeException("Test scheme " + databaseConfig.getSchemaName() + " doesn't exist");
@@ -270,6 +283,35 @@ public abstract class AbstractDatabaseContextTest {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         resourcePaths.forEach(path -> populator.addScript(new ClassPathResource(path)));
         populator.populate(dataSource.getConnection());
+    }
+
+    private void pupulateFromRawSql(DataSource dataSource, List<String> paths) {
+        paths.forEach(p -> {
+            File source = null;
+            try {
+                source = new ClassPathResource(p).getFile();
+            } catch (IOException e) {
+                String message = "Failed to find file for path " + p;
+                log.error(message, e);
+                throw new RuntimeException(message, e);
+            }
+            String rawSql = "";
+            try {
+                Stream<String> lines = Files.lines(source.toPath());
+                rawSql = lines.collect(Collectors.joining(" "));
+                final Statement statement = dataSource.getConnection().createStatement();
+                statement.execute(rawSql);
+
+            } catch (IOException e) {
+                String message = "Failed to read file for file name: " + p;
+                log.error(message, e);
+                throw new RuntimeException(message, e);
+            } catch (SQLException e) {
+                String message = "Failed to execute sql: " + rawSql;
+                log.error(message, e);
+                throw new RuntimeException(message, e);
+            }
+        });
     }
 
     private HikariDataSource createRootDataSource(DatabaseConfig dbConfig, String dbUrl) {

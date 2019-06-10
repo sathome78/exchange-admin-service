@@ -25,7 +25,7 @@ BEGIN
                                 refill_amount_usd    = refill_amount_usd + v_amount_in_usd,
                                 inout_commission_usd = inout_commission_usd + v_commission_in_usd,
                                 balance_dynamics_usd = balance_dynamics_usd + v_amount_in_usd,
-                                last_updated_id      = NEW.id;
+                                source_ids = CONCAT(source_ids, ',', NEW.id);
     END IF;
 
     IF (NEW.source_type = 'WITHDRAW' AND NEW.operation_type = 'OUTPUT') THEN
@@ -37,7 +37,7 @@ BEGIN
                                 withdraw_amount_usd  = withdraw_amount_usd + v_amount_in_usd,
                                 inout_commission_usd = inout_commission_usd + v_commission_in_usd,
                                 balance_dynamics_usd = balance_dynamics_usd + v_amount_in_usd,
-                                last_updated_id      = NEW.id;
+                                source_ids = CONCAT(source_ids, ',', NEW.id);
     END IF;
 
     IF (NEW.source_type = 'USER_TRANSFER' AND NEW.operation_type IN ('INPUT', 'OUTPUT')) THEN
@@ -49,7 +49,7 @@ BEGIN
                                 transfer_amount_usd     = transfer_amount_usd + v_amount_in_usd,
                                 transfer_commission_usd = transfer_commission_usd + v_commission_in_usd,
                                 balance_dynamics_usd    = balance_dynamics_usd + v_amount_in_usd,
-                                last_updated_id         = NEW.id;
+                                source_ids = CONCAT(source_ids, ',', NEW.id);
     END IF;
 
     IF (NEW.source_type = 'ORDER' AND NEW.operation_type IN ('INPUT', 'OUTPUT')) THEN
@@ -64,15 +64,15 @@ BEGIN
             WHERE user_id = NEW.id
               AND source_id = NEW.source_id;
         ELSE
-            INSERT INTO USER_ANNUAL_INSIGHTS (created, user_id, rate_btc_for_one_usd, withdraw_amount_usd,
-                                              inout_commission_usd, balance_dynamics_usd, last_updated_id)
+            INSERT INTO USER_ANNUAL_INSIGHTS (created, user_id, rate_btc_for_one_usd, trade_amount_usd,
+                                              trade_commission_usd, balance_dynamics_usd, last_updated_id)
                 VALUE (v_created, NEW.user_id, NEW.rate_btc_for_one_usd, v_amount_in_usd, v_commission_in_usd,
                        v_amount_in_usd, NEW.id)
             ON DUPLICATE KEY UPDATE rate_btc_for_one_usd = v_btc_rate,
-                                    withdraw_amount_usd  = withdraw_amount_usd + v_amount_in_usd,
-                                    inout_commission_usd = inout_commission_usd + v_commission_in_usd,
+                                    trade_amount_usd  = trade_amount_usd + v_amount_in_usd,
+                                    trade_commission_usd = trade_commission_usd + v_commission_in_usd,
                                     balance_dynamics_usd = balance_dynamics_usd + v_amount_in_usd,
-                                    last_updated_id      = NEW.id;
+                                    source_ids = CONCAT(source_ids, ',', NEW.id);
         END IF;
     END IF;
 END;

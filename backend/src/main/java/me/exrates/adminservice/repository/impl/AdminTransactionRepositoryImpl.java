@@ -13,19 +13,21 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import static me.exrates.adminservice.configurations.AdminDatasourceConfiguration.ADMIN_JDBC_OPS;
+
 @Repository
 public class AdminTransactionRepositoryImpl implements AdminTransactionRepository {
 
     private final JdbcOperations jdbcTemplate;
 
     @Autowired
-    public AdminTransactionRepositoryImpl(@Qualifier("coreTemplate") JdbcOperations jdbcTemplate) {
+    public AdminTransactionRepositoryImpl(@Qualifier(ADMIN_JDBC_OPS) JdbcOperations jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public boolean batchInsert(List<CoreTransaction> transactions) {
-        final String sql = "INSERT INTO " + TABLE + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO " + TABLE + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         final int[] rows = jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
@@ -41,6 +43,8 @@ public class AdminTransactionRepositoryImpl implements AdminTransactionRepositor
                 ps.setTimestamp(8, Timestamp.valueOf(transaction.getDateTime()));
                 ps.setBigDecimal(9, transaction.getRateInUsd());
                 ps.setBigDecimal(10, transaction.getRateInBtc());
+                ps.setBigDecimal(11, transaction.getRateBtcForOneUsd());
+                ps.setInt(12, transaction.getSourceId());
             }
             @Override
             public int getBatchSize() {

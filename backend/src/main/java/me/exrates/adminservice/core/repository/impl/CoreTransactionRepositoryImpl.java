@@ -29,9 +29,9 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
     @Override
     public List<CoreTransaction> findAllLimited(int limit, long position) {
         String sql = "SELECT t.id, w.user_id, C.name as currency_name, t.amount, t.commission_amount, t.source_type, " +
-                "UPPER(OT.name) as operation_type, t.datetime," +
-                "CASE currency_name WHEN 'USD' THEN 1 ELSE NULL END AS rate_in_usd, " +
-                "CASE currency_name WHEN 'BTC' THEN 1 ELSE NULL END AS rate_in_btc " +
+                "UPPER(OT.name) as operation_type, t.datetime, t.source_id as source_id, " +
+                "CASE C.name WHEN 'USD' THEN 1 ELSE NULL END AS rate_in_usd, " +
+                "CASE C.name WHEN 'BTC' THEN 1 ELSE NULL END AS rate_in_btc " +
                 "FROM TRANSACTION t " +
                 "LEFT JOIN WALLET w ON w.id = t.user_wallet_id " +
                 "LEFT JOIN CURRENCY C on t.currency_id = C.id " +
@@ -56,6 +56,7 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
                 .dateTime(rs.getTimestamp(COL_DATETIME).toLocalDateTime())
                 .rateInUsd(getBigDecimal(rs.getBigDecimal(COL_RATE_IN_USD), 2))
                 .rateInBtc(getBigDecimal(rs.getBigDecimal(COL_RATE_IN_BTC), 8))
+                .sourceId(rs.getInt(COL_SOURCE_ID))
                 .build();
     }
 
