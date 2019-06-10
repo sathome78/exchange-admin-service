@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static me.exrates.adminservice.configurations.CacheConfiguration.ACTIVE_CURRENCIES_CACHE;
 import static me.exrates.adminservice.configurations.CacheConfiguration.ALL_CURRENCIES_CACHE;
 import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY_CACHE_BY_ID;
 import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY_CACHE_BY_NAME;
@@ -23,19 +24,22 @@ import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY
 public class CurrencyServiceImpl implements CurrencyService {
 
     private final CoreCurrencyRepository coreCurrencyRepository;
-    private final Cache allCurrenciesCache;
     private final Cache currencyCacheByName;
     private final Cache currencyCacheById;
+    private final Cache allCurrenciesCache;
+    private final Cache activeCurrenciesCache;
 
     @Autowired
     public CurrencyServiceImpl(CoreCurrencyRepository coreCurrencyRepository,
                                @Qualifier(CURRENCY_CACHE_BY_NAME) Cache currencyCacheByName,
                                @Qualifier(CURRENCY_CACHE_BY_ID) Cache currencyCacheById,
-                               @Qualifier(ALL_CURRENCIES_CACHE) Cache allCurrenciesCache) {
+                               @Qualifier(ALL_CURRENCIES_CACHE) Cache allCurrenciesCache,
+                               @Qualifier(ACTIVE_CURRENCIES_CACHE) Cache activeCurrenciesCache) {
         this.coreCurrencyRepository = coreCurrencyRepository;
-        this.allCurrenciesCache = allCurrenciesCache;
         this.currencyCacheByName = currencyCacheByName;
         this.currencyCacheById = currencyCacheById;
+        this.allCurrenciesCache = allCurrenciesCache;
+        this.activeCurrenciesCache = activeCurrenciesCache;
     }
 
     @Transactional(readOnly = true)
@@ -56,17 +60,15 @@ public class CurrencyServiceImpl implements CurrencyService {
         return allCurrenciesCache.get(ALL_CURRENCIES_CACHE, coreCurrencyRepository::getAllCurrencies);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<CoreCurrencyDto> getActiveCachedCurrencies() {
-        return this.getCachedCurrencies().stream()
-                .filter(currency -> !currency.isHidden())
-                .collect(toList());
+        return activeCurrenciesCache.get(ACTIVE_CURRENCIES_CACHE, coreCurrencyRepository::getActiveCurrencies);
     }
 
     @Override
     public List<String> getActiveCurrencyNames() {
-        return this.getCachedCurrencies().stream()
-                .filter(currency -> !currency.isHidden())
+        return this.getActiveCachedCurrencies().stream()
                 .map(CoreCurrencyDto::getName)
                 .collect(toList());
     }

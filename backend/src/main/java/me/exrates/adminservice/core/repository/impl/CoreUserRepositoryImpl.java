@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,21 +25,17 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
     }
 
     @Override
-    public List<CoreUser> findAllAfterIdLimited(long lastUserId, int limit) {
-        String sql = "SELECT u.id as user_id, pub_id, email, password, regdate, phone, UPPER(us.name) as user_status, " +
-                "UPPER(ur.name) as user_role, use2fa, kyc_status FROM USER u " +
-                "LEFT JOIN USER_STATUS us on u.status = us.id " +
-                "LEFT JOIN USER_ROLE ur on u.roleid = ur.id " +
-                "WHERE u.id > :lastId LIMIT :size;";
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("lastId", lastUserId)
-                .addValue("size", limit);
-        return coreTemplate.query(sql, params, getCoreUserRowMapper());
+    public List<CoreUser> findAllAdmins() {
+        String sql = "SELECT u.id as user_id, pub_id, email, password, regdate, phone, \'ACTIVE\' as user_status, " +
+                "\'ADMIN\' as user_role, use2fa, kyc_status FROM USER u " +
+                "WHERE u.roleid = 1 AND u.status = 2";
+        return coreTemplate.query(sql, Collections.emptyMap(), getCoreUserRowMapper());
     }
 
     private RowMapper<CoreUser> getCoreUserRowMapper() {
         return (rs, i) -> CoreUser.builder()
                 .userId(rs.getInt(CoreUserRepository.COL_USER_ID))
+                .publicId(rs.getString(COL_PUBLIC_ID))
                 .email(rs.getString(COL_EMAIL))
                 .password(rs.getString(COL_PASSWORD))
                 .regdate(Objects.isNull(rs.getTimestamp(COL_REG_DATE)) ? null : rs.getTimestamp(COL_REG_DATE).toLocalDateTime())

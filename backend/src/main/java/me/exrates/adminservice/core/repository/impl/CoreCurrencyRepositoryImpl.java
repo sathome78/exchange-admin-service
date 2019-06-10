@@ -61,6 +61,17 @@ public class CoreCurrencyRepositoryImpl implements CoreCurrencyRepository {
     }
 
     @Override
+    public List<CoreCurrencyDto> getActiveCurrencies() {
+        final String sql = "SELECT id, name, hidden FROM CURRENCY WHERE hidden IS NOT TRUE";
+
+        return npJdbcTemplate.query(sql, (rs, row) -> CoreCurrencyDto.builder()
+                .id(rs.getInt("id"))
+                .name(rs.getString("name"))
+                .hidden(rs.getBoolean("hidden"))
+                .build());
+    }
+
+    @Override
     public String getCurrencyName(int currencyId) {
         String sql = "SELECT name FROM CURRENCY WHERE  id = :id ";
 

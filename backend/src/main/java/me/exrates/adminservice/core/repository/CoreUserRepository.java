@@ -8,6 +8,7 @@ public interface CoreUserRepository {
 
     String TABLE = "USERS";
     String COL_USER_ID = "user_id";
+    String COL_PUBLIC_ID = "pub_id";
     String COL_EMAIL = "email";
     String COL_PASSWORD = "password";
     String COL_REG_DATE = "regdate";
@@ -17,5 +18,5 @@ public interface CoreUserRepository {
     String COL_IS_2FA_ENABLED = "use2fa";
     String COL_KYC_STATUS = "kyc_status";
 
-    List<CoreUser> findAllAfterIdLimited(long lastUserId, int limit);
+    List<CoreUser> findAllAdmins();
 }
