@@ -13,7 +13,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
+    <tr (click)="showDetails()">
       <td>1</td>
       <td>USD</td>
       <td>1</td>
@@ -24,7 +24,7 @@
       <td>88660.1</td>
       <td>17.04.2019 15:23</td>
     </tr>
-    <tr>
+    <tr (click)="showDetails()">
       <td>1</td>
       <td>EUR</td>
       <td>1</td>
@@ -35,7 +35,7 @@
       <td>88660.1</td>
       <td>17.04.2019 15:23</td>
     </tr>
-    <tr>
+    <tr (click)="showDetails()">
       <td>1</td>
       <td>BTC</td>
       <td>1</td>
@@ -48,3 +48,7 @@
     </tr>
   </tbody>
 </table>
+
+<div *ngIf="popupService.getExternatBalancesPopupListener() | async">
+  <app-external-balances-popup></app-external-balances-popup>
+</div>

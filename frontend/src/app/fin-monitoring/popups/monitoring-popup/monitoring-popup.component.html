@@ -1,0 +1,36 @@
+<div class="overlay">
+  <div class="popup">
+    <div class="modal-header">
+      <h4 class="modal-title">Мониторинг</h4>
+      <button type="button" (click)="close()" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Допустимое отклонение в </p>
+      <form [formGroup]="form">
+        <div class="d-flex justify-content-between">
+          <p class="p-2">LTS</p>
+          <div class="d-flex justify-content-end p-2">
+            <input formControlName="coin" class="form-control w-25 mr-2">
+            <button type="button" class="close" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <p class="p-2">USD</p>
+          <div class="d-flex justify-content-end p-2">
+            <input formControlName="usd" class="form-control w-25 mr-2">
+            <button type="button" class="close" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer justify-content-center">
+      <button class="btn m-1 btn-success" (click)="onChange()">Изменить</button>
+    </div>
+  </div>
+</div>
