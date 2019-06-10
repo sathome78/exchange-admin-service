@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AdminTransactionRepository {
 
-    String TABLE = "TRANSACTION";
+    String TABLE = "USER_ANNUAL_INSIGHTS";
     String COL_ID = "id";
     String COL_USER_ID = "user_id";
     String COL_CURRENCY_NAME = "user_id";

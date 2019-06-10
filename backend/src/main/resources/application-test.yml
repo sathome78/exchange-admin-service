@@ -15,3 +15,6 @@ spring:
       maximum-pool-size: 10
       validation-timeout: 5000
 
+logging:
+  level:
+    me.exrates.adminservice: error

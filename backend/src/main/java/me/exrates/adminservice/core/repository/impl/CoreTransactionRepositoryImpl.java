@@ -30,8 +30,8 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
     public List<CoreTransaction> findAllLimited(int limit, long position) {
         String sql = "SELECT t.id, w.user_id, C.name as currency_name, t.amount, t.commission_amount, t.source_type, " +
                 "UPPER(OT.name) as operation_type, t.datetime," +
-                "CASE C.name WHEN 'USD' THEN 1 ELSE NULL END AS rate_in_usd, " +
-                "CASE C.name WHEN 'BTC' THEN 1 ELSE NULL END AS rate_in_btc " +
+                "CASE currency_name WHEN 'USD' THEN 1 ELSE NULL END AS rate_in_usd, " +
+                "CASE currency_name WHEN 'BTC' THEN 1 ELSE NULL END AS rate_in_btc " +
                 "FROM TRANSACTION t " +
                 "LEFT JOIN WALLET w ON w.id = t.user_wallet_id " +
                 "LEFT JOIN CURRENCY C on t.currency_id = C.id " +

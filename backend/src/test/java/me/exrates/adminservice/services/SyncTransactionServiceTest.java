@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.fieldIn;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
@@ -52,14 +53,12 @@ import static org.mockito.Mockito.when;
 })
 public class SyncTransactionServiceTest extends DataComparisonTest {
 
+
     @Autowired
     private SyncTransactionService syncTransactionService;
 
     @Autowired
     private ExchangeRatesService exchangeRatesService;
-
-    @Autowired
-    private AdminTransactionRepository adminTransactionRepository;
 
     @Before
     public void before() {
@@ -67,16 +66,13 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
     }
 
     @Test
-    // todo this not complete test it's just for flow steps debugging
     public void syncTransactions_nonEmpty() {
-        when(adminTransactionRepository.batchInsert(anyList())).thenReturn(Boolean.TRUE);
-        syncTransactionService.syncTransactions();
+        final String selectAllInsights = "SELECT * FROM " + AdminTransactionRepository.TABLE;
+        final String selectCursor = "SELECT * FROM " + CursorRepository.TABLE_NAME;
 
-//        await().atMost(5, TimeUnit.SECONDS)
-//                .until(() -> {
-//                    verify(transactionsUpdateEventListener).handleTransactionsUpdateEvent(any());
-//                    return true;
-//                });
+        around()
+                .withSQL(selectAllInsights, selectCursor)
+                .run(() -> syncTransactionService.syncTransactions());
     }
 
     private Map<String, RateDto> getTestRates() {
@@ -101,10 +97,6 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
         @Autowired
         @Qualifier(TEST_ADMIN_NP_TEMPLATE)
         private NamedParameterJdbcOperations adminNPJdbcOperations;
-
-//        @Autowired
-//        @Qualifier(TEST_CORE_DATASOURCE)
-//        public DataSource dataSource;
 
         @Autowired
         private ApplicationEventPublisher applicationEventPublisher;
