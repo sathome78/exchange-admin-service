@@ -16,7 +16,7 @@ export class FinSumTableComponent implements OnInit {
   }
 
   showDetails(){
-    this.popupService.toggleExternatBalancesPopup(true);
+    this.popupService.toggleExternalBalancesPopup(true);
   }
 
 }

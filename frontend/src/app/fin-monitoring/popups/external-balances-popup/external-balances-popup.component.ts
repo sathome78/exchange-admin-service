@@ -37,6 +37,6 @@ export class ExternalBalancesPopupComponent implements OnInit {
   }
 
   close() {
-    this.popupService.toggleExternatBalancesPopup(false);
+    this.popupService.toggleExternalBalancesPopup(false);
   }
 }

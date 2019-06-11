@@ -5,21 +5,21 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class PopupService {
-  onExternatBalancesPopupListener = new Subject<boolean>();
+  onExternalBalancesPopupListener = new Subject<boolean>();
   onMonitoringPopupListener = new Subject<boolean>();
 
   constructor() { }
 
-  toggleExternatBalancesPopup(state: boolean) {
-    this.onExternatBalancesPopupListener.next(state);
+  toggleExternalBalancesPopup(state: boolean) {
+    this.onExternalBalancesPopupListener.next(state);
   }
 
   toggleMonitoringPopup(state: boolean) {
     this.onMonitoringPopupListener.next(state);
   }
 
-  getExternatBalancesPopupListener(): Subject<boolean> {
-    return this.onExternatBalancesPopupListener;
+  getExternalBalancesPopupListener(): Subject<boolean> {
+    return this.onExternalBalancesPopupListener;
   }
 
   getMonitoringPopupListener(): Subject<boolean> {
