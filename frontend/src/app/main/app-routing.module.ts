@@ -6,6 +6,10 @@ import { UsersComponent } from '../users/users/users.component';
 import { AnalyticsComponent } from '../analytics/analytics/analytics.component';
 import { NotificationsComponent } from '../notifications/notifications/notifications.component';
 import { LoginComponent } from '../auth/login/login.component';
+import { RiskManagementComponent } from '../risk-management/views/risk-management/risk-management.component';
+import { ClientManagersComponent } from '../risk-management/views/client-managers/client-managers.component';
+import { JointAccountComponent } from '../risk-management/views/joint-account/joint-account.component';
+import { TradingComponent } from '../risk-management/views/trading/trading.component';
 
 const routes: Routes = [
   {path: 'fin-monitoring', component: FinMonitoringComponent},
@@ -14,6 +18,11 @@ const routes: Routes = [
   {path: 'analytics', component: AnalyticsComponent},
   {path: 'notifications', component: NotificationsComponent},
   {path: 'login', component: LoginComponent},
+
+  {path: 'risk-management', component: RiskManagementComponent},
+  {path: 'client-managers', component: ClientManagersComponent},
+  {path: 'joint-account', component: JointAccountComponent},
+  {path: 'trading', component: TradingComponent},
 
   // {path: 'login', component: DashboardComponent},
 
