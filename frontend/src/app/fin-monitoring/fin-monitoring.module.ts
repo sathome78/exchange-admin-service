@@ -9,6 +9,7 @@ import { FinDiffTableComponent } from './components/fin-diff-table/fin-diff-tabl
 import { ExternalBalancesPopupComponent } from './popups/external-balances-popup/external-balances-popup.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MonitoringPopupComponent } from './popups/monitoring-popup/monitoring-popup.component';
+import { FinMonitoringService } from './services/fin-monitoring.service';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,9 @@ import { MonitoringPopupComponent } from './popups/monitoring-popup/monitoring-p
   imports: [
     CommonModule,
     ReactiveFormsModule
+  ],
+  providers: [
+    FinMonitoringService
   ]
 })
 export class FinMonitoringModule { }

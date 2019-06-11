@@ -1,15 +1,15 @@
 <div class="overlay">
   <div class="popup">
     <div class="modal-header">
-      <h4 class="modal-title">Изменить внешние балансы {{item.coin}}</h4>
+      <h4 class="modal-title">Изменить внешние балансы {{item.currencyName}}</h4>
       <button type="button" (click)="close()" class="close" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-body">
-      <form [formGroup]="form">
+      <form [formGroup]="balanceForm">
         <div class="d-flex justify-content-between p-1">
-          <span>Курс в {{item.coin}}</span>
+          <span>Курс в {{item.currencyName}}</span>
           <span>0.1110945</span>
         </div>
         <div class="d-flex justify-content-between p-1">
@@ -22,56 +22,54 @@
         </div>
         <div class="d-flex justify-content-between p-1">
           <span>Учет прибыли</span>
-          <input class="form-control" formControlName="profit">
+          <input class="form-control" formControlName="profit" (keypress)="numbersOnlyValidation($event)">
         </div>
         <div class="d-flex justify-content-between p-1">
           <span>Учет ручного изменения баланса</span>
-          <input class="form-control" formControlName="balanceChange">
+          <input class="form-control" formControlName="balanceChange" (keypress)="numbersOnlyValidation($event)">
         </div>
       </form>
       <hr>
-      <div>
+      <div *ngFor="let item of reservedWallets">
         <div class="d-flex justify-content-between p-1">
-          <span>Балансы всех резервных кошельков 1</span>
-          <span>30.11.19</span>
-          <span>0</span>
+          <span>{{item.name}}</span>
+          <span>{{item.walletAddress}}</span>
+          <span>{{item.balance}}</span>
         </div>
         <div>
           <button class="btn m-2 btn-success">Change</button>
-          <button class="btn m-2 btn-danger">Remove</button>
-        </div>
-      </div>
-      <div>
-        <div class="d-flex justify-content-between p-1">
-          <span>Балансы всех резервных кошельков 2</span>
-          <span>30.11.19</span>
-          <span>-2</span>
-        </div>
-        <div>
-          <button class="btn m-2 btn-success">Change</button>
-          <button class="btn m-2 btn-danger">Remove</button>
+          <button (click)="removeWallet(item)" class="btn m-2 btn-danger">Remove</button>
         </div>
       </div>
     </div>
     <ng-container *ngIf="isAddWalletMode">
       <hr>
-      <div class="d-flex justify-content-between p-1">
-        <span class="w-50 pl-3 pr-2">Балансы всех резервных кошельков 3</span>
-        <input class="form-control w-25">
-        <input class="form-control w-25">
-      </div>
-
-      <div class="d-flex justify-content-end">
-        <div class="d-flex justify-content-berween w-50">
-          <span class="w-50">Адресс </span>
-          <span class="w-50">Имя </span>
+      <form [formGroup]="walletForm">
+        <div class="d-flex justify-content-between p-1">
+          <span class="w-50 pl-3 pr-2">Балансы всех резервных кошельков 3</span>
+          <input formControlName="walletAddress" class="form-control w-25">
+          <input formControlName="name" class="form-control w-25">
         </div>
-      </div>
 
-      <div class="d-flex justify-content-between p-1">
-        <button *ngIf="isAddWalletMode" class="btn m-2 ml-3 btn-success" (click)="onAddResevedWallet()">Create</button>
-        <input class="form-control w-50 mt-2">
-      </div>
+        <div class="d-flex justify-content-end">
+        </div>
+
+        <div class="d-flex justify-content-between p-1">
+          <div class="w-50">
+            <button *ngIf="isAddWalletMode" class="btn m-1  ml-3 btn-success btn-save"
+              (click)="saveReservedWallet('value')">Сохранить как значение</button>
+            <button *ngIf="isAddWalletMode" class="btn m-1 ml-3 btn-success btn-save"
+              (click)="saveReservedWallet('address')">Сохранить как адрес</button>
+          </div>
+          <div class="w-50">
+            <div class="d-flex justify-content-berween w-100">
+              <span class="w-50">Адрес </span>
+              <span class="w-50">Имя </span>
+            </div>
+            <input formControlName="reservedWalletBalance" class="form-control d-block w-100 mt-2" (keypress)="numbersOnlyValidation($event)">
+          </div>
+        </div>
+      </form>
     </ng-container>
 
     <div class="modal-footer justify-content-start">
