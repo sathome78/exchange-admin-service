@@ -97,7 +97,8 @@ public abstract class AbstractDatabaseContextTest {
 
     static {
         try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -109,7 +110,7 @@ public abstract class AbstractDatabaseContextTest {
     }
 
     @PostConstruct
-    public void prepareTestSchema() throws SQLException, IOException {
+    public void prepareTestSchema() throws SQLException {
         List<String> adminPaths = ImmutableList.of("db/structure/admin/structure.sql",
                 "db/structure/admin/insert-data.sql");
 
@@ -141,10 +142,11 @@ public abstract class AbstractDatabaseContextTest {
 
             pupulateFromRawSql(testSchemaUrl,  databaseConfig.getUser(), databaseConfig.getPassword(), sourceFiles);
 
-
             if (!isSchemeValid(rootDataSource, databaseConfig)) {
                 throw new RuntimeException("Test scheme " + databaseConfig.getSchemaName() + " doesn't exist");
             }
+
+            connection.close();
         }
     }
 
@@ -156,10 +158,12 @@ public abstract class AbstractDatabaseContextTest {
                 Connection connection = DriverManager.getConnection(dbServerUrl, config.getUser(), config.getPassword());
                 Statement statement = connection.createStatement();
                 statement.execute(String.format("DROP DATABASE IF EXISTS %s;", config.getSchemaName()));
+                connection.close();
             } catch (SQLException e) {
                 log.error("Failed to drop database in after class as", e);
             }
         });
+        schemas.clear();
     }
 
     @Rule
@@ -257,6 +261,9 @@ public abstract class AbstractDatabaseContextTest {
             config.setUsername(user);
             config.setPassword(password);
             config.setDriverClassName(driverClassName);
+            config.addDataSourceProperty("cachePrepStmts", "true");
+            config.addDataSourceProperty("prepStmtCacheSize", "250");
+            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
             return new HikariDataSource(config);
         }
     }

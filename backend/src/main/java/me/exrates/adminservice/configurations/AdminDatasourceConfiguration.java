@@ -1,9 +1,12 @@
 package me.exrates.adminservice.configurations;
 
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
+import me.exrates.SSMGetter;
+import org.flywaydb.core.Flyway;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -27,7 +30,7 @@ public class AdminDatasourceConfiguration extends DatabaseConfiguration {
 
     public static final String ADMIN_DATASOURCE = "adminDataSource";
     public static final String ADMIN_JDBC_OPS = "adminTemplate";
-    public static final String ADMIN_NP_TEMPLATE ="adminNPTemplate";
+    public static final String ADMIN_NP_TEMPLATE = "adminNPTemplate";
 
     @Value("${db-admin.datasource.url}")
     private String databaseUrl;
@@ -38,13 +41,22 @@ public class AdminDatasourceConfiguration extends DatabaseConfiguration {
     @Value("${db-admin.datasource.username}")
     private String databaseUsername;
 
-    @Value("${db-admin.datasource.password}")
-    private String password;
+    @Value("${db-admin.ssm.password-path}")
+    private String ssmPath;
+
+    @Autowired
+    private SSMGetter ssmGetter;
 
     @Primary
     @Bean(name = ADMIN_DATASOURCE)
     public DataSource dataSource() {
-        return createDataSource();
+        final HikariDataSource dataSource = createDataSource();
+        Flyway flyway = Flyway.configure()
+                .dataSource(databaseUrl, databaseUsername, getDatabasePassword())
+                .baselineOnMigrate(true)
+                .load();
+        flyway.migrate();
+        return dataSource;
     }
 
     @Primary
@@ -80,7 +92,7 @@ public class AdminDatasourceConfiguration extends DatabaseConfiguration {
 
     @Override
     protected String getDatabasePassword() {
-        return password;
+        return ssmGetter.lookup(ssmPath);
     }
 
     @Override
