@@ -5,6 +5,7 @@ import { RiskManagementComponent } from './views/risk-management/risk-management
 import { ClientManagersComponent } from './views/client-managers/client-managers.component';
 import { JointAccountComponent } from './views/joint-account/joint-account.component';
 import { DashboardAnalyticComponent } from './components/dashboard-analytic/dashboard-analytic.component';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { DashboardAnalyticComponent } from './components/dashboard-analytic/dash
     DashboardAnalyticComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    ChartsModule
   ]
 })
 export class RiskManagementModule { }
