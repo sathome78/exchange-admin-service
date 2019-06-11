@@ -2874,6 +2874,6 @@ INSERT INTO TRANSACTION (id, user_wallet_id, currency_id, amount, commission_amo
     (11, 2, 2, 1.0, 0.1, 'USER_TRANSFER', 2, 11),
     (12, 5, 23, 10.0, 1, 'USER_TRANSFER', 1, 12),
     (13, 1, 4, 1.0, 0.1, 'ORDER', 2, 13),
-    (14, 2, 14, 10.0, 1, 'ORDER', 1, 12),
-    (15, 2, 2, 1.0, 0.1, 'ORDER', 2, 13),
-    (16, 5, 23, 10.0, 1, 'ORDER', 1, 14);
+    (14, 2, 14, 10.0, 1, 'ORDER', 1, 14),
+    (15, 2, 2, 1.0, 0.1, 'ORDER', 2, 15),
+    (16, 5, 23, 10.0, 1, 'ORDER', 1, 16);

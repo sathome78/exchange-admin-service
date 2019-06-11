@@ -11,6 +11,8 @@ import me.exrates.adminservice.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.configuration.ClassicConfiguration;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -111,11 +113,8 @@ public abstract class AbstractDatabaseContextTest {
         List<String> adminPaths = ImmutableList.of("db/structure/admin/structure.sql",
                 "db/structure/admin/insert-data.sql");
 
-        List<String> adminRowSqls = ImmutableList.of("db/structure/admin/trans-trigger-1.sql",
-//                "db/structure/admin/trans-trigger-2.sql",
-                "db/structure/admin/trans-trigger-3.sql");
-//                "db/structure/admin/trans-trigger-4.sql");
-        initSchema(new AdminDatabaseConfigImpl(adminDbConfig), adminPaths, Collections.emptyList());
+        List<String> locations = ImmutableList.of("db/structure/admin/raw");
+        initSchema(new AdminDatabaseConfigImpl(adminDbConfig), adminPaths, locations);
 
         List<String> corePaths = ImmutableList.of("db/structure/core/dump.sql");
         initSchema(new CoreDatabaseConfigImpl(coreDbConfig), corePaths, Collections.emptyList());
@@ -140,7 +139,7 @@ public abstract class AbstractDatabaseContextTest {
 
             populateSchema(rootDataSource, resourcePaths);
 
-            pupulateFromRawSql(rootDataSource, sourceFiles);
+            pupulateFromRawSql(testSchemaUrl,  databaseConfig.getUser(), databaseConfig.getPassword(), sourceFiles);
 
 
             if (!isSchemeValid(rootDataSource, databaseConfig)) {
@@ -289,33 +288,16 @@ public abstract class AbstractDatabaseContextTest {
         populator.populate(dataSource.getConnection());
     }
 
-    private void pupulateFromRawSql(DataSource dataSource, List<String> paths) {
-        paths.forEach(p -> {
-            File source = null;
-            try {
-                source = new ClassPathResource(p).getFile();
-            } catch (IOException e) {
-                String message = "Failed to find file for path " + p;
-                log.error(message, e);
-                throw new RuntimeException(message, e);
-            }
-            String rawSql = "";
-            try {
-                Stream<String> lines = Files.lines(source.toPath());
-                rawSql = lines.collect(Collectors.joining(" "));
-                final Statement statement = dataSource.getConnection().createStatement();
-                statement.execute(rawSql);
-
-            } catch (IOException e) {
-                String message = "Failed to read file for file name: " + p;
-                log.error(message, e);
-                throw new RuntimeException(message, e);
-            } catch (SQLException e) {
-                String message = "Failed to execute sql: " + rawSql;
-                log.error(message, e);
-                throw new RuntimeException(message, e);
-            }
-        });
+    private void pupulateFromRawSql(String dbUrl, String username, String password, List<String> locations) {
+        if (locations.isEmpty()) {
+            return;
+        }
+        Flyway flyway = Flyway.configure()
+                .dataSource(dbUrl, username, password)
+                .locations(locations.toArray(new String [] {}))
+                .baselineOnMigrate(true)
+                .load();
+        flyway.migrate();
     }
 
     private HikariDataSource createRootDataSource(DatabaseConfig dbConfig, String dbUrl) {

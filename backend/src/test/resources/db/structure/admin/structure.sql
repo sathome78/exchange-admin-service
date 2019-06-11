@@ -123,14 +123,18 @@ CREATE TABLE IF NOT EXISTS USER_ANNUAL_INSIGHTS
 (
     created                 DATE NOT NULL,
     user_id                 INT  NOT NULL,
-    rate_btc_for_one_usd    DECIMAL(18, 8),
-    refill_amount_usd       DECIMAL(10, 2),
-    withdraw_amount_usd     DECIMAL(10, 2),
-    inout_commission_usd    DECIMAL(10, 2),
-    transfer_amount_usd     DECIMAL(10, 2),
-    transfer_commission_usd DECIMAL(10, 2),
-    trade_amount_usd        DECIMAL(10, 2),
-    trade_commission_usd    DECIMAL(10, 2),
-    balance_dynamics_usd    DECIMAL(10, 2),
-    source_ids              VARCHAR(255) DEFAULT ''
+    rate_btc_for_one_usd    DECIMAL(18, 8) DEFAULT 0,
+    refill_amount_usd       DECIMAL(10, 2) DEFAULT 0,
+    withdraw_amount_usd     DECIMAL(10, 2) DEFAULT 0,
+    inout_commission_usd    DECIMAL(10, 2) DEFAULT 0,
+    transfer_in_amount_usd  DECIMAL(10, 2) DEFAULT 0,
+    transfer_out_amount_usd DECIMAL(10, 2) DEFAULT 0,
+    transfer_commission_usd DECIMAL(10, 2) DEFAULT 0,
+    trade_sell_count        INTEGER        DEFAULT 0,
+    trade_buy_count         INTEGER        DEFAULT 0,
+    trade_amount_usd        DECIMAL(10, 2) DEFAULT 0,
+    trade_commission_usd    DECIMAL(10, 2) DEFAULT 0,
+    balance_dynamics_usd    DECIMAL(10, 2) DEFAULT 0,
+    source_ids              VARCHAR(255)   DEFAULT '',
+    primary key (created, user_id)
 ) ENGINE InnoDB;

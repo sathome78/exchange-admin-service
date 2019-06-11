@@ -1,5 +1,6 @@
 package me.exrates.adminservice.repository.impl;
 
+import com.google.common.collect.Lists;
 import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.repository.AdminTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,6 @@ public class AdminTransactionRepositoryImpl implements AdminTransactionRepositor
     @Override
     public boolean batchInsert(List<CoreTransaction> transactions) {
         final String sql = "INSERT INTO " + TABLE + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
         final int[] rows = jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -46,6 +46,7 @@ public class AdminTransactionRepositoryImpl implements AdminTransactionRepositor
                 ps.setBigDecimal(11, transaction.getRateBtcForOneUsd());
                 ps.setInt(12, transaction.getSourceId());
             }
+
             @Override
             public int getBatchSize() {
                 return transactions.size();
