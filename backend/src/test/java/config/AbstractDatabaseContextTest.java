@@ -23,11 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,7 +115,7 @@ public abstract class AbstractDatabaseContextTest {
 //                "db/structure/admin/trans-trigger-2.sql",
                 "db/structure/admin/trans-trigger-3.sql");
 //                "db/structure/admin/trans-trigger-4.sql");
-        initSchema(new AdminDatabaseConfigImpl(adminDbConfig), adminPaths, adminRowSqls);
+        initSchema(new AdminDatabaseConfigImpl(adminDbConfig), adminPaths, Collections.emptyList());
 
         List<String> corePaths = ImmutableList.of("db/structure/core/dump.sql");
         initSchema(new CoreDatabaseConfigImpl(coreDbConfig), corePaths, Collections.emptyList());
@@ -139,6 +141,7 @@ public abstract class AbstractDatabaseContextTest {
             populateSchema(rootDataSource, resourcePaths);
 
             pupulateFromRawSql(rootDataSource, sourceFiles);
+
 
             if (!isSchemeValid(rootDataSource, databaseConfig)) {
                 throw new RuntimeException("Test scheme " + databaseConfig.getSchemaName() + " doesn't exist");
@@ -187,6 +190,7 @@ public abstract class AbstractDatabaseContextTest {
     }
 
     @Configuration
+    @Profile("test")
     public static abstract class AppContextConfig {
 
         protected abstract String getSchema();

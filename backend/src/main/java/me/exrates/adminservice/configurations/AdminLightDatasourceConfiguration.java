@@ -1,9 +1,6 @@
 package me.exrates.adminservice.configurations;
 
-import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
-import me.exrates.SSMGetter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,19 +9,14 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Objects;
 
 @Configuration
 @Order(1)
@@ -41,22 +33,13 @@ public class AdminLightDatasourceConfiguration extends DatabaseConfiguration {
     @Value("${db-admin.datasource.username}")
     private String databaseUsername;
 
-    @Value("${db-admin.ssm.password-path}")
-    private String ssmPath;
-
-    @Autowired
-    private SSMGetter ssmGetter;
+    @Value("${db-admin.datasource.password}")
+    private String password;
 
     @Primary
     @Bean(name = "adminDataSource")
     public DataSource dataSource() {
-        final HikariDataSource dataSource = createDataSource();
-        try {
-            populateDefaultData(dataSource);
-        } catch (SQLException e) {
-            log.error("FAILED to populate default data", e);
-        }
-        return dataSource;
+        return createDataSource();
     }
 
     @Primary
@@ -92,7 +75,7 @@ public class AdminLightDatasourceConfiguration extends DatabaseConfiguration {
 
     @Override
     protected String getDatabasePassword() {
-        return ssmGetter.lookup(ssmPath);
+        return password;
     }
 
     @Override
@@ -100,15 +83,4 @@ public class AdminLightDatasourceConfiguration extends DatabaseConfiguration {
         return databaseDriverName;
     }
 
-    private void populateDefaultData(DataSource dataSource) throws SQLException {
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("db/structure/structure.sql"));
-        populator.addScript(new ClassPathResource("db/structure/insert-data.sql"));
-
-
-        Connection connection = dataSource.getConnection();
-        populator.populate(connection);
-
-        connection.close();
-    }
 }

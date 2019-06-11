@@ -1,8 +1,6 @@
 package me.exrates.adminservice.configurations;
 
 import lombok.extern.log4j.Log4j2;
-import me.exrates.SSMGetter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -39,11 +37,8 @@ public class AdminDatasourceConfiguration extends DatabaseConfiguration {
     @Value("${db-admin.datasource.username}")
     private String databaseUsername;
 
-    @Value("${db-admin.ssm.password-path}")
-    private String ssmPath;
-
-    @Autowired
-    private SSMGetter ssmGetter;
+    @Value("${db-admin.datasource.password}")
+    private String password;
 
     @Primary
     @Bean(name = ADMIN_DATASOURCE)
@@ -84,7 +79,7 @@ public class AdminDatasourceConfiguration extends DatabaseConfiguration {
 
     @Override
     protected String getDatabasePassword() {
-        return ssmGetter.lookup(ssmPath);
+        return password;
     }
 
     @Override

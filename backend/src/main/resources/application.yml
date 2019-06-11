@@ -33,32 +33,25 @@ spring:
     mapper:
       default_view_inclusion: true
     default-property-inclusion: 'non_null'
-#  flyway:
-#    url: ${spring.datasource.url}
-#    user: ${spring.datasource.username}
-#    password: ${spring.datasource.password}
-#    baseline-on-migrate: true
+  flyway:
+    url: ${db-admin.datasource.url}
+    user: ${db-admin.datasource.username}
+    password: ${db-admin.datasource.password}
+    baseline-on-migrate: true
 
 db-admin:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:4406/admin_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
-  #    password: root
-  ssm:
-    password-path:
+    password: root
 
 db-core:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/birzha?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
-  #    password: root
-  ssm:
-    password-path:
-
-ssm:
-  mode: develop
+    password: root
 
 api:
   exchange:

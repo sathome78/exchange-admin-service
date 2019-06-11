@@ -14,3 +14,12 @@ spring:
       minimum-idle: 5
       maximum-pool-size: 10
       validation-timeout: 5000
+#  flyway:
+#    url: ${spring.datasource.url}
+#    user: ${spring.datasource.username}
+#    password: ${spring.datasource.password}
+#    baseline-on-migrate: true
+
+logging:
+  level:
+    me.exrates.adminservice: debug

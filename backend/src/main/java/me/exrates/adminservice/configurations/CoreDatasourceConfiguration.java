@@ -1,9 +1,5 @@
 package me.exrates.adminservice.configurations;
 
-import me.exrates.SSMGetter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +19,6 @@ import javax.sql.DataSource;
 @Order(2)
 public class CoreDatasourceConfiguration extends DatabaseConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(CoreDatasourceConfiguration.class);
-
     @Value("${db-core.datasource.url}")
     private String databaseUrl;
 
@@ -34,11 +28,8 @@ public class CoreDatasourceConfiguration extends DatabaseConfiguration {
     @Value("${db-core.datasource.username}")
     private String databaseUsername;
 
-    @Value("${db-core.ssm.password-path}")
-    private String ssmPath;
-
-    @Autowired
-    private SSMGetter ssmGetter;
+    @Value("${db-core.datasource.password}")
+    private String password;
 
     @Bean(name = "coreDataSource")
     public DataSource dataSource() {
@@ -75,7 +66,7 @@ public class CoreDatasourceConfiguration extends DatabaseConfiguration {
 
     @Override
     protected String getDatabasePassword() {
-        return ssmGetter.lookup(ssmPath);
+        return password;
     }
 
     @Override
