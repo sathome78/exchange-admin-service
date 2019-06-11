@@ -1,5 +1,7 @@
-DROP TRIGGER IF EXISTS PREPARE_AFTER_TRANSACTIONS;
+DROP TRIGGER IF EXISTS PREPARE_AFTER_TRANSACTIONS ;
+
 DELIMITER $$
+
 CREATE TRIGGER PREPARE_AFTER_TRANSACTIONS
     AFTER INSERT
     ON TRANSACTIONS
@@ -18,7 +20,7 @@ BEGIN
 
     IF (NEW.source_type = 'REFILL' AND NEW.operation_type = 'INPUT') THEN
         INSERT INTO USER_ANNUAL_INSIGHTS (created, user_id, rate_btc_for_one_usd, refill_amount_usd,
-                                          inout_commission_usd, balance_dynamics_usd, last_updated_id)
+                                          inout_commission_usd, balance_dynamics_usd, source_ids)
             VALUE (v_created, NEW.user_id, NEW.rate_btc_for_one_usd, v_amount_in_usd, v_commission_in_usd,
                    v_amount_in_usd, NEW.id)
         ON DUPLICATE KEY UPDATE rate_btc_for_one_usd = v_btc_rate,
@@ -30,7 +32,7 @@ BEGIN
 
     IF (NEW.source_type = 'WITHDRAW' AND NEW.operation_type = 'OUTPUT') THEN
         INSERT INTO USER_ANNUAL_INSIGHTS (created, user_id, rate_btc_for_one_usd, withdraw_amount_usd,
-                                          inout_commission_usd, balance_dynamics_usd, last_updated_id)
+                                          inout_commission_usd, balance_dynamics_usd, source_ids)
             VALUE (v_created, NEW.user_id, NEW.rate_btc_for_one_usd, v_amount_in_usd, v_commission_in_usd,
                    v_amount_in_usd, NEW.id)
         ON DUPLICATE KEY UPDATE rate_btc_for_one_usd = v_btc_rate,
@@ -42,7 +44,7 @@ BEGIN
 
     IF (NEW.source_type = 'USER_TRANSFER' AND NEW.operation_type IN ('INPUT', 'OUTPUT')) THEN
         INSERT INTO USER_ANNUAL_INSIGHTS (created, user_id, rate_btc_for_one_usd, transfer_amount_usd,
-                                          transfer_commission_usd, balance_dynamics_usd, last_updated_id)
+                                          transfer_commission_usd, balance_dynamics_usd, source_ids)
             VALUE (v_created, NEW.user_id, NEW.rate_btc_for_one_usd, v_amount_in_usd, v_commission_in_usd,
                    v_amount_in_usd, NEW.id)
         ON DUPLICATE KEY UPDATE rate_btc_for_one_usd    = v_btc_rate,
@@ -60,12 +62,12 @@ BEGIN
         THEN
             UPDATE USER_ANNUAL_INSIGHTS
             SET trade_commission_usd = trade_commission_usd + v_commission_in_usd,
-                last_updated_id      = NEW.id
+                source_ids      = CONCAT(source_ids, ',', NEW.id)
             WHERE user_id = NEW.id
               AND source_id = NEW.source_id;
         ELSE
             INSERT INTO USER_ANNUAL_INSIGHTS (created, user_id, rate_btc_for_one_usd, trade_amount_usd,
-                                              trade_commission_usd, balance_dynamics_usd, last_updated_id)
+                                              trade_commission_usd, balance_dynamics_usd, source_ids)
                 VALUE (v_created, NEW.user_id, NEW.rate_btc_for_one_usd, v_amount_in_usd, v_commission_in_usd,
                        v_amount_in_usd, NEW.id)
             ON DUPLICATE KEY UPDATE rate_btc_for_one_usd = v_btc_rate,
@@ -75,6 +77,6 @@ BEGIN
                                     source_ids = CONCAT(source_ids, ',', NEW.id);
         END IF;
     END IF;
-END;
+END $$
 
 DELIMITER ;

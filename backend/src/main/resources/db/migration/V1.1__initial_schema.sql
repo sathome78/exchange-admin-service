@@ -13,16 +13,18 @@ CREATE TABLE IF NOT EXISTS CURSORS
 DROP TABLE IF EXISTS TRANSACTIONS;
 CREATE TABLE IF NOT EXISTS TRANSACTIONS
 (
-    id                INTEGER        NOT NULL,
-    user_id           INTEGER        NOT NULL,
-    currency_name     varchar(50)    NOT NULL,
-    amount            DECIMAL(40, 9) NOT NULL,
-    commission_amount DECIMAL(40, 9) NOT NULL,
-    source_type       varchar(255)   NOT NULL,
-    operation_type    varchar(255)   NOT NULL,
-    datetime          TIMESTAMP      NOT NULL,
-    rate_in_usd       DECIMAL(20, 2) DEFAULT NULL,
-    rate_in_btc       DECIMAL(40, 8) DEFAULT NULL,
+    id                   INTEGER        NOT NULL,
+    user_id              INTEGER        NOT NULL,
+    currency_name        varchar(50)    NOT NULL,
+    amount               DECIMAL(40, 9) NOT NULL,
+    commission_amount    DECIMAL(40, 9) NOT NULL,
+    source_type          varchar(255)   NOT NULL,
+    operation_type       varchar(255)   NOT NULL,
+    datetime             TIMESTAMP      NOT NULL,
+    rate_in_usd          DECIMAL(20, 2) DEFAULT NULL,
+    rate_in_btc          DECIMAL(40, 8) DEFAULT NULL,
+    rate_btc_for_one_usd DECIMAL(18, 8) DEFAULT NULL,
+    source_id            INTEGER        DEFAULT 0,
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
@@ -132,5 +134,3 @@ CREATE TABLE IF NOT EXISTS USER_ANNUAL_INSIGHTS
     balance_dynamics_usd    DECIMAL(10, 2),
     source_ids              VARCHAR(255) DEFAULT ''
 ) ENGINE InnoDB;
-
-

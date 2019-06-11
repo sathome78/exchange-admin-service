@@ -1,3 +1,7 @@
+DROP TRIGGER IF EXISTS PREPARE_AFTER_TRANSACTIONS ;
+
+DELIMITER $$
+
 CREATE TRIGGER PREPARE_AFTER_TRANSACTIONS
     AFTER INSERT
     ON TRANSACTIONS
@@ -73,4 +77,6 @@ BEGIN
                                     source_ids = CONCAT(source_ids, ',', NEW.id);
         END IF;
     END IF;
-END
+END $$
+
+DELIMITER ;

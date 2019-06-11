@@ -1,3 +1,8 @@
+# INSERT IGNORE INTO INTERNAL_WALLET_BALANCES (currency_id, currency_name, role_id, role_name)
+# SELECT cur.id AS currency_id, cur.name AS currency_name, ur.id AS role_id, ur.name AS role_name
+# FROM birzha.CURRENCY cur CROSS JOIN birzha.USER_ROLE ur
+# ORDER BY cur.id, ur.id;
+
 INSERT IGNORE INTO INTERNAL_WALLET_BALANCES (currency_id, currency_name, role_id, role_name) VALUES
 (1,'RUB',1,'ADMINISTRATOR'),
 (1,'RUB',2,'ACCOUNTANT'),

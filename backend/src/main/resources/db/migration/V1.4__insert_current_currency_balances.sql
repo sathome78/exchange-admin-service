@@ -1,3 +1,7 @@
+# INSERT IGNORE INTO CURRENT_CURRENCY_BALANCES (currency_id, currency_name)
+# SELECT cur.id, cur.name
+# FROM birzha.CURRENCY cur;
+
 INSERT IGNORE INTO CURRENT_CURRENCY_BALANCES (currency_id, currency_name) VALUES
 (202, 'ABBC'),
 (90, 'ABTC'),
