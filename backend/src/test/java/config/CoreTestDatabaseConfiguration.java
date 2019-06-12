@@ -39,7 +39,7 @@ public class CoreTestDatabaseConfiguration {
         Flyway flyway = Flyway.configure()
                 .dataSource(hikariDataSource)
                 .baselineOnMigrate(true)
-                .locations("db/structure/core/data")
+                .locations("db/data/core/")
                 .load();
         flyway.migrate();
 

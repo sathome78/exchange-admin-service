@@ -3,7 +3,6 @@ package config;
 import com.google.common.base.Preconditions;
 import config.impl.AdminDatabaseConfigImpl;
 import lombok.extern.log4j.Log4j2;
-import me.exrates.adminservice.configurations.CoreDatasourceConfiguration;
 import me.exrates.adminservice.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -31,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -232,21 +230,10 @@ public abstract class AbstractDatabaseContextTest {
     }
 
     private void executeMigrations() {
-//        File appMigrationDirectory = new File("./src/main/resources/db/migration");
-//
-//        File testMigrationDirectory = new File("./src/test/resources/db/migration/");
-//
-//        try {
-//            FileUtils.copyDirectoryToDirectory(appMigrationDirectory, testMigrationDirectory);
-//        } catch (IOException ex) {
-//            final String message = "Failed to copy resource file with migrations";
-//            log.error(message, ex);
-//            throw new RuntimeException(message, ex);
-//        }
 
         final String [] locations = {
                 "db/migration",
-                "db/structure/admin/data"
+                "db/data/admin/"
         };
 
         Flyway flyway = Flyway.configure()
