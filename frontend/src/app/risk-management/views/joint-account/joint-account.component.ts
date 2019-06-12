@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { fields } from '../../constants/joint-account.constant';
 
 @Component({
   selector: 'app-joint-account',
@@ -40,7 +41,23 @@ export class JointAccountComponent implements OnInit {
       name: 'Доход от объема торгов',
       value: '$111234567'
     }
-  ]
+  ];
+  fields = fields;
+
+  values = [{
+    date: '14/12/18',
+    income_from_commissions: '12345',
+    volume_revenue: '12345',
+    new_account: '123456',
+    new_account_not_replenished: '',
+    account_refilled: '',
+    account_refilled_first_operation: '',
+    active: '',
+    no_trading: '',
+    client_reset: '',
+    resuscitation: '',
+    activity: ''
+  }];
 
   constructor() { }
 

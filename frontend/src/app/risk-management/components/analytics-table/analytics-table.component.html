@@ -1,0 +1,14 @@
+<div class="wrapper p-2">
+<table class="table table-hover table-striped">
+  <thead>
+    <tr>
+      <th *ngFor="let field of fieldKeys" scope="col">{{fields[field]}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let value of values">
+      <td *ngFor="let field of fieldKeys">{{value[field]}}</td>
+    </tr>
+  </tbody>
+</table>
+</div>

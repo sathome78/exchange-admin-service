@@ -6,6 +6,7 @@ import { ClientManagersComponent } from './views/client-managers/client-managers
 import { JointAccountComponent } from './views/joint-account/joint-account.component';
 import { DashboardAnalyticComponent } from './components/dashboard-analytic/dashboard-analytic.component';
 import { ChartsModule } from 'ng2-charts';
+import { AnalyticsTableComponent } from './components/analytics-table/analytics-table.component';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { ChartsModule } from 'ng2-charts';
     ClientManagersComponent,
     JointAccountComponent,
     TradingComponent,
-    DashboardAnalyticComponent
+    DashboardAnalyticComponent,
+    AnalyticsTableComponent
   ],
   imports: [
     CommonModule,
