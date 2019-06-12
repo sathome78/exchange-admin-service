@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PopupService } from 'src/app/services/popup.service';
 
 @Component({
   selector: 'app-fin-diff-table',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FinDiffTableComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private popupService: PopupService
+    ) { }
 
   ngOnInit() {
+  }
+
+  showDetails() {
+    this.popupService.toggleMonitoringPopup(true);
   }
 
 }

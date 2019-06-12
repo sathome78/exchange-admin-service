@@ -6,6 +6,10 @@ import { FinSumTableComponent } from './components/fin-sum-table/fin-sum-table.c
 import { FinSumCardsComponent } from './components/fin-sum-cards/fin-sum-cards.component';
 import { FinDiffCardsComponent } from './components/fin-diff-cards/fin-diff-cards.component';
 import { FinDiffTableComponent } from './components/fin-diff-table/fin-diff-table.component';
+import { ExternalBalancesPopupComponent } from './popups/external-balances-popup/external-balances-popup.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MonitoringPopupComponent } from './popups/monitoring-popup/monitoring-popup.component';
+import { FinMonitoringService } from './services/fin-monitoring.service';
 
 @NgModule({
   declarations: [
@@ -14,10 +18,16 @@ import { FinDiffTableComponent } from './components/fin-diff-table/fin-diff-tabl
     FinSumTableComponent,
     FinSumCardsComponent,
     FinDiffCardsComponent,
-    FinDiffTableComponent
+    FinDiffTableComponent,
+    ExternalBalancesPopupComponent,
+    MonitoringPopupComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule
+  ],
+  providers: [
+    FinMonitoringService
   ]
 })
 export class FinMonitoringModule { }

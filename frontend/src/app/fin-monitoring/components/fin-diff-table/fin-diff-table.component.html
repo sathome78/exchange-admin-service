@@ -24,7 +24,9 @@
       <td>88660.1</td>
       <td>88660.1</td>
       <td>17.04.2019 15:23</td>
-      <td></td>
+      <td class="text-center">
+        <input (click)="showDetails()" class="form-check-input" type="checkbox">
+      </td>
     </tr>
     <tr>
       <td>1</td>
@@ -36,7 +38,9 @@
       <td>88660.1</td>
       <td>88660.1</td>
       <td>17.04.2019 15:23</td>
-      <td></td>
+      <td class="text-center">
+        <input (click)="showDetails()" class="form-check-input" type="checkbox">
+      </td>
     </tr>
     <tr>
       <td>1</td>
@@ -48,7 +52,13 @@
       <td>88660.1</td>
       <td>88660.1</td>
       <td>17.04.2019 15:23</td>
-      <td></td>
+      <td class="text-center">
+        <input (click)="showDetails()" class="form-check-input" type="checkbox">
+      </td>
     </tr>
   </tbody>
 </table>
+
+<div *ngIf="popupService.getMonitoringPopupListener() | async">
+  <app-monitoring-popup></app-monitoring-popup>
+</div>
