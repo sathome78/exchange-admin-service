@@ -50,7 +50,7 @@ public class SyncTransactionServiceImpl implements SyncTransactionService {
         final MutableBoolean shouldProceed = new MutableBoolean(false);
         final Set<Integer> updateUserIds = new HashSet<>();
         do {
-            Optional<Long> result = Optional.ofNullable(cursorRepository.findLastByTable(CoreTransactionRepository.TABLE));
+            Optional<Long> result = adminTransactionRepository.findMaxId();
             long lastIndex = result.orElse(-1L);
             final List<CoreTransaction> transactions = coreTransactionRepository.findAllLimited(chunkSize, lastIndex);
             shouldProceed.setValue(! transactions.isEmpty());
@@ -67,7 +67,6 @@ public class SyncTransactionServiceImpl implements SyncTransactionService {
                     t.setRateBtcForOneUsd(rateDto.getRateBtcForOneUsd());
                 });
                 adminTransactionRepository.batchInsert(transactions);
-                cursorRepository.updateCursorByTable(CoreTransactionRepository.UPDATE_CURSOR_SQL);
             }
         } while (shouldProceed.getValue());
         if (! updateUserIds.isEmpty()) {

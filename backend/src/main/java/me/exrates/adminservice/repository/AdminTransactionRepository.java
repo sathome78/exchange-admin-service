@@ -3,6 +3,7 @@ package me.exrates.adminservice.repository;
 import me.exrates.adminservice.core.domain.CoreTransaction;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AdminTransactionRepository {
 
@@ -20,4 +21,6 @@ public interface AdminTransactionRepository {
     String COL_SOURCE_ID = "rate_in_btc";
 
     boolean batchInsert(List<CoreTransaction> transactions);
+
+    Optional<Long> findMaxId();
 }

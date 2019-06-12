@@ -1,10 +1,10 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:4406/admin_db?autoReconnect=true&useSSL=false&rewriteBatchedStatements=true&lower_case_table_names=1&useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3406/admin_db_test?autoReconnect=true&useSSL=false&rewriteBatchedStatements=true&lower_case_table_names=1&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
     password: root
-    scheme-name: admin_db
+    scheme-name: admin_db_test
     hikari:
       connection-timeout: 30000
       idle-timeout: 180000
@@ -19,6 +19,13 @@ spring:
 #    user: ${spring.datasource.username}
 #    password: ${spring.datasource.password}
 #    baseline-on-migrate: true
+
+db-core:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/birzha_empty_schema?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: root
 
 logging:
   level:

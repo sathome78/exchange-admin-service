@@ -1,18 +1,13 @@
 package config;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import config.impl.AdminDatabaseConfigImpl;
-import config.impl.CoreDatabaseConfigImpl;
 import lombok.extern.log4j.Log4j2;
+import me.exrates.adminservice.configurations.CoreDatasourceConfiguration;
 import me.exrates.adminservice.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.flywaydb.core.Flyway;
-import org.flywaydb.core.api.configuration.ClassicConfiguration;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,15 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
@@ -47,12 +40,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.io.File.separator;
 
@@ -76,10 +65,6 @@ public abstract class AbstractDatabaseContextTest {
     private DatabaseConfig  adminDbConfig;
 
     @Autowired
-    @Qualifier(DatabaseConfig.CORE_DB_CONFIG)
-    private DatabaseConfig  coreDbConfig;
-
-    @Autowired
     @Qualifier(TEST_ADMIN_DATASOURCE)
     protected DataSource dataSource;
 
@@ -98,7 +83,6 @@ public abstract class AbstractDatabaseContextTest {
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -111,17 +95,10 @@ public abstract class AbstractDatabaseContextTest {
 
     @PostConstruct
     public void prepareTestSchema() throws SQLException {
-        List<String> adminPaths = ImmutableList.of("db/structure/admin/structure.sql",
-                "db/structure/admin/insert-data.sql");
-
-        List<String> locations = ImmutableList.of("db/structure/admin/raw");
-        initSchema(new AdminDatabaseConfigImpl(adminDbConfig), adminPaths, locations);
-
-        List<String> corePaths = ImmutableList.of("db/structure/core/dump.sql");
-        initSchema(new CoreDatabaseConfigImpl(coreDbConfig), corePaths, Collections.emptyList());
+        initSchema(new AdminDatabaseConfigImpl(adminDbConfig));
     }
 
-    private void initSchema(DatabaseConfig databaseConfig, List<String> resourcePaths, List<String> sourceFiles) throws SQLException {
+    private void initSchema(DatabaseConfig databaseConfig) throws SQLException {
         Preconditions.checkNotNull(databaseConfig.getSchemaName(), "Admin Scheme name must be defined");
         schemas.putIfAbsent(databaseConfig.getSchemaName(), databaseConfig);
 
@@ -136,11 +113,9 @@ public abstract class AbstractDatabaseContextTest {
             Statement statement = connection.createStatement();
             statement.execute(String.format("CREATE DATABASE %s;", databaseConfig.getSchemaName()));
 
-            DataSource rootDataSource = createRootDataSource(databaseConfig, testSchemaUrl);
+            DataSource rootDataSource = HikariDataSourceFactory.createRootDataSource(databaseConfig, testSchemaUrl);
 
-            populateSchema(rootDataSource, resourcePaths);
-
-            pupulateFromRawSql(testSchemaUrl,  databaseConfig.getUser(), databaseConfig.getPassword(), sourceFiles);
+            executeMigrations();
 
             if (!isSchemeValid(rootDataSource, databaseConfig)) {
                 throw new RuntimeException("Test scheme " + databaseConfig.getSchemaName() + " doesn't exist");
@@ -194,6 +169,9 @@ public abstract class AbstractDatabaseContextTest {
 
     @Configuration
     @Profile("test")
+    @Import({
+            CoreTestDatabaseConfiguration.class
+    })
     public static abstract class AppContextConfig {
 
         protected abstract String getSchema();
@@ -202,18 +180,9 @@ public abstract class AbstractDatabaseContextTest {
         @Qualifier(DatabaseConfig.ADMIN_DB_CONFIG)
         protected DatabaseConfig adminDatabaseConfig;
 
-        @Autowired
-        @Qualifier(DatabaseConfig.CORE_DB_CONFIG)
-        protected DatabaseConfig coreDatabaseConfig;
-
         @Bean(DatabaseConfig.ADMIN_DB_CONFIG)
         public DatabaseConfig adminDatabaseConfig() {
             return new AdminDatabaseConfigImpl(getSchema());
-        }
-
-        @Bean(DatabaseConfig.CORE_DB_CONFIG)
-        public DatabaseConfig coreDatabaseConfig() {
-            return new CoreDatabaseConfigImpl(getSchema());
         }
 
         @Bean(name = TEST_ADMIN_DATASOURCE)
@@ -221,15 +190,7 @@ public abstract class AbstractDatabaseContextTest {
             String dbUrl = adminDatabaseConfig.getUrl().replace(adminDatabaseConfig.getRootSchemeName() + "?", adminDatabaseConfig.getSchemaName() + "?");
             log.debug("DB PROPS: DB URL: " + LogUtils.stripDbUrl(dbUrl));
             log.debug("DB CONFIG: ADMIN: " + adminDatabaseConfig);
-            return createDataSource(adminDatabaseConfig.getUser(), adminDatabaseConfig.getPassword(), dbUrl, adminDatabaseConfig.getDriverClassName());
-        }
-
-        @Bean(name = TEST_CORE_DATASOURCE)
-        public DataSource coreDataSource() {
-            String dbUrl = coreDatabaseConfig.getUrl().replace(coreDatabaseConfig.getRootSchemeName() + "?", coreDatabaseConfig.getSchemaName() + "?");
-            log.debug("DB PROPS: DB URL: " + LogUtils.stripDbUrl(dbUrl));
-            log.debug("DB CONFIG: CORE: " + coreDatabaseConfig);
-            return createDataSource(coreDatabaseConfig.getUser(), coreDatabaseConfig.getPassword(), dbUrl, coreDatabaseConfig.getDriverClassName());
+            return HikariDataSourceFactory.createDataSource(adminDatabaseConfig.getUser(), adminDatabaseConfig.getPassword(), dbUrl, adminDatabaseConfig.getDriverClassName());
         }
 
         @Bean(name = TEST_ADMIN_JDBC_OPS)
@@ -243,28 +204,9 @@ public abstract class AbstractDatabaseContextTest {
             return new NamedParameterJdbcTemplate(dataSource);
         }
 
-        @Bean(name = TEST_CORE_NP_TEMPLATE)
-        public NamedParameterJdbcOperations coreNPTemplate(@Qualifier(TEST_CORE_DATASOURCE) DataSource dataSource) {
-            return new NamedParameterJdbcTemplate(dataSource);
-        }
-
         @Bean
         public DataSourceTransactionManager dataSourceTransactionManager(@Qualifier(TEST_ADMIN_DATASOURCE) DataSource dataSource) {
             return new DataSourceTransactionManager(dataSource);
-        }
-
-        private HikariDataSource createDataSource(String user, String password, String url, String driverClassName) {
-            log.debug("Creating datasource for {}, {}, {}", LogUtils.stripDbUrl(url), password, user);
-            HikariConfig config = new HikariConfig();
-            config.setInitializationFailTimeout(-1);
-            config.setJdbcUrl(url);
-            config.setUsername(user);
-            config.setPassword(password);
-            config.setDriverClassName(driverClassName);
-            config.addDataSourceProperty("cachePrepStmts", "true");
-            config.addDataSourceProperty("prepStmtCacheSize", "250");
-            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-            return new HikariDataSource(config);
         }
     }
 
@@ -289,31 +231,29 @@ public abstract class AbstractDatabaseContextTest {
         }
     }
 
-    private void populateSchema(DataSource dataSource, List<String> resourcePaths) throws SQLException {
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        resourcePaths.forEach(path -> populator.addScript(new ClassPathResource(path)));
-        populator.populate(dataSource.getConnection());
-    }
+    private void executeMigrations() {
+//        File appMigrationDirectory = new File("./src/main/resources/db/migration");
+//
+//        File testMigrationDirectory = new File("./src/test/resources/db/migration/");
+//
+//        try {
+//            FileUtils.copyDirectoryToDirectory(appMigrationDirectory, testMigrationDirectory);
+//        } catch (IOException ex) {
+//            final String message = "Failed to copy resource file with migrations";
+//            log.error(message, ex);
+//            throw new RuntimeException(message, ex);
+//        }
 
-    private void pupulateFromRawSql(String dbUrl, String username, String password, List<String> locations) {
-        if (locations.isEmpty()) {
-            return;
-        }
+        final String [] locations = {
+                "db/migration",
+                "db/structure/admin/data"
+        };
+
         Flyway flyway = Flyway.configure()
-                .dataSource(dbUrl, username, password)
-                .locations(locations.toArray(new String [] {}))
-                .baselineOnMigrate(true)
+                .dataSource(dataSource)
+                .locations(locations)
                 .load();
         flyway.migrate();
-    }
-
-    private HikariDataSource createRootDataSource(DatabaseConfig dbConfig, String dbUrl) {
-        HikariConfig config = new HikariConfig();
-        config.setInitializationFailTimeout(-1);
-        config.setJdbcUrl(dbUrl);
-        config.setUsername(dbConfig.getUser());
-        config.setPassword(dbConfig.getPassword());
-        return new HikariDataSource(config);
     }
 
     private String createConnectionURL(String dbUrl, String newSchemaName, DatabaseConfig config) {

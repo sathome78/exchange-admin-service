@@ -85,7 +85,7 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
     static class InnerConfig extends AbstractDatabaseContextTest.AppContextConfig {
 
         @Autowired
-        @Qualifier(TEST_CORE_NP_TEMPLATE)
+        @Qualifier(TEST_CORE_NP_TEMPLATE) // it's ok bean will be imported later
         private NamedParameterJdbcOperations coreNPJdbcOperations;
 
         @Autowired
@@ -101,7 +101,7 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
 
         @Bean
         public AdminTransactionRepository adminTransactionRepository() {
-            return new AdminTransactionRepositoryImpl(adminJdbcOperations);
+            return new AdminTransactionRepositoryImpl(adminJdbcOperations, adminNPJdbcOperations);
         }
 
         @Bean

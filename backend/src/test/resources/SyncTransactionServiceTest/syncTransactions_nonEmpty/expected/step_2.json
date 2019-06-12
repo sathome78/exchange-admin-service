@@ -211,12 +211,7 @@
   } ]
 }, {
   "sql" : "SELECT * FROM CURSORS",
-  "content" : [ {
-    "table_name" : "TRANSACTION",
-    "table_column" : "id",
-    "last_id" : "16",
-    "modified_at" : "p(any)"
-  } ]
+  "content" : [ ]
 }, {
   "sql" : "SELECT * FROM USER_ANNUAL_INSIGHTS",
   "content" : [ {
