@@ -23,8 +23,6 @@ import javax.sql.DataSource;
 @Order(2)
 public class CoreDatasourceConfiguration extends DatabaseConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(CoreDatasourceConfiguration.class);
-
     @Value("${db-core.datasource.url}")
     private String databaseUrl;
 

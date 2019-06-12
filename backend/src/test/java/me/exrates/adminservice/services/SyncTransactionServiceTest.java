@@ -3,12 +3,13 @@ package me.exrates.adminservice.services;
 import config.AbstractDatabaseContextTest;
 import config.AsyncTransactionsTestConfig;
 import config.DataComparisonTest;
-import config.HSQLConfiguration;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.core.repository.impl.CoreTransactionRepositoryImpl;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.repository.AdminTransactionRepository;
+import me.exrates.adminservice.repository.AdminUserInsightsRepository;
 import me.exrates.adminservice.repository.CursorRepository;
+import me.exrates.adminservice.repository.impl.AdminTransactionRepositoryImpl;
 import me.exrates.adminservice.repository.impl.CursorRepositoryImpl;
 import me.exrates.adminservice.services.impl.SyncTransactionServiceImpl;
 import org.junit.Before;
@@ -21,25 +22,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.fieldIn;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,14 +48,12 @@ import static org.mockito.Mockito.when;
 })
 public class SyncTransactionServiceTest extends DataComparisonTest {
 
+
     @Autowired
     private SyncTransactionService syncTransactionService;
 
     @Autowired
     private ExchangeRatesService exchangeRatesService;
-
-    @Autowired
-    private AdminTransactionRepository adminTransactionRepository;
 
     @Before
     public void before() {
@@ -67,51 +61,47 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
     }
 
     @Test
-    // todo this not complete test it's just for flow steps debugging
     public void syncTransactions_nonEmpty() {
-        when(adminTransactionRepository.batchInsert(anyList())).thenReturn(Boolean.TRUE);
-        syncTransactionService.syncTransactions();
+        final String selectAllInsights = "SELECT * FROM " + AdminTransactionRepository.TABLE;
+        final String selectCursor = "SELECT * FROM " + CursorRepository.TABLE_NAME;
+        final String selectInsights = "SELECT * FROM " + AdminUserInsightsRepository.TABLE;
 
-//        await().atMost(5, TimeUnit.SECONDS)
-//                .until(() -> {
-//                    verify(transactionsUpdateEventListener).handleTransactionsUpdateEvent(any());
-//                    return true;
-//                });
+        around()
+                .withSQL(selectAllInsights, selectCursor, selectInsights)
+                .run(() -> syncTransactionService.syncTransactions());
     }
 
     private Map<String, RateDto> getTestRates() {
+        BigDecimal crossRate = new BigDecimal(0.00012548);
         Map<String, RateDto> rateDtoMap = new HashMap<>(3);
-        rateDtoMap.put("USD", RateDto.builder().currencyName("USD").btcRate(BigDecimal.TEN).usdRate(BigDecimal.ONE).build());
-        rateDtoMap.put("BTC", RateDto.builder().currencyName("BTC").btcRate(BigDecimal.ONE).usdRate(BigDecimal.TEN).build());
-        rateDtoMap.put("LTC", RateDto.builder().currencyName("LTC").btcRate(BigDecimal.TEN).usdRate(BigDecimal.TEN).build());
+        rateDtoMap.put("USD", RateDto.builder().currencyName("USD").btcRate(BigDecimal.TEN).usdRate(BigDecimal.ONE).rateBtcForOneUsd(crossRate).build());
+        rateDtoMap.put("BTC", RateDto.builder().currencyName("BTC").btcRate(BigDecimal.ONE).usdRate(BigDecimal.TEN).rateBtcForOneUsd(crossRate).build());
+        rateDtoMap.put("LTC", RateDto.builder().currencyName("LTC").btcRate(BigDecimal.TEN).usdRate(BigDecimal.TEN).rateBtcForOneUsd(crossRate).build());
         return rateDtoMap;
     }
 
     @Configuration
     @Profile("test")
-    @Import({
-            HSQLConfiguration.class
-    })
     static class InnerConfig extends AbstractDatabaseContextTest.AppContextConfig {
 
         @Autowired
-        @Qualifier(TEST_CORE_NP_TEMPLATE)
+        @Qualifier(TEST_CORE_NP_TEMPLATE) // it's ok bean will be imported later
         private NamedParameterJdbcOperations coreNPJdbcOperations;
 
         @Autowired
         @Qualifier(TEST_ADMIN_NP_TEMPLATE)
         private NamedParameterJdbcOperations adminNPJdbcOperations;
 
-//        @Autowired
-//        @Qualifier(TEST_CORE_DATASOURCE)
-//        public DataSource dataSource;
+        @Autowired
+        @Qualifier(TEST_ADMIN_JDBC_OPS)
+        private JdbcOperations adminJdbcOperations;
 
         @Autowired
         private ApplicationEventPublisher applicationEventPublisher;
 
         @Bean
         public AdminTransactionRepository adminTransactionRepository() {
-            return Mockito.mock(AdminTransactionRepository.class);
+            return new AdminTransactionRepositoryImpl(adminJdbcOperations, adminNPJdbcOperations);
         }
 
         @Bean

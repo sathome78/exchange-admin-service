@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -49,7 +50,8 @@ public class SyncTransactionServiceImpl implements SyncTransactionService {
         final MutableBoolean shouldProceed = new MutableBoolean(false);
         final Set<Integer> updateUserIds = new HashSet<>();
         do {
-            long lastIndex = cursorRepository.findLastByTable(CoreTransactionRepository.TABLE);
+            Optional<Long> result = adminTransactionRepository.findMaxId();
+            long lastIndex = result.orElse(-1L);
             final List<CoreTransaction> transactions = coreTransactionRepository.findAllLimited(chunkSize, lastIndex);
             shouldProceed.setValue(! transactions.isEmpty());
 
@@ -62,9 +64,9 @@ public class SyncTransactionServiceImpl implements SyncTransactionService {
                     } else if (!(t.getCurrencyName().equalsIgnoreCase("USD"))) {
                         t.setRateInUsd(rateDto.getUsdRate());
                     }
+                    t.setRateBtcForOneUsd(rateDto.getRateBtcForOneUsd());
                 });
                 adminTransactionRepository.batchInsert(transactions);
-                cursorRepository.updateCursorByTable(CoreTransactionRepository.UPDATE_CURSOR_SQL);
             }
         } while (shouldProceed.getValue());
         if (! updateUserIds.isEmpty()) {
