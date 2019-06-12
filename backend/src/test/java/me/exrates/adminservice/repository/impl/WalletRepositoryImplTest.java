@@ -195,6 +195,13 @@ public class WalletRepositoryImplTest extends DataComparisonTest {
     }
 
     @Test
+    public void updateSignOfCertaintyForCurrency_ok() {
+        around()
+                .withSQL("SELECT * FROM " + WalletRepository.TABLE_NAME_1)
+                .run(() -> walletRepository.updateSignOfCertaintyForCurrency(1, Boolean.TRUE));
+    }
+
+    @Test
     public void updateSignOfMonitoringForCurrency_ok() {
         around()
                 .withSQL("SELECT * FROM " + WalletRepository.TABLE_NAME_1)

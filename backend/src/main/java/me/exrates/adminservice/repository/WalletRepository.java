@@ -39,6 +39,8 @@ public interface WalletRepository {
 
     void updateAccountingImbalance(String currencyName, BigDecimal accountingProfit, BigDecimal accountingManualBalanceChanges);
 
+    void updateSignOfCertaintyForCurrency(int currencyId, boolean signOfCertainty);
+    
     void updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring);
 
     void updateMonitoringRangeForCurrency(int currencyId, BigDecimal coinRange, boolean checkByCoinRange, BigDecimal usdRange, boolean checkByUsdRange);

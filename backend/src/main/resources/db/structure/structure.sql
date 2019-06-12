@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS COMPANY_EXTERNAL_WALLET_BALANCES
     total_balance_usd     NUMERIC(30, 8)                          DEFAULT 0,
     total_balance_btc     NUMERIC(30, 8)                          DEFAULT 0,
     last_updated_at       TIMESTAMP                      NULL     DEFAULT CURRENT_TIMESTAMP,
+    sign_of_certainty     TINYINT(1)                     NOT NULL DEFAULT 0,
     sign_of_monitoring    TINYINT(1)                     NOT NULL DEFAULT 0,
     coin_range            NUMERIC(30, 8)                          DEFAULT 0,
     check_coin_range      TINYINT(1)                     NOT NULL DEFAULT 0,
