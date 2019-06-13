@@ -1,0 +1,61 @@
+[ {
+  "created" : {
+    "year" : 2019,
+    "month" : "MARCH",
+    "day" : 3,
+    "chronology" : {
+      "id" : "ISO",
+      "calendarType" : "iso8601"
+    },
+    "dayOfMonth" : 3,
+    "dayOfWeek" : "SUNDAY",
+    "era" : "CE",
+    "dayOfYear" : 62,
+    "leapYear" : false,
+    "monthValue" : 3
+  },
+  "userId" : 1,
+  "rateBtcForOneUsd" : 1.5E-6,
+  "refillAmountUsd" : 1,
+  "withdrawAmountUsd" : 1,
+  "inoutCommissionUsd" : 0.2,
+  "transferInAmountUsd" : 1,
+  "transferOutAmountUsd" : 1,
+  "transferCommissionUsd" : 0.2,
+  "tradeSellCount" : 4,
+  "tradeBuyCount" : 4,
+  "tradeAmountUsd" : 20,
+  "tradeCommissionUsd" : 1,
+  "balanceDynamicsUsd" : -10,
+  "sourceIds" : [ 1, 2, 3, 4 ]
+}, {
+  "created" : {
+    "year" : 2019,
+    "month" : "MARCH",
+    "day" : 4,
+    "chronology" : {
+      "id" : "ISO",
+      "calendarType" : "iso8601"
+    },
+    "dayOfMonth" : 4,
+    "dayOfWeek" : "MONDAY",
+    "era" : "CE",
+    "dayOfYear" : 63,
+    "leapYear" : false,
+    "monthValue" : 3
+  },
+  "userId" : 1,
+  "rateBtcForOneUsd" : 1.5E-6,
+  "refillAmountUsd" : 1,
+  "withdrawAmountUsd" : 1,
+  "inoutCommissionUsd" : 0.2,
+  "transferInAmountUsd" : 1,
+  "transferOutAmountUsd" : 1,
+  "transferCommissionUsd" : 0.2,
+  "tradeSellCount" : 4,
+  "tradeBuyCount" : 4,
+  "tradeAmountUsd" : 20,
+  "tradeCommissionUsd" : 1,
+  "balanceDynamicsUsd" : -10,
+  "sourceIds" : [ 1, 2, 3, 4 ]
+} ]

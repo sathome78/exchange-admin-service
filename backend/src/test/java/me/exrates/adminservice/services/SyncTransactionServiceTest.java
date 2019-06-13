@@ -7,8 +7,8 @@ import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.core.repository.impl.CoreTransactionRepositoryImpl;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.repository.AdminTransactionRepository;
-import me.exrates.adminservice.repository.AdminUserInsightsRepository;
 import me.exrates.adminservice.repository.CursorRepository;
+import me.exrates.adminservice.repository.UserInsightRepository;
 import me.exrates.adminservice.repository.impl.AdminTransactionRepositoryImpl;
 import me.exrates.adminservice.repository.impl.CursorRepositoryImpl;
 import me.exrates.adminservice.services.impl.SyncTransactionServiceImpl;
@@ -64,7 +64,7 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
     public void syncTransactions_nonEmpty() {
         final String selectAllInsights = "SELECT * FROM " + AdminTransactionRepository.TABLE;
         final String selectCursor = "SELECT * FROM " + CursorRepository.TABLE_NAME;
-        final String selectInsights = "SELECT * FROM " + AdminUserInsightsRepository.TABLE;
+        final String selectInsights = "SELECT * FROM " + UserInsightRepository.TABLE;
 
         around()
                 .withSQL(selectAllInsights, selectCursor, selectInsights)

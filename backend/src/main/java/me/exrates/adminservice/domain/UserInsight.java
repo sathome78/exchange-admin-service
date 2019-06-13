@@ -21,8 +21,11 @@ public class UserInsight {
     private BigDecimal refillAmountUsd;
     private BigDecimal withdrawAmountUsd;
     private BigDecimal inoutCommissionUsd;
-    private BigDecimal transferAmountUsd;
+    private BigDecimal transferInAmountUsd;
+    private BigDecimal transferOutAmountUsd;
     private BigDecimal transferCommissionUsd;
+    private Integer tradeSellCount;
+    private Integer tradeBuyCount;
     private BigDecimal tradeAmountUsd;
     private BigDecimal tradeCommissionUsd;
     private BigDecimal balanceDynamicsUsd;
