@@ -1,9 +1,8 @@
 package me.exrates.adminservice.repository.impl;
 
 import lombok.extern.log4j.Log4j2;
-import me.exrates.adminservice.domain.PagedResult;
 import me.exrates.adminservice.domain.UserInsight;
-import me.exrates.adminservice.repository.AdminUserInsightsRepository;
+import me.exrates.adminservice.repository.UserInsightRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,7 +14,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,32 +24,41 @@ import static me.exrates.adminservice.configurations.AdminDatasourceConfiguratio
 
 @Repository
 @Log4j2
-public class AdminUserInsightsRepositoryImpl implements AdminUserInsightsRepository {
+public class UserInsightRepositoryImpl implements UserInsightRepository {
+
+    private static final int DEFAULT_LIMIT = 20;
+    private static final String LIMIT_KEY = "limit";
+    private static final String OFFSET_KEY = "offset";
 
     private final NamedParameterJdbcOperations namedParameterJdbcOperations;
 
     @Autowired
-    public AdminUserInsightsRepositoryImpl(@Qualifier(ADMIN_NP_TEMPLATE) NamedParameterJdbcOperations namedParameterJdbcOperations) {
+    public UserInsightRepositoryImpl(@Qualifier(ADMIN_NP_TEMPLATE) NamedParameterJdbcOperations namedParameterJdbcOperations) {
         this.namedParameterJdbcOperations = namedParameterJdbcOperations;
     }
 
     @Override
-    public PagedResult<UserInsight> findAll(int limit, int offset) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        String limitCondition = " LIMIT 20 ";
-        if (limit > 0) {
-            limitCondition = "LIMIT :size";
-            params.addValue("size", limit);
+    public List<UserInsight> findAll(int limit, int offset) {
+        String limitCondition = " LIMIT :" + LIMIT_KEY;
+        Map<String, Integer> params = new HashMap<>();
+        params.put(LIMIT_KEY, DEFAULT_LIMIT);
+        if (limit != DEFAULT_LIMIT && limit > 0) {
+            params.put(LIMIT_KEY, limit);
         }
         String offsetCondition = "";
         if (offset > 0) {
-            offsetCondition = " OFFSET :step ";
-            params.addValue("step", offset);
+            offsetCondition = "OFFSET :" + OFFSET_KEY;
+            params.put(OFFSET_KEY, offset);
         }
-        String sql = "SELECT * FROM " + TABLE + " ORDER BY " + COL_CREATED + " ASC, " + COL_USER_ID + " ASC "
-                + limitCondition + offsetCondition;
-        final List<UserInsight> insights = namedParameterJdbcOperations.query(sql, params, getRowMapper());
-        return new PagedResult<>(getTotalAmount(), insights);
+        String sql = "SELECT * FROM " + TABLE + limitCondition + offsetCondition;
+        return namedParameterJdbcOperations.query(sql, params, getRowMapper());
+    }
+
+    @Override
+    public List<UserInsight> findAllByUserId(int userId) {
+        String sql = "SELECT * FROM " + TABLE + " WHERE " + COL_USER_ID + " = :userId";
+        MapSqlParameterSource params = new MapSqlParameterSource("userId", userId);
+        return namedParameterJdbcOperations.query(sql, params, getRowMapper());
     }
 
     private int getTotalAmount() {
@@ -72,20 +82,24 @@ public class AdminUserInsightsRepositoryImpl implements AdminUserInsightsReposit
                 .refillAmountUsd(rs.getBigDecimal(COL_REFILL_AMOUNT_USD))
                 .withdrawAmountUsd(rs.getBigDecimal(COL_WITHDRAW_AMOUNT_USD))
                 .inoutCommissionUsd(rs.getBigDecimal(COL_INOUT_COMMISSION_USD))
-                .transferAmountUsd(rs.getBigDecimal(COL_TRANSFER_AMOUNT_USD))
+                .transferInAmountUsd(rs.getBigDecimal(COL_TRANSFER_IN_AMOUNT_USD))
+                .transferOutAmountUsd(rs.getBigDecimal(COL_TRANSFER_OUT_AMOUNT_USD))
                 .transferCommissionUsd(rs.getBigDecimal(COL_TRANSFER_COMMISSION_USD))
+                .tradeSellCount(rs.getInt(COL_TRADE_SELL_COUNT))
+                .tradeBuyCount(rs.getInt(COL_TRADE_BUY_COUNT))
                 .tradeAmountUsd(rs.getBigDecimal(COL_TRADE_AMOUNT_USD))
                 .tradeCommissionUsd(rs.getBigDecimal(COL_TRADE_COMMISSION_USD))
                 .balanceDynamicsUsd(rs.getBigDecimal(COL_BALANCE_DYNAMICS_USD))
-                .sourceIds(getSourceIds(rs.getString(COL_SOURCE_IDS)))
+                .sourceIds(toList(rs.getString(COL_SOURCE_IDS)))
                 .build();
     }
 
-    private List<Integer> getSourceIds(String ids) {
-        String [] values = ids.split(",");
-        return Arrays.stream(values)
-                .filter(StringUtils::isNotBlank)
-                .map(v -> Integer.parseInt(v.trim()))
+    private List<Integer> toList(String value) {
+        if (StringUtils.isEmpty(value)) {
+            return Collections.EMPTY_LIST;
+        }
+        return Arrays.stream(value.split(","))
+                .map(s -> Integer.parseInt(s.trim()))
                 .collect(Collectors.toList());
     }
 }
