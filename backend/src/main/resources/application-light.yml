@@ -68,4 +68,4 @@ logging:
 
 angular:
   allowed:
-    origins: http://localhost,http://localhost:4200,http://localhost:4400
+    origins: http://localhost:4200
