@@ -86,12 +86,6 @@ export class ClientManagersComponent implements OnInit {
     client_active_5y: ''
   }];
 
-
-
-
-
-
-
   constructor() { }
 
   ngOnInit() {
