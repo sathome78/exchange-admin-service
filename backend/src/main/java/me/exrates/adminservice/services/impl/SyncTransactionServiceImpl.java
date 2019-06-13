@@ -5,7 +5,6 @@ import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.events.TransactionsUpdateEvent;
 import me.exrates.adminservice.repository.AdminTransactionRepository;
-import me.exrates.adminservice.repository.CursorRepository;
 import me.exrates.adminservice.services.ExchangeRatesService;
 import me.exrates.adminservice.services.SyncTransactionService;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -25,7 +24,6 @@ public class SyncTransactionServiceImpl implements SyncTransactionService {
 
     private final AdminTransactionRepository adminTransactionRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final CursorRepository cursorRepository;
     private final CoreTransactionRepository coreTransactionRepository;
     private final ExchangeRatesService exchangeRatesService;
 
@@ -35,12 +33,10 @@ public class SyncTransactionServiceImpl implements SyncTransactionService {
     @Autowired
     public SyncTransactionServiceImpl(AdminTransactionRepository adminTransactionRepository,
                                       ApplicationEventPublisher applicationEventPublisher,
-                                      @Qualifier(value = "cursorRepository") CursorRepository cursorRepository,
                                       CoreTransactionRepository coreTransactionRepository,
                                       ExchangeRatesService exchangeRatesService) {
         this.adminTransactionRepository = adminTransactionRepository;
         this.applicationEventPublisher = applicationEventPublisher;
-        this.cursorRepository = cursorRepository;
         this.coreTransactionRepository = coreTransactionRepository;
         this.exchangeRatesService = exchangeRatesService;
     }

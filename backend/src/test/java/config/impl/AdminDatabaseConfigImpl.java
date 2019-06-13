@@ -72,7 +72,7 @@ public class AdminDatabaseConfigImpl implements DatabaseConfig {
 
     @Override
     public String getTestTable() {
-        return "CURSORS";
+        return "TRANSACTIONS";
     }
 
     @Override
