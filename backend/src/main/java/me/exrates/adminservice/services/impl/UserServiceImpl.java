@@ -2,7 +2,7 @@ package me.exrates.adminservice.services.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.domain.User;
-import me.exrates.adminservice.repository.AdminUserRepository;
+import me.exrates.adminservice.repository.UserRepository;
 import me.exrates.adminservice.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,10 +19,10 @@ import java.util.Set;
 @Log4j2
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-    private final AdminUserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(AdminUserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
