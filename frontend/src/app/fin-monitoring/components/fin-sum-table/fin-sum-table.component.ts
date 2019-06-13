@@ -9,7 +9,7 @@ import { PopupService } from 'src/app/services/popup.service';
 export class FinSumTableComponent implements OnInit {
 
   constructor(
-    private popupService: PopupService
+    public popupService: PopupService
     ) { }
 
   ngOnInit() {
