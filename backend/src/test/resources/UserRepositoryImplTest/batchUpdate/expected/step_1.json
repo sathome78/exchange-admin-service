@@ -1,0 +1,15 @@
+{
+  "sql" : "SELECT * FROM USERS",
+  "content" : [ {
+    "user_id" : "43242432",
+    "pub_id" : "HJGFJHFGSDASDGFSD",
+    "email" : "admin@exrates.me",
+    "password" : "{bcrypt}$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.",
+    "regdate" : "p(any)",
+    "phone" : null,
+    "user_status" : "ACTIVATED",
+    "user_role" : "ADMINISTRATOR",
+    "use2fa" : "0",
+    "kyc_status" : "success"
+  } ]
+}

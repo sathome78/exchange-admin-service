@@ -1,10 +1,9 @@
 package me.exrates.adminservice.repository.impl;
 
 import me.exrates.adminservice.core.domain.CoreUser;
-import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.domain.User;
 import me.exrates.adminservice.domain.enums.UserRole;
-import me.exrates.adminservice.repository.AdminUserRepository;
+import me.exrates.adminservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -19,25 +18,18 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static me.exrates.adminservice.core.repository.CoreUserRepository.COL_EMAIL;
-import static me.exrates.adminservice.core.repository.CoreUserRepository.COL_PASSWORD;
-import static me.exrates.adminservice.core.repository.CoreUserRepository.COL_USER_ID;
-import static me.exrates.adminservice.core.repository.CoreUserRepository.COL_USER_ROLE;
-import static me.exrates.adminservice.core.repository.CoreUserRepository.TABLE;
-
 @Repository
-public class AdminUserRepositoryImpl implements AdminUserRepository {
+public class UserRepositoryImpl implements UserRepository {
 
     private final NamedParameterJdbcOperations adminTemplate;
     private final JdbcOperations jdbcOperations;
 
     @Autowired
-    public AdminUserRepositoryImpl(@Qualifier("adminNPTemplate") NamedParameterJdbcOperations adminTemplate,
-                                   @Qualifier("adminTemplate") JdbcOperations jdbcOperations) {
+    public UserRepositoryImpl(@Qualifier("adminNPTemplate") NamedParameterJdbcOperations adminTemplate,
+                              @Qualifier("adminTemplate") JdbcOperations jdbcOperations) {
         this.adminTemplate = adminTemplate;
         this.jdbcOperations = jdbcOperations;
     }
@@ -45,21 +37,11 @@ public class AdminUserRepositoryImpl implements AdminUserRepository {
     @Override
     public Optional<User> findOne(String username) throws UsernameNotFoundException {
         try {
-            String sql = "SELECT * FROM " + CoreUserRepository.TABLE + " WHERE email = :username";
+            String sql = "SELECT * FROM " + TABLE + " WHERE email = :username";
             MapSqlParameterSource params = new MapSqlParameterSource("username", username);
             return Optional.ofNullable(adminTemplate.queryForObject(sql, params, getRowMapper()));
         } catch (DataAccessException e) {
             return Optional.empty();
-        }
-    }
-
-    @Override
-    public Integer findMaxUserId() {
-        try {
-            String sql = "SELECT MAX(" + COL_USER_ID + ") FROM " + TABLE;
-            return adminTemplate.queryForObject(sql, Collections.emptyMap(), Integer.class);
-        } catch (DataAccessException e) {
-           return -1;
         }
     }
 

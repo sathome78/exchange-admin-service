@@ -9,7 +9,7 @@ import { PopupService } from 'src/app/services/popup.service';
 export class FinDiffTableComponent implements OnInit {
 
   constructor(
-    private popupService: PopupService
+    public popupService: PopupService
     ) { }
 
   ngOnInit() {

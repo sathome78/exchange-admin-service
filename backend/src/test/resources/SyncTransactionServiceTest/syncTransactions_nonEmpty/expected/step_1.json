@@ -2,9 +2,6 @@
   "sql" : "SELECT * FROM TRANSACTIONS",
   "content" : [ ]
 }, {
-  "sql" : "SELECT * FROM CURSORS",
-  "content" : [ ]
-}, {
   "sql" : "SELECT * FROM USER_ANNUAL_INSIGHTS",
   "content" : [ ]
 } ]

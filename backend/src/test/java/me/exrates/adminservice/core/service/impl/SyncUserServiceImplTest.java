@@ -4,8 +4,8 @@ import config.DataComparisonTest;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.core.repository.impl.CoreUserRepositoryImpl;
 import me.exrates.adminservice.core.service.SyncUserService;
-import me.exrates.adminservice.repository.AdminUserRepository;
-import me.exrates.adminservice.repository.impl.AdminUserRepositoryImpl;
+import me.exrates.adminservice.repository.UserRepository;
+import me.exrates.adminservice.repository.impl.UserRepositoryImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +73,8 @@ public class SyncUserServiceImplTest extends DataComparisonTest {
 
         @Bean
         @Profile("test")
-        public AdminUserRepository adminUserRepository() {
-            return new AdminUserRepositoryImpl(adminNPJdbcOperations, adminJdbcOperations);
+        public UserRepository adminUserRepository() {
+            return new UserRepositoryImpl(adminNPJdbcOperations, adminJdbcOperations);
         }
 
         @Bean
