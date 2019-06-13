@@ -17,7 +17,8 @@ public interface CoreTransactionRepository {
     String COL_DATETIME = "datetime";
     String COL_RATE_IN_USD = "rate_in_usd";
     String COL_RATE_IN_BTC = "rate_in_btc";
-    String UPDATE_CURSOR_SQL =  "REPLACE INTO CURSORS (last_id, table_name, table_column) SELECT MAX(id), 'TRANSACTION', 'id' FROM TRANSACTION;";
+    String COL_SOURCE_ID = "source_id";
+    String UPDATE_CURSOR_SQL =  "REPLACE INTO CURSORS (last_id, table_name, table_column) SELECT MAX(id), 'TRANSACTION', 'id' FROM TRANSACTIONS;";
 
     List<CoreTransaction> findAllLimited(int limit, long position);
 }

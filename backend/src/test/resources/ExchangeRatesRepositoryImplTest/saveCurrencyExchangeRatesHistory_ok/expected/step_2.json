@@ -1,0 +1,12 @@
+{
+  "sql" : "SELECT * FROM CURRENCY_RATES_HISTORY",
+  "content" : [ {
+    "id" : "1",
+    "content" : "p(any)",
+    "created_at" : "p(any)"
+  }, {
+    "id" : "2",
+    "content" : "",
+    "created_at" : "p(any)"
+  } ]
+}

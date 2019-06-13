@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Log4j2
 public class AdminServiceApplication{
 
-
     public static void main(String[] args) {
         SpringApplication.run(AdminServiceApplication.class, args);
     }

@@ -1,7 +1,9 @@
 package me.exrates.adminservice.configurations;
 
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.SSMGetter;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +30,7 @@ public class AdminDatasourceConfiguration extends DatabaseConfiguration {
 
     public static final String ADMIN_DATASOURCE = "adminDataSource";
     public static final String ADMIN_JDBC_OPS = "adminTemplate";
-    public static final String ADMIN_NP_TEMPLATE ="adminNPTemplate";
+    public static final String ADMIN_NP_TEMPLATE = "adminNPTemplate";
 
     @Value("${db-admin.datasource.url}")
     private String databaseUrl;
@@ -48,7 +50,13 @@ public class AdminDatasourceConfiguration extends DatabaseConfiguration {
     @Primary
     @Bean(name = ADMIN_DATASOURCE)
     public DataSource dataSource() {
-        return createDataSource();
+        final HikariDataSource dataSource = createDataSource();
+        Flyway flyway = Flyway.configure()
+                .dataSource(databaseUrl, databaseUsername, getDatabasePassword())
+                .baselineOnMigrate(true)
+                .load();
+        flyway.migrate();
+        return dataSource;
     }
 
     @Primary
