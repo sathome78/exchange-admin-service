@@ -1,0 +1,11 @@
+{
+  "sql" : "SELECT * FROM CURRENT_CURRENCY_BALANCES",
+  "content" : [ {
+    "id" : "1",
+    "currency_id" : "1",
+    "currency_name" : "TEST_COIN",
+    "balance" : "0E-8",
+    "last_updated_at" : "p(any)",
+    "schedule_last_updated_at" : "p(any)"
+  } ]
+}
