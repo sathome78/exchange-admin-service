@@ -50,13 +50,7 @@ public class AdminLightDatasourceConfiguration extends DatabaseConfiguration {
     @Primary
     @Bean(name = "adminDataSource")
     public DataSource dataSource() {
-        final HikariDataSource dataSource = createDataSource();
-        try {
-            populateDefaultData(dataSource);
-        } catch (SQLException e) {
-            log.error("FAILED to populate default data", e);
-        }
-        return dataSource;
+        return createDataSource();
     }
 
     @Primary
@@ -100,16 +94,4 @@ public class AdminLightDatasourceConfiguration extends DatabaseConfiguration {
         return databaseDriverName;
     }
 
-    private void populateDefaultData(DataSource dataSource) throws SQLException {
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("db/structure/data.sql"));
-        populator.addScript(new ClassPathResource("db/structure/insert-data.sql"));
-        // test data
-
-
-        Connection connection = dataSource.getConnection();
-        populator.populate(connection);
-
-        connection.close();
-    }
 }
