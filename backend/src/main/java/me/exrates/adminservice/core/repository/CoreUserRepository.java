@@ -1,6 +1,9 @@
 package me.exrates.adminservice.core.repository;
 
 import me.exrates.adminservice.core.domain.CoreUser;
+import me.exrates.adminservice.core.domain.FilterDto;
+import me.exrates.adminservice.core.domain.UserDashboardDto;
+import me.exrates.adminservice.core.domain.UserInfoDto;
 
 import java.util.List;
 import java.util.Map;
@@ -28,4 +31,8 @@ public interface CoreUserRepository {
     Optional<CoreUser> findByUsername(String username);
 
     Map<Integer, String> findAllUsersIdAndEmail();
+
+    UserDashboardDto getUsersDashboard();
+
+    List<UserInfoDto> getUserInfoList(FilterDto filter, int limit, int offset);
 }
