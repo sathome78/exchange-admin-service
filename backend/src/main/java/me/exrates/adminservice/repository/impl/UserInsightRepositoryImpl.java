@@ -7,17 +7,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.exrates.adminservice.configurations.AdminDatasourceConfiguration.ADMIN_NP_TEMPLATE;
@@ -61,17 +66,16 @@ public class UserInsightRepositoryImpl implements UserInsightRepository {
         return namedParameterJdbcOperations.query(sql, params, getRowMapper());
     }
 
-    private int getTotalAmount() {
-        try {
-            String sqlCount = "SELECT COUNT(*) FROM " + TABLE;
-            Optional<Integer> result = Optional.ofNullable(namedParameterJdbcOperations.queryForObject(sqlCount, Collections.emptyMap(), Integer.class));
-            return result.orElse(0);
-        } catch (DataAccessException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("No records found for table " + TABLE);
+    @Override
+    public Set<Integer> getActiveUserIds() {
+        String sql = "SELECT DISTINCT(" + COL_USER_ID + ") FROM " + TABLE;
+        return namedParameterJdbcOperations.query(sql, Collections.emptyMap(), rs -> {
+            final Set<Integer> userIds = new HashSet<>();
+            while (rs.next()) {
+                userIds.add(rs.getInt(COL_USER_ID));
             }
-            return 0;
-        }
+            return userIds;
+        });
     }
 
     private RowMapper<UserInsight> getRowMapper() {

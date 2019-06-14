@@ -1,6 +1,7 @@
 package me.exrates.adminservice.repository.impl;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import config.DataComparisonTest;
 import me.exrates.adminservice.domain.UserInsight;
 import me.exrates.adminservice.repository.UserInsightRepository;
@@ -20,10 +21,14 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static me.exrates.adminservice.repository.UserInsightRepository.TABLE;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -81,6 +86,13 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
                 .run(() -> userInsights.addAll(userInsightRepository.findAllByUserId(1)));
         
         assertEquals(2, userInsights.size());
+    }
+
+    @Test
+    public void getActiveUserIds() throws SQLException {
+        prepareTestData(getInsertData());
+        final Set<Integer> activeUserIds = userInsightRepository.getActiveUserIds();
+        assertThat(activeUserIds, is(ImmutableSet.of(1, 2)));
     }
 
     @Test
