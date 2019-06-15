@@ -1,8 +1,8 @@
 package me.exrates.adminservice.configurations;
 
+import lombok.extern.log4j.Log4j2;
 import me.exrates.SSMGetter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import me.exrates.SSMGetterImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +19,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
+@Log4j2
 @Configuration
 @Order(2)
 public class CoreDatasourceConfiguration extends DatabaseConfiguration {
@@ -36,6 +37,7 @@ public class CoreDatasourceConfiguration extends DatabaseConfiguration {
     private String ssmPath;
 
     @Autowired
+    @Qualifier("coreSSMGetter")
     private SSMGetter ssmGetter;
 
     @Bean(name = "coreDataSource")
@@ -79,5 +81,24 @@ public class CoreDatasourceConfiguration extends DatabaseConfiguration {
     @Override
     protected String getDatabaseDriverClassName() {
         return databaseDriverName;
+    }
+
+    @Bean("coreSSMGetter")
+    public SSMGetter ssmGetter() {
+        if (ssmMode.equals("develop")) {
+            return new MockSSM();
+        }
+        return new SSMGetterImpl();
+    }
+
+    private class MockSSM implements SSMGetter {
+        MockSSM() {
+            log.info("Using mock core ssm lookup...");
+        }
+
+        @Override
+        public String lookup(String s) {
+            return "KQmK82dd";
+        }
     }
 }
