@@ -4,15 +4,11 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.utils.LogUtils;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.concurrent.TimeUnit;
 
 @Log4j2
 public abstract class DatabaseConfiguration {
-
-    @Value("${ssm.mode}")
-    String ssmMode;
 
     protected abstract String getDatabaseUrl();
 

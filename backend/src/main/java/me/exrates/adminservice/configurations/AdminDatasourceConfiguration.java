@@ -3,7 +3,6 @@ package me.exrates.adminservice.configurations;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.SSMGetter;
-import me.exrates.SSMGetterImpl;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,7 +45,6 @@ public class AdminDatasourceConfiguration extends DatabaseConfiguration {
     private String ssmPath;
 
     @Autowired
-    @Qualifier("adminSSMGetter")
     private SSMGetter ssmGetter;
 
     @Primary
@@ -100,24 +98,5 @@ public class AdminDatasourceConfiguration extends DatabaseConfiguration {
     @Override
     protected String getDatabaseDriverClassName() {
         return databaseDriverName;
-    }
-
-    @Bean("adminSSMGetter")
-    public SSMGetter ssmGetter() {
-        if (ssmMode.equals("develop")) {
-            return new MockSSM();
-        }
-        return new SSMGetterImpl();
-    }
-
-    private class MockSSM implements SSMGetter {
-        MockSSM() {
-            log.info("Using mock admin ssm lookup...");
-        }
-
-        @Override
-        public String lookup(String s) {
-            return "root";
-        }
     }
 }

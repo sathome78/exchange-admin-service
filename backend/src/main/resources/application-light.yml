@@ -23,7 +23,7 @@ db-admin:
     url: jdbc:mysql://admin-mysql:3306/admin_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
   ssm:
-    password-path:
+    password-path: admin
 
 db-core:
   datasource:
@@ -31,10 +31,10 @@ db-core:
     url: jdbc:mysql://exdbdev.cedlveyttji9.us-east-2.rds.amazonaws.com:3306/dbdev2?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: exdevdb
   ssm:
-    password-path:
+    password-path: core
 
 ssm:
-  mode: develop
+  develop-mode: true
 
 api:
   exchange:
