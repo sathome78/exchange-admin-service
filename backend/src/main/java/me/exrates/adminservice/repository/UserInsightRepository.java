@@ -2,7 +2,9 @@ package me.exrates.adminservice.repository;
 
 import me.exrates.adminservice.domain.UserInsight;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface UserInsightRepository {
@@ -24,9 +26,13 @@ public interface UserInsightRepository {
     String COL_BALANCE_DYNAMICS_USD = "balance_dynamics_usd";
     String COL_SOURCE_IDS = "source_ids";
 
+    List<UserInsight> findAll(int limit, int offset, Set<Integer> userIds);
+
+    List<UserInsight> findAll(Set<Integer> userIds);
+
     List<UserInsight> findAll(int limit, int offset);
 
-    List<UserInsight> findAllByUserId(int userId);
+    Set<UserInsight> findAllByUserId(int userId);
 
     Set<Integer> getActiveUserIds();
 }

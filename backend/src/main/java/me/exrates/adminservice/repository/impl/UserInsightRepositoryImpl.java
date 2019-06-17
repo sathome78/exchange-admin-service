@@ -15,12 +15,15 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,6 +37,7 @@ public class UserInsightRepositoryImpl implements UserInsightRepository {
     private static final int DEFAULT_LIMIT = 20;
     private static final String LIMIT_KEY = "limit";
     private static final String OFFSET_KEY = "offset";
+    private static final String LAST_YEAR_CONDITION = " " + COL_CREATED + " >= CURRENT_TIMESTAMP - INTERVAL 1 YEAR";
 
     private final NamedParameterJdbcOperations namedParameterJdbcOperations;
 
@@ -43,9 +47,14 @@ public class UserInsightRepositoryImpl implements UserInsightRepository {
     }
 
     @Override
-    public List<UserInsight> findAll(int limit, int offset) {
+    public List<UserInsight> findAll(int limit, int offset, Set<Integer> userIds) {
+        String userIdsCondition = "";
+        Map<String, Object> params = new HashMap<>();
+        if (!userIds.isEmpty()) {
+            userIdsCondition = " WHERE " + COL_USER_ID + " IN (:ids) ";
+            params.put("ids", userIds);
+        }
         String limitCondition = " LIMIT :" + LIMIT_KEY;
-        Map<String, Integer> params = new HashMap<>();
         params.put(LIMIT_KEY, DEFAULT_LIMIT);
         if (limit != DEFAULT_LIMIT && limit > 0) {
             params.put(LIMIT_KEY, limit);
@@ -55,15 +64,28 @@ public class UserInsightRepositoryImpl implements UserInsightRepository {
             offsetCondition = "OFFSET :" + OFFSET_KEY;
             params.put(OFFSET_KEY, offset);
         }
-        String sql = "SELECT * FROM " + TABLE + limitCondition + offsetCondition;
+        String intervalCondition = StringUtils.isEmpty(userIdsCondition)
+                ? " WHERE" + LAST_YEAR_CONDITION
+                : " AND" + LAST_YEAR_CONDITION;
+        String sql = "SELECT * FROM " + TABLE + userIdsCondition + limitCondition + offsetCondition + intervalCondition;
         return namedParameterJdbcOperations.query(sql, params, getRowMapper());
     }
 
     @Override
-    public List<UserInsight> findAllByUserId(int userId) {
-        String sql = "SELECT * FROM " + TABLE + " WHERE " + COL_USER_ID + " = :userId";
+    public List<UserInsight> findAll(Set<Integer> userIds) {
+        return findAll(DEFAULT_LIMIT, 0, Collections.emptySet());
+    }
+
+    @Override
+    public List<UserInsight> findAll(int limit, int offset) {
+        return findAll(limit, offset, Collections.emptySet());
+    }
+
+    @Override
+    public Set<UserInsight> findAllByUserId(int userId) {
+        String sql = "SELECT * FROM " + TABLE + " WHERE " + COL_USER_ID + " = :userId" + " AND" + LAST_YEAR_CONDITION;
         MapSqlParameterSource params = new MapSqlParameterSource("userId", userId);
-        return namedParameterJdbcOperations.query(sql, params, getRowMapper());
+        return new HashSet<>(namedParameterJdbcOperations.query(sql, params, getRowMapper()));
     }
 
     @Override

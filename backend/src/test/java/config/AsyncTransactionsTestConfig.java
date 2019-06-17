@@ -16,7 +16,7 @@ public class AsyncTransactionsTestConfig {
 
     @Bean
     public TransactionsUpdateEventListener transactionsUpdateEventListener() {
-        return new TransactionsUpdateEventListener();
+        return new TransactionsUpdateEventListener(userInsightsService);
     }
 
     @Bean(name = "applicationEventMulticaster")
