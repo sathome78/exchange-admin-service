@@ -67,7 +67,7 @@ public class UserInsightRepositoryImpl implements UserInsightRepository {
         String intervalCondition = StringUtils.isEmpty(userIdsCondition)
                 ? " WHERE" + LAST_YEAR_CONDITION
                 : " AND" + LAST_YEAR_CONDITION;
-        String sql = "SELECT * FROM " + TABLE + userIdsCondition + limitCondition + offsetCondition + intervalCondition;
+        String sql = "SELECT * FROM " + TABLE + userIdsCondition + intervalCondition +  limitCondition + offsetCondition;
         return namedParameterJdbcOperations.query(sql, params, getRowMapper());
     }
 
