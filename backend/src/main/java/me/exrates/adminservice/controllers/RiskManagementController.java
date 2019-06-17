@@ -25,7 +25,7 @@ public class RiskManagementController {
         this.userInsightsService = userInsightsService;
     }
 
-
+    // /api/risks/heavy-table
     @GetMapping("/heavy-table")
     @ResponseBody
     public PagedResult<UserInsightDTO> getRiskManagementTable(@RequestParam(required = false) Integer limit,

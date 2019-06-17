@@ -103,7 +103,8 @@ public abstract class AbstractDatabaseContextTest {
         String testSchemaUrl = createConnectionURL(databaseConfig.getUrl(), databaseConfig.getSchemaName(), databaseConfig);
 
         try {
-            DriverManager.getConnection(testSchemaUrl, databaseConfig.getUser(), databaseConfig.getPassword());
+            final Connection connection = DriverManager.getConnection(testSchemaUrl, databaseConfig.getUser(), databaseConfig.getPassword());
+            connection.close();
         } catch (Exception e) {
             String dbServerUrl = createConnectionURL(databaseConfig.getUrl(), "", databaseConfig);
             Connection connection = DriverManager.getConnection(dbServerUrl, databaseConfig.getUser(), databaseConfig.getPassword());

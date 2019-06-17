@@ -1,6 +1,8 @@
 package config;
 
 import me.exrates.adminservice.events.listeners.TransactionsUpdateEventListener;
+import me.exrates.adminservice.services.UserInsightsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
@@ -13,6 +15,9 @@ import java.util.concurrent.Executor;
 
 @Configuration
 public class AsyncTransactionsTestConfig {
+
+    @Autowired
+    private UserInsightsService userInsightsService;
 
     @Bean
     public TransactionsUpdateEventListener transactionsUpdateEventListener() {

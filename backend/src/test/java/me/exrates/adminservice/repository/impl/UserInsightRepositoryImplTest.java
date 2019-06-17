@@ -97,7 +97,7 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
 
     @Test
     public void findAllByUserId_whenEmpty() {
-        final List<UserInsight> userInsights = userInsightRepository.findAllByUserId(10);
+        final Set<UserInsight> userInsights = userInsightRepository.findAllByUserId(10);
         assertEquals(0, userInsights.size());
     }
 
