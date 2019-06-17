@@ -2,7 +2,7 @@ package config;
 
 import me.exrates.adminservice.events.listeners.TransactionsUpdateEventListener;
 import me.exrates.adminservice.services.UserInsightsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationEventMulticaster;
@@ -16,12 +16,14 @@ import java.util.concurrent.Executor;
 @Configuration
 public class AsyncTransactionsTestConfig {
 
-    @Autowired
-    private UserInsightsService userInsightsService;
+    @Bean
+    public UserInsightsService userInsightsService() {
+      return Mockito.mock(UserInsightsService.class);
+    }
 
     @Bean
     public TransactionsUpdateEventListener transactionsUpdateEventListener() {
-        return new TransactionsUpdateEventListener(userInsightsService);
+        return new TransactionsUpdateEventListener(userInsightsService());
     }
 
     @Bean(name = "applicationEventMulticaster")
