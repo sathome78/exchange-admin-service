@@ -40,7 +40,7 @@ public class UserInsightMapper {
 
     public static UserInsightDTO map(int userId, Set<UserInsight> entries) {
         if (entries.isEmpty()) {
-            return UserInsightDTO.empty(userId);
+            return UserInsightDTO.empty(userId, "");
         }
         UserInsightDTO dto = new UserInsightDTO();
         dto.setUserId(userId);

@@ -220,9 +220,10 @@ public class UserInsightDTO {
     private boolean noDealsButWithdrawAndRefilledYear;
 
 
-    public static UserInsightDTO empty(int userId) {
+    public static UserInsightDTO empty(int userId, String email) {
         return UserInsightDTO.builder()
                 .userId(userId)
+                .email(email)
                 .deposit(BigDecimal.ZERO)
                 .withdrawal(BigDecimal.ZERO)
                 .tradeComDay(BigDecimal.ZERO)

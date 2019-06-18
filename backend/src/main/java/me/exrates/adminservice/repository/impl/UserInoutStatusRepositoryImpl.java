@@ -29,7 +29,7 @@ public class UserInoutStatusRepositoryImpl implements UserInoutStatusRepository 
     public Map<Integer, UserInoutStatus> findAll(List<Integer> userIds) {
         String sql = "SELECT * FROM " + TABLE + " WHERE " + COL_USER_ID + " IN (:ids)";
         Map<String, Object> params = new HashMap<>();
-        params.put("isd", userIds);
+        params.put("ids", userIds);
         return namedParameterJdbcOperations.query(sql, params, rs -> {
             Map<Integer, UserInoutStatus> values = new HashMap<>();
             while (rs.next()) {

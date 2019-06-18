@@ -34,5 +34,5 @@ public interface UserInsightRepository {
 
     Set<UserInsight> findAllByUserId(int userId);
 
-    Set<Integer> getActiveUserIds();
+    Set<Integer> getActiveUserIds(int limit, int offset);
 }

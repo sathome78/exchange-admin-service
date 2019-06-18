@@ -53,6 +53,16 @@ public class UserInsightsServiceImpl implements UserInsightsService {
         this.insightsCache = buildCache();
     }
 
+    public UserInsightsServiceImpl(CoreUserRepository coreUserRepository,
+                                   UserInsightRepository userInsightRepository,
+                                   UserInoutStatusRepository userInoutStatusRepository,
+                                   LoadingCache<Integer, Set<UserInsight>> insightsCache) {
+        this.coreUserRepository = coreUserRepository;
+        this.userInsightRepository = userInsightRepository;
+        this.userInoutStatusRepository = userInoutStatusRepository;
+        this.insightsCache = insightsCache;
+    }
+
     @PostConstruct
     public void loadData() {
         reloadCache(Collections.emptySet());
@@ -60,18 +70,26 @@ public class UserInsightsServiceImpl implements UserInsightsService {
 
     @Override
     public PagedResult<UserInsightDTO> findAll(int limit, int offset) {
-        final Set<Integer> activeUserIds = userInsightRepository.getActiveUserIds();
-        List<Integer> userIds = new ArrayList<>(activeUserIds).subList(limit, offset);
-        final Map<Integer, Set<UserInsight>> storedInsights = insightsCache.getAllPresent(userIds);
-        final Map<Integer, UserInoutStatus> allBalances = userInoutStatusRepository.findAll(userIds);
-        List<UserInsightDTO> dtos = storedInsights.entrySet().stream()
-                .map(UserInsightMapper::map)
-                .peek(i -> {
-                    i.setEmail(coreUserRepository.findAllUsersIdAndEmail().getOrDefault(i.getUserId(), "not found"));
-                    UserInsightMapper.calculate(i, allBalances);
-                })
-                .collect(Collectors.toList());
-        return new PagedResult<>(activeUserIds.size(), dtos);
+        final Set<Integer> activeUserIds = userInsightRepository.getActiveUserIds(limit, offset);
+        boolean hasNextPage = limit < 1 ? activeUserIds.size() > 20 : activeUserIds.size() > limit;
+        final Map<Integer, Set<UserInsight>> storedInsights = insightsCache.getAllPresent(activeUserIds);
+        final Map<Integer, UserInoutStatus> allBalances = userInoutStatusRepository.findAll(new ArrayList<>(activeUserIds));
+        final Map<Integer, String> allUsersIdAndEmail = coreUserRepository.findAllUsersIdAndEmail();
+        final Map<Integer, UserInsightDTO> results = new HashMap<>();
+        activeUserIds.forEach(id -> {
+            UserInsightDTO dto;
+            final String email = allUsersIdAndEmail.getOrDefault(id, "not found");
+            if (storedInsights.containsKey(id)) {
+                final Set<UserInsight> userInsights = storedInsights.get(id);
+                dto = UserInsightMapper.map(id, userInsights);
+                dto.setEmail(email);
+                UserInsightMapper.calculate(dto, allBalances);
+            } else {
+                dto = UserInsightDTO.empty(id, email);
+            }
+            results.put(id, dto);
+        });
+        return new PagedResult<>(hasNextPage, results.values());
     }
 
     @Override
@@ -126,7 +144,7 @@ public class UserInsightsServiceImpl implements UserInsightsService {
     }
 
     private PagedResult<UserInsightDTO> getUserInsightDTOPagedResult(Optional<CoreUser> coreUser) {
-        PagedResult<UserInsightDTO> pagedResult = new PagedResult<>(1, new ArrayList<>());
+        PagedResult<UserInsightDTO> pagedResult = new PagedResult<>(false, new ArrayList<>());
         coreUser.ifPresent(insight -> {
             Set<UserInsight> storedInsights = insightsCache.get(insight.getUserId());
             if (Objects.isNull(storedInsights)) {

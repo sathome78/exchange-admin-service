@@ -89,9 +89,17 @@ public class UserInsightRepositoryImpl implements UserInsightRepository {
     }
 
     @Override
-    public Set<Integer> getActiveUserIds() {
-        String sql = "SELECT DISTINCT(" + COL_USER_ID + ") FROM " + TABLE;
-        return namedParameterJdbcOperations.query(sql, Collections.emptyMap(), rs -> {
+    public Set<Integer> getActiveUserIds(int limit, int offset) {
+        String limitCondition = " LIMIT :size";
+        String offsetCondition = "";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("size", limit < 1 ? DEFAULT_LIMIT + 1 : limit + 1);
+        if (offset > 0) {
+            offsetCondition = " OFFSET :shift";
+            params.addValue("shift", offset);
+        }
+        String sql = "SELECT DISTINCT(" + COL_USER_ID + ") FROM " + TABLE + limitCondition + offsetCondition;
+        return namedParameterJdbcOperations.query(sql, params, rs -> {
             final Set<Integer> userIds = new HashSet<>();
             while (rs.next()) {
                 userIds.add(rs.getInt(COL_USER_ID));

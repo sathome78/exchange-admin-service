@@ -85,7 +85,7 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
     @Test
     public void getActiveUserIds() throws SQLException {
         prepareTestData(getInsertData());
-        final Set<Integer> activeUserIds = userInsightRepository.getActiveUserIds();
+        final Set<Integer> activeUserIds = userInsightRepository.getActiveUserIds(10, 0);
         assertThat(activeUserIds, is(ImmutableSet.of(1, 2)));
     }
 
@@ -95,7 +95,7 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
         assertEquals(0, userInsights.size());
     }
 
-    private List<UserInsight> getTestUserInsights() {
+    public static List<UserInsight> getTestUserInsights() {
         UserInsight insight1 = UserInsight.builder()
                 .created(LocalDate.of(2019, 3, 3))
                 .userId(1)
