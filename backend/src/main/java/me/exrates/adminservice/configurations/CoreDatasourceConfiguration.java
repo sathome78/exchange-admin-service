@@ -1,8 +1,7 @@
 package me.exrates.adminservice.configurations;
 
+import lombok.extern.log4j.Log4j2;
 import me.exrates.SSMGetter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
+@Log4j2
 @Configuration
 @Order(2)
 public class CoreDatasourceConfiguration extends DatabaseConfiguration {

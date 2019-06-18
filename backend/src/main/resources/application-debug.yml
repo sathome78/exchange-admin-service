@@ -22,21 +22,19 @@ db-admin:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:5506/admin_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
-    password: root
   ssm:
-    password-path:
+    password-path: admin
 
 db-core:
   datasource:
-    driver-class-name: ${db-admin.datasource.driver-class-name}
-    url: ${db-admin.datasource.url}
-    username: ${db-admin.datasource.username}
-    password: ${db-admin.datasource.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://exdbdev.cedlveyttji9.us-east-2.rds.amazonaws.com:3306/dbdev2?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: exdevdb
   ssm:
-    password-path:
+    password-path: core
 
 ssm:
-  mode: develop
+  develop-mode: true
 
 api:
   exchange:

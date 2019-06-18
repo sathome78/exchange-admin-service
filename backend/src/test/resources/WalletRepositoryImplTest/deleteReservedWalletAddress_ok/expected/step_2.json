@@ -1,0 +1,4 @@
+{
+  "sql" : "SELECT * FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS",
+  "content" : [ ]
+}
