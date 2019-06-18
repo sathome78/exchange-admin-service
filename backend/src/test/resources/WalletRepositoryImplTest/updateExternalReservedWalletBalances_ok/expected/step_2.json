@@ -1,0 +1,32 @@
+[ {
+  "sql" : "SELECT * FROM COMPANY_EXTERNAL_WALLET_BALANCES",
+  "content" : [ {
+    "id" : "1",
+    "currency_id" : "1",
+    "currency_name" : "TEST_COIN",
+    "usd_rate" : "0E-8",
+    "btc_rate" : "0E-8",
+    "main_balance" : "0E-8",
+    "reserved_balance" : "1.00000000",
+    "accounting_imbalance" : "0E-8",
+    "total_balance" : "1.00000000",
+    "total_balance_usd" : "0E-8",
+    "total_balance_btc" : "0E-8",
+    "last_updated_at" : "p(any)",
+    "sign_of_certainty" : "0",
+    "sign_of_monitoring" : "0",
+    "coin_range" : "0E-8",
+    "check_coin_range" : "0",
+    "usd_range" : "0E-8",
+    "check_usd_range" : "0"
+  } ]
+}, {
+  "sql" : "SELECT * FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS",
+  "content" : [ {
+    "id" : "1",
+    "currency_id" : "1",
+    "name" : "wallet_name",
+    "wallet_address" : "wallet_address",
+    "balance" : "1.00000000"
+  } ]
+} ]

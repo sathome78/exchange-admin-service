@@ -34,3 +34,8 @@ curl -X GET \
     - to add some data to admin database /test/resources/db/data/admin/....  (please start with R__)
     
  ENJOY
+
+
+******SSM DEVELOP MODE******
+1. Set environment variable in property file: **ssm.develop-mode=true**
+2. Add environment variables in IDEA environment configurations or in console as a command when run *.jar file: **db-admin.datasource.password=password** and **db-core.datasource.password=password** (replace word 'password' to real password) 

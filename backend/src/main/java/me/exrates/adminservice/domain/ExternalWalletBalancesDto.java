@@ -36,6 +36,8 @@ public class ExternalWalletBalancesDto {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime lastUpdatedDate;
 
+    private boolean signOfCertainty;
+
     private boolean signOfMonitoring;
 
     private BigDecimal coinRange;

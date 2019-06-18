@@ -32,6 +32,8 @@ public class BalancesDto {
     private BigDecimal deviationUSD;
     private BigDecimal deviationBTC;
 
+    private boolean signOfCertainty;
+
     private boolean signOfMonitoring;
 
     private DeviationStatus deviationStatus;
