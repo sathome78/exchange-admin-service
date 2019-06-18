@@ -37,6 +37,7 @@ import static me.exrates.adminservice.repository.UserInsightRepository.TABLE;
 import static me.exrates.adminservice.repository.impl.UserInsightRepositoryImplTest.getInsertData;
 import static me.exrates.adminservice.repository.impl.UserInsightRepositoryImplTest.getTestUserInsights;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.when;
@@ -70,14 +71,15 @@ public class UserInsightsServiceImplTest extends DataComparisonTest {
     @Test
     public void findAll_byUsername() {
         final PagedResult<UserInsightDTO> pagedResult = userInsightsService.findAll("admin@exrates.me");
-
         assertEquals(getTestPageResult().getItems().get(0).getEmail(), pagedResult.getItems().get(0).getEmail());
+        assertFalse(pagedResult.isHasNextPage());
     }
 
     @Test
     public void findAll_byUserId() {
         final PagedResult<UserInsightDTO> pagedResult = userInsightsService.findAll(1);
         assertEquals(getTestPageResult().getItems().get(0).getEmail(), pagedResult.getItems().get(0).getEmail());
+        assertFalse(pagedResult.isHasNextPage());
     }
 
     @Test
@@ -86,6 +88,7 @@ public class UserInsightsServiceImplTest extends DataComparisonTest {
         assertEquals(2, pagedResult.getItems().size());
         assertEquals(getTestPageResult().getItems().get(0).getEmail(), pagedResult.getItems().get(0).getEmail());
         assertEquals("admin1@exrates.me", pagedResult.getItems().get(1).getEmail());
+        assertFalse(pagedResult.isHasNextPage());
     }
 
     private PagedResult<UserInsightDTO> getTestPageResult() {
