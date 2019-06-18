@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -54,11 +53,6 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void prepareTestSchema() throws SQLException {
-        super.prepareTestSchema();
     }
 
     @Test

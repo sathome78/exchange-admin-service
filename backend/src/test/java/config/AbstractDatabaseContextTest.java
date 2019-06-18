@@ -1,9 +1,7 @@
 package config;
 
-import com.google.common.base.Preconditions;
-import config.impl.AdminDatabaseConfigImpl;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
-import me.exrates.adminservice.utils.LogUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.flywaydb.core.Flyway;
@@ -21,25 +19,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static java.io.File.separator;
 
@@ -49,8 +43,9 @@ import static java.io.File.separator;
 public abstract class AbstractDatabaseContextTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private static final Map<String, DatabaseConfig> schemas = new ConcurrentHashMap<>();
     static final String RESOURCES_ROOT = "src/test/resources/";
+
+    protected static HikariDataSource adminDatasource;
 
     protected static final String TEST_ADMIN_DATASOURCE = "testAdminDataSource";
     protected static final String TEST_CORE_DATASOURCE = "testCoreDataSource";
@@ -58,9 +53,6 @@ public abstract class AbstractDatabaseContextTest {
     protected static final String TEST_CORE_NP_TEMPLATE = "testCoreTemplate";
     protected static final String TEST_ADMIN_JDBC_OPS = "adminJdbcOperations";
 
-    @Autowired
-    @Qualifier(DatabaseConfig.ADMIN_DB_CONFIG)
-    private DatabaseConfig  adminDbConfig;
 
     @Autowired
     @Qualifier(TEST_ADMIN_DATASOURCE)
@@ -88,56 +80,14 @@ public abstract class AbstractDatabaseContextTest {
 
     @BeforeClass
     public static void beforeClass() {
-
-    }
-
-    @PostConstruct
-    public void prepareTestSchema() throws SQLException {
-        initSchema(new AdminDatabaseConfigImpl(adminDbConfig));
-    }
-
-    private void initSchema(DatabaseConfig databaseConfig) throws SQLException {
-        Preconditions.checkNotNull(databaseConfig.getSchemaName(), "Admin Scheme name must be defined");
-        schemas.putIfAbsent(databaseConfig.getSchemaName(), databaseConfig);
-
-        String testSchemaUrl = createConnectionURL(databaseConfig.getUrl(), databaseConfig.getSchemaName(), databaseConfig);
-
-        try {
-            final Connection connection = DriverManager.getConnection(testSchemaUrl, databaseConfig.getUser(), databaseConfig.getPassword());
-            connection.close();
-        } catch (Exception e) {
-            String dbServerUrl = createConnectionURL(databaseConfig.getUrl(), "", databaseConfig);
-            Connection connection = DriverManager.getConnection(dbServerUrl, databaseConfig.getUser(), databaseConfig.getPassword());
-
-            Statement statement = connection.createStatement();
-            statement.execute(String.format("CREATE DATABASE %s;", databaseConfig.getSchemaName()));
-
-            DataSource rootDataSource = HikariDataSourceFactory.createRootDataSource(databaseConfig, testSchemaUrl);
-
-            executeMigrations();
-
-            if (!isSchemeValid(rootDataSource, databaseConfig)) {
-                throw new RuntimeException("Test scheme " + databaseConfig.getSchemaName() + " doesn't exist");
-            }
-
-            connection.close();
-        }
+        adminDatasource = HikariDataSourceFactory.createAdminDataSource();
+        rebuildSchema(adminDatasource);
+        executeMigrations(adminDatasource);
     }
 
     @AfterClass
     public static void afterClass() {
-        schemas.values().forEach(config -> {
-            try {
-                String dbServerUrl = config.getUrl().replace(config.getRootSchemeName() + "?",  "?");
-                Connection connection = DriverManager.getConnection(dbServerUrl, config.getUser(), config.getPassword());
-                Statement statement = connection.createStatement();
-                statement.execute(String.format("DROP DATABASE IF EXISTS %s;", config.getSchemaName()));
-                connection.close();
-            } catch (SQLException e) {
-                log.error("Failed to drop database in after class as", e);
-            }
-        });
-        schemas.clear();
+//        HikariDataSourceFactory.closeAdminDataSource();
     }
 
     @Rule
@@ -149,13 +99,14 @@ public abstract class AbstractDatabaseContextTest {
         before();
     }
 
-    protected void before() {
+    protected void before() throws SQLException {
 
     }
 
     @After
     public void after() {
-
+//        dataSources.values().forEach(HikariDataSource::close);
+//        dataSources.clear();
     }
 
     private void createFileTreeForTesting() throws IOException {
@@ -175,21 +126,9 @@ public abstract class AbstractDatabaseContextTest {
 
         protected abstract String getSchema();
 
-        @Autowired
-        @Qualifier(DatabaseConfig.ADMIN_DB_CONFIG)
-        protected DatabaseConfig adminDatabaseConfig;
-
-        @Bean(DatabaseConfig.ADMIN_DB_CONFIG)
-        public DatabaseConfig adminDatabaseConfig() {
-            return new AdminDatabaseConfigImpl(getSchema());
-        }
-
         @Bean(name = TEST_ADMIN_DATASOURCE)
         public DataSource adminDataSource() {
-            String dbUrl = adminDatabaseConfig.getUrl().replace(adminDatabaseConfig.getRootSchemeName() + "?", adminDatabaseConfig.getSchemaName() + "?");
-            log.debug("DB PROPS: DB URL: " + LogUtils.stripDbUrl(dbUrl));
-            log.debug("DB CONFIG: ADMIN: " + adminDatabaseConfig);
-            return HikariDataSourceFactory.createDataSource(adminDatabaseConfig.getUser(), adminDatabaseConfig.getPassword(), dbUrl, adminDatabaseConfig.getDriverClassName());
+            return HikariDataSourceFactory.createAdminDataSource();
         }
 
         @Bean(name = TEST_ADMIN_JDBC_OPS)
@@ -230,8 +169,18 @@ public abstract class AbstractDatabaseContextTest {
         }
     }
 
-    private void executeMigrations() {
+    private static void rebuildSchema(DataSource dataSource) {
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("db/tools/R__prepare_database.sql"));
+        try {
+            populator.populate(dataSource.getConnection());
+        } catch (SQLException e) {
+            log.error(e);
+           throw new RuntimeException("Failed run create table scripts " + e.getMessage(), e);
+        }
+    }
 
+    private static void executeMigrations(DataSource dataSource) {
         final String [] locations = {
                 "db/migration",
                 "db/data/admin/"
@@ -242,21 +191,5 @@ public abstract class AbstractDatabaseContextTest {
                 .locations(locations)
                 .load();
         flyway.migrate();
-    }
-
-    private String createConnectionURL(String dbUrl, String newSchemaName, DatabaseConfig config) {
-        return dbUrl.replace(config.getRootSchemeName() + "?", newSchemaName + "?");
-    }
-
-    private boolean isSchemeValid(DataSource rootDataSource, DatabaseConfig config) {
-        boolean result;
-        try {
-            final Statement statement = rootDataSource.getConnection().createStatement();
-            result = statement.execute("SELECT 1 FROM " + config.getTestTable());
-        } catch (SQLException e) {
-            logger.error(String.format("Failed to check scheme %s validity", config.getSchemaName()), e);
-            throw new RuntimeException(e);
-        }
-        return result;
     }
 }

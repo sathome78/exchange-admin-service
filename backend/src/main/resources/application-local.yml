@@ -11,7 +11,7 @@ spring:
 #    password: root
     scheme-name: admin_db
     hikari:
-      connection-timeout: 30000
+      connection-timeout: 1000
       idle-timeout: 180000
       max-lifetime: 600000
       connection-init-sql: SELECT 1 FROM DUAL;
