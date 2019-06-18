@@ -10,6 +10,7 @@ import { ExternalBalancesPopupComponent } from './popups/external-balances-popup
 import { ReactiveFormsModule } from '@angular/forms';
 import { MonitoringPopupComponent } from './popups/monitoring-popup/monitoring-popup.component';
 import { FinMonitoringService } from './services/fin-monitoring.service';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { FinMonitoringService } from './services/fin-monitoring.service';
   ],
   imports: [
     CommonModule,
+    SharedModule,
     ReactiveFormsModule
   ],
   providers: [

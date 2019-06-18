@@ -9,21 +9,49 @@
 
 <ng-container *ngIf="currTab === tabs.SUM; else diff" >
   <div class="row mt-4 pb-4">
-    <app-fin-sum-cards class="col"></app-fin-sum-cards>
+    <app-fin-sum-cards
+      class="col"
+    ></app-fin-sum-cards>
   </div>
 
-  <div class="row mt-4 pb-4" >
-    <app-fin-sum-table class="col"></app-fin-sum-table>
+  <div class="row mt-4" >
+    <app-fin-sum-table
+      class="col"
+    ></app-fin-sum-table>
+  </div>
+  <div class="row pb-4">
+    <div class="col">
+      <app-pagination
+        class="float-right"
+        [total]="100"
+        [limit]="limitT1"
+        [offset]="offsetT1"
+        (changePage)="changePageT1($event)"
+      ></app-pagination>
+    </div>
   </div>
 </ng-container>
 
 <ng-template #diff>
   <div class="row mt-4 pb-4">
-    <app-fin-diff-cards class="col"></app-fin-diff-cards>
+    <app-fin-diff-cards
+      class="col"
+    ></app-fin-diff-cards>
   </div>
-  <div class="row mt-4 pb-4">
-    <app-fin-diff-table class="col">
-
-    </app-fin-diff-table>
+  <div class="row mt-4">
+    <app-fin-diff-table
+      class="col"
+    ></app-fin-diff-table>
+  </div>
+  <div class="row pb-4">
+    <div class="col">
+      <app-pagination
+        class="float-right"
+        [total]="100"
+        [limit]="limitT2"
+        [offset]="offsetT2"
+        (changePage)="changePageT2($event)"
+      ></app-pagination>
+    </div>
   </div>
 </ng-template>

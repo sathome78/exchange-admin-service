@@ -31,45 +31,50 @@
       </form>
       <hr>
       <div *ngFor="let item of reservedWallets">
-        <div class="d-flex justify-content-between p-1">
+        <div class="d-flex justify-content-between p-1 pb-0">
           <span>{{item.name}}</span>
           <span>{{item.walletAddress}}</span>
           <span>{{item.balance}}</span>
         </div>
         <div>
-          <button class="btn m-2 btn-success">Change</button>
-          <button (click)="removeWallet(item)" class="btn m-2 btn-danger">Remove</button>
+          <button class="btn m-2 btn-success btn-sm">Change</button>
+          <button (click)="removeWallet(item)" class="btn m-2 btn-danger btn-sm">Remove</button>
         </div>
       </div>
     </div>
     <ng-container *ngIf="isAddWalletMode">
-      <hr>
-      <form [formGroup]="walletForm">
-        <div class="d-flex justify-content-between p-1">
-          <span class="w-50 pl-3 pr-2">Балансы всех резервных кошельков 3</span>
-          <input formControlName="walletAddress" class="form-control w-25">
-          <input formControlName="name" class="form-control w-25">
-        </div>
+      <hr class="mt-0">
+      <div class="modal-body pt-0">
+        <form [formGroup]="walletForm">
+          <div class="row">
+            <div class="col d-flex flex-column w-50">
+              <div class="px-1 pb-1">
+                <span class="w-50 pr-2">Балансы всех резервных кошельков 3</span>
+              </div>
+              <div class="w-50">
+                <button *ngIf="isAddWalletMode" class="btn m-1 btn-success btn-save btn-sm"
+                  (click)="saveReservedWallet('value')">Сохранить как значение</button>
+                <button *ngIf="isAddWalletMode" class="btn m-1 btn-success btn-save btn-sm"
+                  (click)="saveReservedWallet('address')">Сохранить как адрес</button>
+              </div>
 
-        <div class="d-flex justify-content-end">
-        </div>
-
-        <div class="d-flex justify-content-between p-1">
-          <div class="w-50">
-            <button *ngIf="isAddWalletMode" class="btn m-1  ml-3 btn-success btn-save"
-              (click)="saveReservedWallet('value')">Сохранить как значение</button>
-            <button *ngIf="isAddWalletMode" class="btn m-1 ml-3 btn-success btn-save"
-              (click)="saveReservedWallet('address')">Сохранить как адрес</button>
-          </div>
-          <div class="w-50">
-            <div class="d-flex justify-content-berween w-100">
-              <span class="w-50">Адрес </span>
-              <span class="w-50">Имя </span>
             </div>
-            <input formControlName="reservedWalletBalance" class="form-control d-block w-100 mt-2" (keypress)="numbersOnlyValidation($event)">
+            <div class="col d-flex flex-column">
+              <div class="d-flex flex-row">
+                <input formControlName="walletAddress" class="form-control flex-grow-1 mr-2" autocomplete="false">
+                <input formControlName="name" class="form-control flex-grow-1" autocomplete="false">
+              </div>
+              <div class="d-flex flex-row">
+                <span class="flex-grow-1 mr-2">Адрес </span>
+                <span class="flex-grow-1">Имя </span>
+              </div>
+              <div >
+                <input formControlName="reservedWalletBalance" class="form-control d-block w-100 mt-2" (keypress)="numbersOnlyValidation($event)">
+              </div>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </ng-container>
 
     <div class="modal-footer justify-content-start">

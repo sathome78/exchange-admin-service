@@ -8,26 +8,26 @@ export class FinMonitoringService {
 
   constructor(private http: HttpClient) { }
 
-  baseUrl: string = 'http://localhost:7777/api/financial-monitoring/';
+  baseUrl: string = 'http://localhost:7777/api/financial-monitoring';
 
   // Reserved Wallets
 
   createReservedWallet(wallet) {
-    return this.http.post(`${this.baseUrl}reserved-wallets?currencyId=${wallet.currencyId}`, wallet);
+    return this.http.post(`${this.baseUrl}/reserved-wallets?currencyId=${wallet.currencyId}`, wallet);
   }
 
   deleteReservedWallet(wallet) {
-    return this.http.delete(`${this.baseUrl}reserved-wallets?id=${wallet.id}
+    return this.http.delete(`${this.baseUrl}/reserved-wallets?id=${wallet.id}
     &currencyId=${wallet.currencyId}&walletAddress=${wallet.walletAddress}'`);
   }
 
   saveAsAddressReservedWallet(wallet) {
-    return this.http.put(`${this.baseUrl}reserved-wallets/as-address?id=${wallet.id}
+    return this.http.put(`${this.baseUrl}/reserved-wallets/as-address?id=${wallet.id}
     &currencyId=${wallet.currencyId}&walletAddres=${wallet.walletAddress}`, wallet);
   }
 
   saveAsNameReservedWallet(wallet) {
-    let url = `${this.baseUrl}reserved-wallets/as-name?id=${wallet.id}
+    let url = `${this.baseUrl}/reserved-wallets/as-name?id=${wallet.id}
     &currencyId=${wallet.currencyId}&walletAddres=${wallet.walletAddress}
     &reservedWalletBalance=${wallet.balance}`;
     if (wallet.name) {
@@ -37,12 +37,25 @@ export class FinMonitoringService {
   }
 
   getReservedWallets(value) {
-    return this.http.get(`${this.baseUrl}reserved-wallets/${value.currencyId}`);
+    return this.http.get(`${this.baseUrl}/reserved-wallets/${value.currencyId}`);
   }
 
   saveAccountingImbalance(value) {
-    return this.http.put(`${this.baseUrl}accounting-imbalance?currencyName=${value.currencyName}&
+    return this.http.put(`${this.baseUrl}/accounting-imbalance?currencyName=${value.currencyName}&
     accountingProfit=${value.accountingProfit}&accountingManualBalanceChanges=${value.accountingManualBalanceChanges}`, {});
+  }
+
+  getDashboardOne() {
+    return this.http.get(`${this.baseUrl}/dashboard-one`);
+  }
+  getDashboardTwo() {
+    return this.http.get(`${this.baseUrl}/dashboard-two`);
+  }
+  getExternalWallets(params) {
+    return this.http.get(`${this.baseUrl}/external-wallets?limit=${params.limit}&offset=${params.offset}`);
+  }
+  getBalancesSlice(params) {
+    return this.http.get(`${this.baseUrl}/balances-slice?limit=${params.limit}&offset=${params.offset}`);
   }
 
 }

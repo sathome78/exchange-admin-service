@@ -11,8 +11,9 @@ import { UsersModule } from '../users/users.module';
 import { LiquidityModule } from '../liquidity/liquidity.module';
 import { AuthModule } from '../auth/auth.module';
 import { SharedModule } from '../shared/shared.module';
-import { AuthInterceptor } from '../services/auth.interceptor';
+import { AuthInterceptor } from '../shared/services/auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,12 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
     UsersModule,
     LiquidityModule,
     AuthModule,
+    NgxLoadingModule.forRoot({
+      animationType: ngxLoadingAnimationTypes.pulse,
+      primaryColour:  '#ffffff',
+      secondaryColour: '#cccccc',
+      backdropBorderRadius: '3px'
+    }),
   ],
   providers: [ {
     provide: HTTP_INTERCEPTORS,

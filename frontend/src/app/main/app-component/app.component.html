@@ -5,3 +5,5 @@
 <div class="container-fluid py-3">
   <router-outlet></router-outlet>
 </div>
+
+<ngx-loading [show]="loaderService.getLoader() | async"></ngx-loading>
