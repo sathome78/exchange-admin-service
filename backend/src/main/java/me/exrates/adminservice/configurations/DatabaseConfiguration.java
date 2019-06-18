@@ -30,7 +30,6 @@ public abstract class DatabaseConfiguration {
         config.setLeakDetectionThreshold(TimeUnit.MILLISECONDS.convert(45, TimeUnit.SECONDS));
         config.setMinimumIdle(1);
         config.setIdleTimeout(30000);
-        config.setReadOnly(true);
         return new HikariDataSource(config);
     }
 }
