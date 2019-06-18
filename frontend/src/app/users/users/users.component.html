@@ -1,3 +1,55 @@
-<p>
-  users works!
-</p>
+<h4 class="border border-secondary m-2 p-2">Пользователи</h4>
+<div class="d-flex p-2 m-2">
+  <div class="mr-4">
+    <h5>
+      Всего юзеров
+    </h5>
+    <p class="mt-4">
+      170 000
+    </p>
+  </div>
+  <div class="mr-4">
+    <h5>
+      Варифицированных
+    </h5>
+    <p class="mt-4">
+      98 001
+    </p>
+  </div>
+  <div class="mr-4">
+    <h5>
+      Сейчас на сайте
+    </h5>
+    <p class="mt-4">
+      2 013
+    </p>
+  </div>
+  <div class="mr-4">
+    <h5>
+      Заблокированы
+    </h5>
+    <p class="mt-4">
+      2 013
+    </p>
+  </div>
+</div>
+<div class="d-flex m-2 pt-2">
+  <button class="btn btn-light mr-4">Отправить email</button>
+  <button class="btn btn-light mr-4">Отправить notification</button>
+  <button class="btn btn-light mr-1">Выгрузить в Exel</button>
+</div>
+<div class="wrapper p-2">
+    <table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th *ngFor="let key of fieldKeys" scope="col">{{fields[key]}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users" (click)="showUserDetails(user.id)">
+          <td *ngFor="let field of fieldKeys">{{user[field]}}</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <router-outlet></router-outlet>
