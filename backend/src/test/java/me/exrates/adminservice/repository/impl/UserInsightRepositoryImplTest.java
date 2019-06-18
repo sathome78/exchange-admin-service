@@ -38,8 +38,8 @@ import static org.junit.Assert.assertThat;
 })
 public class UserInsightRepositoryImplTest extends DataComparisonTest {
 
-    private static final String SELECT_ALL_SQL = "SELECT * FROM " + TABLE;
-    private static final String INSERT_SQL = "INSERT INTO " + TABLE + " (created, user_id, rate_btc_for_one_usd, " +
+    public static final String SELECT_ALL_SQL = "SELECT * FROM " + TABLE;
+    public static final String INSERT_SQL = "INSERT INTO " + TABLE + " (created, user_id, rate_btc_for_one_usd, " +
             "refill_amount_usd, withdraw_amount_usd, inout_commission_usd, transfer_in_amount_usd, transfer_out_amount_usd, " +
             "transfer_commission_usd, trade_sell_count, trade_buy_count, trade_amount_usd, trade_commission_usd, " +
             "balance_dynamics_usd, source_ids)";
@@ -140,7 +140,7 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
         return ImmutableList.of(insight1, insight2);
     }
 
-    private String getInsertData() {
+    public static String getInsertData() {
         return INSERT_SQL + " VALUES"
                 + " (\'2019-03-03\', 1, 0.0000015, 1, 1, 0.2, 1, 1, 0.2, 4, 4, 20, 1, -10, \'1, 2, 3, 4\'),"
                 + " (\'2019-03-04\', 1, 0.0000015, 1, 1, 0.2, 1, 1, 0.2, 4, 4, 20, 1, -10, \'1, 2, 3, 4\'),"
