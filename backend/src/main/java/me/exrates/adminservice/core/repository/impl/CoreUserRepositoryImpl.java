@@ -8,19 +8,17 @@ import me.exrates.adminservice.core.domain.UserInfoDto;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.domain.enums.UserRole;
 import me.exrates.adminservice.domain.enums.UserStatus;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +26,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.Objects.nonNull;
+import static me.exrates.adminservice.utils.CollectionUtil.isNotEmpty;
 
 @Repository
 @Log4j2
@@ -106,14 +105,70 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         return UserDashboardDto.builder()
                 .allUsersCount(allUsers.size())
                 .allVerifiedUsersCount(allVerifiedUsers.size())
-                .allOnlineUsersCount(0) //todo: not implemented yet
+                .allOnlineUsersCount(0) //TODO: not implemented yet
                 .allBlockedUsersCount(allBlockedUsers.size())
                 .build();
     }
 
     @Override
     public List<UserInfoDto> getUserInfoList(FilterDto filter, int limit, int offset) {
+        String balanceClause = StringUtils.EMPTY;
+        if (nonNull(filter.getMinBalance()) && nonNull(filter.getMaxBalance())) {
+            balanceClause = "AGR.balance BETWEEN :min_balance AND :max_balance AND ";
+        } else if (nonNull(filter.getMinBalance())) {
+            balanceClause = "AGR.balance >= :min_balance AND ";
+        } else if (nonNull(filter.getMaxBalance())) {
+            balanceClause = "AGR.balance <= :max_balance AND ";
+        }
+
+        String registrationDateClause = StringUtils.EMPTY;
+        if (nonNull(filter.getRegisteredFrom()) && nonNull(filter.getRegisteredTo())) {
+            registrationDateClause = "AGR.registration_date BETWEEN :registered_from AND :registered_to AND ";
+        } else if (nonNull(filter.getRegisteredFrom())) {
+            registrationDateClause = "AGR.registration_date >= :registered_from AND ";
+        } else if (nonNull(filter.getRegisteredTo())) {
+            registrationDateClause = "AGR.registration_date <= :registered_to AND ";
+        }
+
+        String lastEntryDateClause = StringUtils.EMPTY;
+
+        String verificationStatusClause = filter.isVerified()
+                ? "AGR.verification_status = 'SUCCESS' OR (AGR.verification_status = 'ACCEPTED' AND AGR.verification_step = 2) AND "
+                : StringUtils.EMPTY;
+
+        String closedOrdersCountClause = StringUtils.EMPTY;
+        if (nonNull(filter.getMinClosedOrders()) && nonNull(filter.getMaxClosedOrders())) {
+            closedOrdersCountClause = "AGR.closed_orders BETWEEN :min_closed_orders AND :max_closed_orders AND ";
+        } else if (nonNull(filter.getMinClosedOrders())) {
+            closedOrdersCountClause = "AGR.closed_orders >= :min_closed_orders AND ";
+        } else if (nonNull(filter.getMaxClosedOrders())) {
+            closedOrdersCountClause = "AGR.closed_orders <= :max_closed_orders AND ";
+        }
+
+        String refillRequestCountClause = StringUtils.EMPTY;
+        if (nonNull(filter.getMinRefillRequests()) && nonNull(filter.getMaxRefillRequests())) {
+            refillRequestCountClause = "AGR.success_input BETWEEN :min_refill_requests AND :max_refill_requests AND ";
+        } else if (nonNull(filter.getMinRefillRequests())) {
+            refillRequestCountClause = "AGR.success_input >= :min_refill_requests AND ";
+        } else if (nonNull(filter.getMaxRefillRequests())) {
+            refillRequestCountClause = "AGR.success_input <= :max_refill_requests AND ";
+        }
+
+        String withdrawRequestCountClause = StringUtils.EMPTY;
+        if (nonNull(filter.getMinWithdrawRequests()) && nonNull(filter.getMaxWithdrawRequests())) {
+            withdrawRequestCountClause = "AGR.success_output BETWEEN :min_withdraw_requests AND :max_withdraw_requests ";
+        } else if (nonNull(filter.getMinWithdrawRequests())) {
+            withdrawRequestCountClause = "AGR.success_output >= :min_withdraw_requests ";
+        } else if (nonNull(filter.getMaxWithdrawRequests())) {
+            withdrawRequestCountClause = "AGR.success_output <= :max_withdraw_requests ";
+        }
+
+        String limitStr = limit < 1 ? StringUtils.EMPTY : String.format(" LIMIT %d ", limit);
+        String offsetStr = offset < 1 ? StringUtils.EMPTY : String.format(" OFFSET %d ", offset);
+
         String sql = "SELECT " +
+                "AGR.user_id, " +
+                "AGR.user_nickname, " +
                 "AGR.ip_address, " +
                 "AGR.email, " +
                 "AGR.country, " +
@@ -125,6 +180,8 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "AGR.status_id " +
                 "FROM " +
                 "(SELECT " +
+                "u.id AS user_id, " +
+                "u.nickname AS user_nickname, " +
                 "u.ipaddress AS ip_address, " +
                 "u.email, " +
                 "u.country, " +
@@ -139,37 +196,120 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "(SELECT COUNT(rr.id) FROM REFILL_REQUEST rr WHERE rr.user_id = u.id AND rr.status_id IN (9, 10)) AS success_input, " +
                 "(SELECT COUNT(wr.id) FROM WITHDRAW_REQUEST wr WHERE wr.user_id = u.id AND wr.status_id IN (9, 10)) AS success_output " +
                 "FROM USER u " +
-                "JOIN USER_ROLE ur ON ur.id = u.roleid AND ur.name IN ('USER') " +
-                "JOIN EXORDERS o ON o.user_id = u.id AND o.status_id = 3 " +
+                "JOIN USER_ROLE ur ON ur.id = u.roleid " +
+                (nonNull(filter.getRole()) ? "AND ur.name IN (:user_role) " : StringUtils.EMPTY) +
+                "JOIN EXORDERS o ON o.user_id = u.id " +
+                (filter.isActive() ? "AND o.status_id = 3 " : StringUtils.EMPTY) +
                 "JOIN WALLET w ON w.user_id = u.id " +
                 "JOIN CURRENT_CURRENCY_RATES ccr ON ccr.currency_id = w.currency_id " +
-                "JOIN CURRENCY cur ON cur.id = w.currency_id AND cur.name IN ('BTC') " +
+                "JOIN CURRENCY cur ON cur.id = w.currency_id " +
+                (isNotEmpty(filter.getCurrencies()) ? "AND cur.name IN (:currencies) " : StringUtils.EMPTY) +
                 "GROUP BY w.user_id) AGR " +
                 "WHERE " +
-                "AGR.balance BETWEEN 0 AND 10000 AND " +
-                "AGR.registration_date BETWEEN '2019-01-01 00:00' AND '2019-05-01 00:00' AND " +
-                "AGR.verification_status = 'SUCCESS' OR (AGR.verification_status = 'ACCEPTED' AND AGR.verification_step = 2) AND " +
-                "AGR.closed_orders BETWEEN 0 AND 1000 AND " +
-                "AGR.success_input BETWEEN 0 AND 1000 AND " +
-                "AGR.success_output BETWEEN 0 AND 1000 " +
-                "LIMIT 15 OFFSET 0";
+                balanceClause +
+                registrationDateClause +
+                lastEntryDateClause +
+                verificationStatusClause +
+                closedOrdersCountClause +
+                refillRequestCountClause +
+                withdrawRequestCountClause +
+                limitStr +
+                offsetStr;
 
-        Map<String, Object> namedParameters = new HashMap<String, Object>() {{
-            put("user_roles", "");
-        }};
+        Map<String, Object> params = new HashMap<>();
+        if (nonNull(filter.getMinBalance()) && nonNull(filter.getMaxBalance())) {
+            params.put("min_balance", filter.getMinBalance());
+            params.put("max_balance", filter.getMaxBalance());
+        } else if (nonNull(filter.getMinBalance())) {
+            params.put("min_balance", filter.getMinBalance());
+        } else if (nonNull(filter.getMaxBalance())) {
+            params.put("max_balance", filter.getMaxBalance());
+        }
+        if (nonNull(filter.getRegisteredFrom()) && nonNull(filter.getRegisteredTo())) {
+            params.put("registered_from", Date.valueOf(filter.getRegisteredFrom()));
+            params.put("registered_to", Date.valueOf(filter.getRegisteredTo()));
+        } else if (nonNull(filter.getRegisteredFrom())) {
+            params.put("registered_from", Date.valueOf(filter.getRegisteredFrom()));
+        } else if (nonNull(filter.getRegisteredTo())) {
+            params.put("registered_to", Date.valueOf(filter.getRegisteredTo()));
+        }
+        if (nonNull(filter.getMinClosedOrders()) && nonNull(filter.getMaxClosedOrders())) {
+            params.put("min_closed_orders", filter.getMinClosedOrders());
+            params.put("max_closed_orders", filter.getMaxClosedOrders());
+        } else if (nonNull(filter.getMinClosedOrders())) {
+            params.put("min_closed_orders", filter.getMinClosedOrders());
+        } else if (nonNull(filter.getMaxClosedOrders())) {
+            params.put("max_closed_orders", filter.getMaxClosedOrders());
+        }
+        if (nonNull(filter.getMinRefillRequests()) && nonNull(filter.getMaxRefillRequests())) {
+            params.put("min_refill_requests", filter.getMinRefillRequests());
+            params.put("max_refill_requests", filter.getMaxRefillRequests());
+        } else if (nonNull(filter.getMinRefillRequests())) {
+            params.put("min_refill_requests", filter.getMinRefillRequests());
+        } else if (nonNull(filter.getMaxRefillRequests())) {
+            params.put("max_refill_requests", filter.getMaxRefillRequests());
+        }
+        if (nonNull(filter.getMinWithdrawRequests()) && nonNull(filter.getMaxWithdrawRequests())) {
+            params.put("min_withdraw_requests", filter.getMinWithdrawRequests());
+            params.put("max_withdraw_requests", filter.getMaxWithdrawRequests());
+        } else if (nonNull(filter.getMinWithdrawRequests())) {
+            params.put("min_withdraw_requests", filter.getMinWithdrawRequests());
+        } else if (nonNull(filter.getMaxWithdrawRequests())) {
+            params.put("max_withdraw_requests", filter.getMaxWithdrawRequests());
+        }
+        if (nonNull(filter.getRole())) {
+            params.put("user_role", filter.getRole().name());
+        }
+        if (isNotEmpty(filter.getCurrencies())) {
+            params.put("user_role", String.join(",", filter.getCurrencies()));
+        }
 
-        return coreTemplate.query(sql, namedParameters, (rs, idx) -> UserInfoDto.builder()
-                .registerIp(rs.getString("ip_address"))
-                .email(rs.getString("email"))
-                .country(rs.getString("country"))
-                .balanceSumUsd(rs.getBigDecimal("balance"))
-                .registrationDate(rs.getTimestamp("registration_date").toLocalDateTime())
-                .lastEntryDate(LocalDateTime.MIN) //todo: not implemented yet
-                .phone(rs.getString("phone"))
-                .verificationStatus(rs.getString("verification_status"))
-                .role(UserRole.valueOf(rs.getString("role_name")))
-                .status(UserStatus.convert(rs.getInt("status_id")))
-                .build());
+        return coreTemplate.query(sql, params, getUserInfoDtoRowMapper());
+    }
+
+    @Override
+    public UserInfoDto getUserInfo(int userId) {
+        String sql = "SELECT " +
+                "AGR.user_id, " +
+                "AGR.user_nickname, " +
+                "AGR.ip_address, " +
+                "AGR.email, " +
+                "AGR.country, " +
+                "AGR.balance, " +
+                "AGR.registration_date, " +
+                "AGR.phone, " +
+                "AGR.verification_status, " +
+                "AGR.role_name, " +
+                "AGR.status_id " +
+                "FROM " +
+                "(SELECT " +
+                "u.id AS user_id, " +
+                "u.nickname AS user_nickname, " +
+                "u.ipaddress AS ip_address, " +
+                "u.email, " +
+                "u.country, " +
+                "SUM((w.active_balance + w.reserved_balance) * ccr.usd_rate) AS balance, " +
+                "u.regdate AS registration_date, " +
+                "u.phone, " +
+                "u.kyc_status AS verification_status, " +
+                "u.kyc_verification_step AS verification_step, " +
+                "ur.name AS role_name, " +
+                "u.status AS status_id " +
+                "FROM USER u " +
+                "JOIN USER_ROLE ur ON ur.id = u.roleid " +
+                "JOIN WALLET w ON w.user_id = u.id " +
+                "JOIN CURRENT_CURRENCY_RATES ccr ON ccr.currency_id = w.currency_id " +
+                "GROUP BY w.user_id) AGR " +
+                "WHERE AGR.user_id = :user_id";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+
+        try {
+            return coreTemplate.queryForObject(sql, params, getUserInfoDtoRowMapper());
+        } catch (Exception ex) {
+            throw new RuntimeException(String.format("Do not found user: %d", userId));
+        }
     }
 
     private RowMapper<CoreUser> getCoreUserRowMapper() {
@@ -184,6 +324,23 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 .userRole(rs.getString(COL_USER_ROLE))
                 .use2fa(rs.getBoolean(COL_IS_2FA_ENABLED))
                 .kycStatus(rs.getString(COL_KYC_STATUS))
+                .build();
+    }
+
+    private RowMapper<UserInfoDto> getUserInfoDtoRowMapper() {
+        return (rs, idx) -> UserInfoDto.builder()
+                .userId(rs.getInt("user_id"))
+                .userNickname(rs.getString("user_nickname"))
+                .registerIp(rs.getString("ip_address"))
+                .email(rs.getString("email"))
+                .country(rs.getString("country"))
+                .balanceSumUsd(rs.getBigDecimal("balance"))
+                .registrationDate(rs.getTimestamp("registration_date").toLocalDateTime())
+                .lastEntryDate(LocalDateTime.MIN) //TODO: not implemented yet
+                .phone(rs.getString("phone"))
+                .verificationStatus(rs.getString("verification_status"))
+                .role(UserRole.valueOf(rs.getString("role_name")))
+                .status(UserStatus.convert(rs.getInt("status_id")))
                 .build();
     }
 }

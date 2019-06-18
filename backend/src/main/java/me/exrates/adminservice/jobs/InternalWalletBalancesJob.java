@@ -25,6 +25,10 @@ public class InternalWalletBalancesJob {
 
     @Scheduled(cron = "${scheduled.update.internal-balances}")
     public void update() {
-        walletService.updateInternalWalletBalances();
+        try {
+            walletService.updateInternalWalletBalances();
+        } catch (Exception ex) {
+            log.info("--> In processing 'InternalWalletBalancesJob' occurred error", ex);
+        }
     }
 }

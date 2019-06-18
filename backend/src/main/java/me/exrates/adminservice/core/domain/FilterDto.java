@@ -25,10 +25,10 @@ public class FilterDto {
     private LocalDate lastEntryFrom;
     private LocalDate lastEntryTo;
 
-    private String verificationStatus;
+    private boolean isVerified;
     private UserRole role;
 
-    private Boolean isActive;
+    private boolean isActive;
 
     private List<String> currencies;
 

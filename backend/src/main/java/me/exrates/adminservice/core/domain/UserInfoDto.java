@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UserInfoDto {
 
+    private int userId;
+    private String userNickname;
     private String registerIp;
     private String email;
     private String country;

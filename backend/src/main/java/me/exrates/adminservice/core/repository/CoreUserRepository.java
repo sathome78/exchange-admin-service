@@ -8,7 +8,6 @@ import me.exrates.adminservice.core.domain.UserInfoDto;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 public interface CoreUserRepository {
 
@@ -35,4 +34,6 @@ public interface CoreUserRepository {
     UserDashboardDto getUsersDashboard();
 
     List<UserInfoDto> getUserInfoList(FilterDto filter, int limit, int offset);
+
+    UserInfoDto getUserInfo(int userId);
 }
