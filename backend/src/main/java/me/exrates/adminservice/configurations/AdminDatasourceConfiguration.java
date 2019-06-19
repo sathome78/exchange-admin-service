@@ -22,10 +22,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
+@Log4j2
 @Configuration
 @Order(1)
 @Profile("!light")
-@Log4j2
 public class AdminDatasourceConfiguration extends DatabaseConfiguration {
 
     public static final String ADMIN_DATASOURCE = "adminDataSource";
