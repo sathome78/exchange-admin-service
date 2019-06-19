@@ -19,7 +19,6 @@ spring:
 #    password: ${db-admin.datasource.password}
     baseline-on-migrate: true
 
-
 db-admin:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
