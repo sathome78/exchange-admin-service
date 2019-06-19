@@ -1,6 +1,7 @@
 package me.exrates.adminservice.repository.impl;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import config.DataComparisonTest;
 import me.exrates.adminservice.domain.UserInsight;
 import me.exrates.adminservice.repository.UserInsightRepository;
@@ -21,9 +22,12 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static me.exrates.adminservice.repository.UserInsightRepository.TABLE;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -33,8 +37,8 @@ import static org.junit.Assert.assertEquals;
 })
 public class UserInsightRepositoryImplTest extends DataComparisonTest {
 
-    private static final String SELECT_ALL_SQL = "SELECT * FROM " + TABLE;
-    private static final String INSERT_SQL = "INSERT INTO " + TABLE + " (created, user_id, rate_btc_for_one_usd, " +
+    public static final String SELECT_ALL_SQL = "SELECT * FROM " + TABLE;
+    public static final String INSERT_SQL = "INSERT INTO " + TABLE + " (created, user_id, rate_btc_for_one_usd, " +
             "refill_amount_usd, withdraw_amount_usd, inout_commission_usd, transfer_in_amount_usd, transfer_out_amount_usd, " +
             "transfer_commission_usd, trade_sell_count, trade_buy_count, trade_amount_usd, trade_commission_usd, " +
             "balance_dynamics_usd, source_ids)";
@@ -49,11 +53,6 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void prepareTestSchema() throws SQLException {
-        super.prepareTestSchema();
     }
 
     @Test
@@ -84,12 +83,19 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
     }
 
     @Test
+    public void getActiveUserIds() throws SQLException {
+        prepareTestData(getInsertData());
+        final Set<Integer> activeUserIds = userInsightRepository.getActiveUserIds(10, 0);
+        assertThat(activeUserIds, is(ImmutableSet.of(1, 2)));
+    }
+
+    @Test
     public void findAllByUserId_whenEmpty() {
-        final List<UserInsight> userInsights = userInsightRepository.findAllByUserId(10);
+        final Set<UserInsight> userInsights = userInsightRepository.findAllByUserId(10);
         assertEquals(0, userInsights.size());
     }
 
-    private List<UserInsight> getTestUserInsights() {
+    public static List<UserInsight> getTestUserInsights() {
         UserInsight insight1 = UserInsight.builder()
                 .created(LocalDate.of(2019, 3, 3))
                 .userId(1)
@@ -128,7 +134,7 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
         return ImmutableList.of(insight1, insight2);
     }
 
-    private String getInsertData() {
+    public static String getInsertData() {
         return INSERT_SQL + " VALUES"
                 + " (\'2019-03-03\', 1, 0.0000015, 1, 1, 0.2, 1, 1, 0.2, 4, 4, 20, 1, -10, \'1, 2, 3, 4\'),"
                 + " (\'2019-03-04\', 1, 0.0000015, 1, 1, 0.2, 1, 1, 0.2, 4, 4, 20, 1, -10, \'1, 2, 3, 4\'),"
