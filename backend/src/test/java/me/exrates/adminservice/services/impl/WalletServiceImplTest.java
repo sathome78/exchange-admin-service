@@ -743,6 +743,17 @@ public class WalletServiceImplTest {
     }
 
     @Test
+    public void updateSignOfCertaintyForCurrency_success() {
+        doNothing()
+                .when(walletRepository)
+                .updateSignOfCertaintyForCurrency(anyInt(), anyBoolean());
+
+        walletService.updateSignOfCertaintyForCurrency(1, true);
+
+        verify(walletRepository, atLeastOnce()).updateSignOfCertaintyForCurrency(anyInt(), anyBoolean());
+    }
+
+    @Test
     public void updateSignOfMonitoringForCurrency_success() {
         doNothing()
                 .when(walletRepository)
@@ -833,6 +844,7 @@ public class WalletServiceImplTest {
                 .totalBalance(BigDecimal.TEN)
                 .totalBalanceUSD(BigDecimal.TEN)
                 .totalBalanceBTC(BigDecimal.TEN)
+                .signOfCertainty(true)
                 .signOfMonitoring(true)
                 .coinRange(BigDecimal.ONE)
                 .checkCoinRange(true)
@@ -878,6 +890,7 @@ public class WalletServiceImplTest {
                 .totalBalance(BigDecimal.TEN)
                 .totalBalanceUSD(BigDecimal.TEN)
                 .totalBalanceBTC(BigDecimal.TEN)
+                .signOfCertainty(true)
                 .signOfMonitoring(true)
                 .coinRange(BigDecimal.ONE)
                 .checkCoinRange(false)
@@ -923,6 +936,7 @@ public class WalletServiceImplTest {
                 .totalBalance(BigDecimal.TEN)
                 .totalBalanceUSD(BigDecimal.TEN)
                 .totalBalanceBTC(BigDecimal.TEN)
+                .signOfCertainty(true)
                 .signOfMonitoring(false)
                 .build()))
                 .when(walletRepository)
@@ -964,6 +978,7 @@ public class WalletServiceImplTest {
                 .totalBalance(BigDecimal.TEN)
                 .totalBalanceUSD(BigDecimal.TEN)
                 .totalBalanceBTC(BigDecimal.TEN)
+                .signOfCertainty(true)
                 .signOfMonitoring(true)
                 .coinRange(BigDecimal.ONE)
                 .checkCoinRange(false)

@@ -1,0 +1,11 @@
+{
+  "sql" : "SELECT * FROM CURRENT_CURRENCY_RATES",
+  "content" : [ {
+    "id" : "1",
+    "currency_id" : "1",
+    "currency_name" : "TEST_COIN",
+    "usd_rate" : "0E-8",
+    "btc_rate" : "0E-8",
+    "schedule_last_updated_at" : "p(any)"
+  } ]
+}

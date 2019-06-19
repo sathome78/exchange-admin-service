@@ -14,13 +14,15 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = JSON.parse(localStorage.getItem('token'));
-    const headers: any = {
-      Authorization: token.access_token
-    };
-    request = request.clone({
-      setHeaders: headers
-    });
-    console.log(request);
+    if (token) {
+      const headers: any = {
+        Authorization: 'Bearer ' + token.access_token
+      };
+      request = request.clone({
+        setHeaders: headers
+      });
+    }
+
     return next.handle(request);
   }
 }

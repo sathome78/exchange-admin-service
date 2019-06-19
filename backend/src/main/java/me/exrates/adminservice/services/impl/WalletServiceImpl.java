@@ -366,6 +366,11 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    public void updateSignOfCertaintyForCurrency(int currencyId, boolean signOfCertainty) {
+        walletRepository.updateSignOfCertaintyForCurrency(currencyId, signOfCertainty);
+    }
+
+    @Override
     public void updateSignOfMonitoringForCurrency(int currencyId, boolean signOfMonitoring) {
         walletRepository.updateSignOfMonitoringForCurrency(currencyId, signOfMonitoring);
     }
@@ -492,9 +497,11 @@ public class WalletServiceImpl implements WalletService {
                             .map(InternalWalletBalancesDto::getTotalBalanceBTC)
                             .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
 
-                    final BigDecimal deviation = externalTotalBalance.subtract(internalTotalBalance);
-                    final BigDecimal deviationUSD = externalTotalBalanceUSD.subtract(internalTotalBalanceUSD);
-                    final BigDecimal deviationBTC = externalTotalBalanceBTC.subtract(internalTotalBalanceBTC);
+                    final boolean signOfCertainty = extWalletBalance.isSignOfCertainty();
+
+                    final BigDecimal deviation = signOfCertainty ? externalTotalBalance.subtract(internalTotalBalance) : BigDecimal.ZERO;
+                    final BigDecimal deviationUSD = signOfCertainty ? externalTotalBalanceUSD.subtract(internalTotalBalanceUSD) : BigDecimal.ZERO;
+                    final BigDecimal deviationBTC = signOfCertainty ? externalTotalBalanceBTC.subtract(internalTotalBalanceBTC) : BigDecimal.ZERO;
 
                     if ((nonNull(currencyNames) && !currencyNames.contains(currencyName))
                             || (nonNull(minExBalance) && externalTotalBalanceUSD.compareTo(minExBalance) < 0)
@@ -545,6 +552,7 @@ public class WalletServiceImpl implements WalletService {
                             .deviation(deviation)
                             .deviationUSD(deviationUSD)
                             .deviationBTC(deviationBTC)
+                            .signOfCertainty(signOfCertainty)
                             .signOfMonitoring(signOfMonitoring)
                             .deviationStatus(deviationStatus)
                             .build();

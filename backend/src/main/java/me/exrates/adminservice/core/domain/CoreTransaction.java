@@ -24,4 +24,7 @@ public class CoreTransaction {
     private LocalDateTime dateTime;
     private BigDecimal rateInUsd;
     private BigDecimal rateInBtc;
+    private BigDecimal rateBtcForOneUsd;
+    private Integer sourceId;
+
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -129,6 +130,15 @@ public class FinancialMonitoringController {
                                                     @RequestParam(defaultValue = "0") BigDecimal accountingProfit,
                                                     @RequestParam(defaultValue = "0") BigDecimal accountingManualBalanceChanges) {
         walletService.updateAccountingImbalance(currencyName, accountingProfit, accountingManualBalanceChanges);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/sign-of-certainty")
+    @ResponseBody
+    public ResponseEntity updateSignOfCertaintyForCurrency(@RequestParam int currencyId,
+                                                           @RequestParam boolean signOfCertainty) {
+        walletService.updateSignOfCertaintyForCurrency(currencyId, signOfCertainty);
 
         return ResponseEntity.ok().build();
     }

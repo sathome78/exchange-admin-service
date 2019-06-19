@@ -22,23 +22,6 @@ public class AdminDatabaseConfigImpl implements DatabaseConfig {
     @Value("${spring.datasource.password}")
     private String dbPassword;
 
-    @Value("${spring.datasource.scheme-name}")
-    private String rootSchemeName;
-
-    private final String dbScheme;
-
-    public AdminDatabaseConfigImpl(String schemaName) {
-        this.dbScheme = ADMIN_PREFIX + schemaName;
-    }
-
-    public AdminDatabaseConfigImpl(DatabaseConfig config) {
-        this.dbScheme = config.getSchemaName();
-        this.dbUrl = config.getUrl();
-        this.dbDriverClassname = config.getDriverClassName();
-        this.dbUsername = config.getUser();
-        this.dbPassword = config.getPassword();
-        this.rootSchemeName = config.getRootSchemeName();
-    }
 
     @Override
     public String getUrl() {
@@ -58,27 +41,6 @@ public class AdminDatabaseConfigImpl implements DatabaseConfig {
     @Override
     public String getPassword() {
         return this.dbPassword;
-    }
-
-    @Override
-    public String getSchemaName() {
-        return this.dbScheme;
-    }
-
-    @Override
-    public String getRootSchemeName() {
-        return this.rootSchemeName;
-    }
-
-    @Override
-    public String getTestTable() {
-        return "CURSORS";
-    }
-
-    @Override
-    public String toString() {
-        return String.format("dbUrl: %s, schema: %s,  dbUsername: %s, pass: %s, root-schema: %s, test-table: %s", LogUtils.stripDbUrl(dbUrl),
-                this.dbScheme, this.dbUsername, this.dbPassword, this.rootSchemeName, getTestTable());
     }
 
 }

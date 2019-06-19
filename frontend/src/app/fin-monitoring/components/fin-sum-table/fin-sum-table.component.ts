@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PopupService } from 'src/app/services/popup.service';
 
 @Component({
   selector: 'app-fin-sum-table',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FinSumTableComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    public popupService: PopupService
+    ) { }
 
   ngOnInit() {
+  }
+
+  showDetails(){
+    this.popupService.toggleExternalBalancesPopup(true);
   }
 
 }

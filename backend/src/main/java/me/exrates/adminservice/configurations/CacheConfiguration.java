@@ -1,11 +1,16 @@
 package me.exrates.adminservice.configurations;
 
+import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import me.exrates.adminservice.domain.UserInsight;
 import org.springframework.cache.Cache;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
