@@ -14,7 +14,7 @@ services:
   admin-server:
     container_name: admin-server
     build: ./backend
-    entrypoint: java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=light -Ddb-admin.datasource.password=root -Ddb-core.datasource.password=KQmK82dd -jar app.jar
+    entrypoint: java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=light -jar app.jar
     depends_on:
       - admin-mysql
     ports:

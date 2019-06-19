@@ -91,11 +91,11 @@ public class UserInsightDTO {
     @JsonSerialize(using = BigDecimalSerializer.class)
     private BigDecimal changeBalanceWeek;
 
-    @JsonProperty("commission_transfer_per_year")
+    @JsonProperty("change_balance_per_month")
     @JsonSerialize(using = BigDecimalSerializer.class)
     private BigDecimal changeBalanceMonth;
 
-    @JsonProperty("change_balance_per_month")
+    @JsonProperty("change_balance_per_year")
     @JsonSerialize(using = BigDecimalSerializer.class)
     private BigDecimal changeBalanceYear;
 
