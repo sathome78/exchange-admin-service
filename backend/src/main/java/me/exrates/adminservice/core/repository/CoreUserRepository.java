@@ -4,6 +4,8 @@ import me.exrates.adminservice.core.domain.CoreUser;
 import me.exrates.adminservice.core.domain.FilterDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
+import me.exrates.adminservice.core.domain.UserOperationAuthorityOption;
+import me.exrates.adminservice.domain.enums.UserRole;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +33,13 @@ public interface CoreUserRepository {
 
     Map<Integer, String> findAllUsersIdAndEmail();
 
+    UserRole getUserRoleById(Integer userId);
+
+    void updateUserOperationAuthority(List<UserOperationAuthorityOption> options, Integer userId);
+
     UserDashboardDto getUsersDashboard();
+
+    int getUserInfoListCount(FilterDto filter, Integer limit, Integer offset);
 
     List<UserInfoDto> getUserInfoList(FilterDto filter, int limit, int offset);
 

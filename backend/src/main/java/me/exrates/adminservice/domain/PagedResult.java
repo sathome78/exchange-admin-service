@@ -12,6 +12,7 @@ public class PagedResult<T> {
 
     private int count;
     private List<T> items;
+    private boolean hasNextPage;
 
     public PagedResult() {
         items = new ArrayList<>();
