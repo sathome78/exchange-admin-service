@@ -54,9 +54,10 @@ public abstract class AbstractDatabaseContextTest {
 
     protected static final String TEST_ADMIN_DATASOURCE = "testAdminDataSource";
     protected static final String TEST_CORE_DATASOURCE = "testCoreDataSource";
-    protected static final String TEST_ADMIN_NP_TEMPLATE = "testAdminTemplate";
-    protected static final String TEST_CORE_NP_TEMPLATE = "testCoreTemplate";
-    protected static final String TEST_ADMIN_JDBC_OPS = "adminJdbcOperations";
+    protected static final String TEST_ADMIN_NP_TEMPLATE = "testAdminNPTemplate";
+    protected static final String TEST_ADMIN_TEMPLATE = "testAdminTemplate";
+    protected static final String TEST_CORE_NP_TEMPLATE = "testCoreNPTemplate";
+    protected static final String TEST_CORE_TEMPLATE = "testCoreTemplate";
 
     @Autowired
     @Qualifier(DatabaseConfig.ADMIN_DB_CONFIG)
@@ -75,7 +76,7 @@ public abstract class AbstractDatabaseContextTest {
     protected NamedParameterJdbcOperations coreNPJdbcOperations;
 
     @Autowired
-    @Qualifier(TEST_ADMIN_JDBC_OPS)
+    @Qualifier(TEST_ADMIN_TEMPLATE)
     protected JdbcOperations adminJdbcOperations;
 
     static {
@@ -191,7 +192,7 @@ public abstract class AbstractDatabaseContextTest {
             return HikariDataSourceFactory.createDataSource(adminDatabaseConfig.getUser(), adminDatabaseConfig.getPassword(), dbUrl, adminDatabaseConfig.getDriverClassName());
         }
 
-        @Bean(name = TEST_ADMIN_JDBC_OPS)
+        @Bean(name = TEST_ADMIN_TEMPLATE)
         public JdbcOperations adminJdbcOperations(@Qualifier(TEST_ADMIN_DATASOURCE) DataSource dataSource) {
             return new JdbcTemplate(dataSource);
         }

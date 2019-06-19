@@ -59,16 +59,20 @@ public class SyncUserServiceImplTest extends DataComparisonTest {
         protected NamedParameterJdbcOperations adminNPJdbcOperations;
 
         @Autowired
+        @Qualifier(TEST_ADMIN_TEMPLATE)
+        protected JdbcOperations adminJdbcOperations;
+
+        @Autowired
         @Qualifier(TEST_CORE_NP_TEMPLATE)
         protected NamedParameterJdbcOperations coreNPJdbcOperations;
 
         @Autowired
-        @Qualifier(TEST_ADMIN_JDBC_OPS)
-        protected JdbcOperations adminJdbcOperations;
+        @Qualifier(TEST_CORE_TEMPLATE)
+        protected JdbcOperations coreJdbcOperations;
 
         @Bean
         public CoreUserRepository coreUserRepository() {
-            return new CoreUserRepositoryImpl(coreNPJdbcOperations);
+            return new CoreUserRepositoryImpl(coreNPJdbcOperations, coreJdbcOperations);
         }
 
         @Bean

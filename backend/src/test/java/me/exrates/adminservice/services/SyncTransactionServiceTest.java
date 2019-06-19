@@ -90,7 +90,7 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
         private NamedParameterJdbcOperations adminNPJdbcOperations;
 
         @Autowired
-        @Qualifier(TEST_ADMIN_JDBC_OPS)
+        @Qualifier(TEST_ADMIN_TEMPLATE)
         private JdbcOperations adminJdbcOperations;
 
         @Autowired
