@@ -3,6 +3,7 @@ package me.exrates.adminservice.controllers;
 import me.exrates.adminservice.domain.PagedResult;
 import me.exrates.adminservice.domain.api.UserInsightDTO;
 import me.exrates.adminservice.services.UserInsightsService;
+import me.exrates.adminservice.utils.AppConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -37,6 +38,8 @@ public class RiskManagementController {
         } else if (Objects.nonNull(userId) && userId > 0) {
             return userInsightsService.findAll(userId);
         } else {
+            limit = AppConstants.checkLimit(limit);
+            offset = AppConstants.checkOffset(offset);
             return userInsightsService.findAll(limit, offset);
         }
     }

@@ -73,7 +73,9 @@ public class UserInsightsServiceImpl implements UserInsightsService {
         final Set<Integer> activeUserIds = userInsightRepository.getActiveUserIds(limit, offset);
         boolean hasNextPage = limit < 1 ? activeUserIds.size() > 20 : activeUserIds.size() > limit;
         final Map<Integer, Set<UserInsight>> storedInsights = insightsCache.getAllPresent(activeUserIds);
-        final Map<Integer, UserInoutStatus> allBalances = userInoutStatusRepository.findAll(new ArrayList<>(activeUserIds));
+        final Map<Integer, UserInoutStatus> allBalances = activeUserIds.isEmpty()
+                ? Collections.emptyMap()
+                : userInoutStatusRepository.findAll(new ArrayList<>(activeUserIds));
         final Map<Integer, String> allUsersIdAndEmail = coreUserRepository.findAllUsersIdAndEmail();
         final Map<Integer, UserInsightDTO> results = new HashMap<>();
         activeUserIds.forEach(id -> {

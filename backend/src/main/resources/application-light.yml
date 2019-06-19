@@ -14,7 +14,7 @@ spring:
   flyway:
     url: ${db-admin.datasource.url}
     user: ${db-admin.datasource.username}
-    password: ${db-admin.datasource.password}
+    password: root
     baseline-on-migrate: true
 
 db-admin:
