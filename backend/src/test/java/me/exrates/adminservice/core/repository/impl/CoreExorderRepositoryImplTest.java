@@ -48,6 +48,12 @@ public class CoreExorderRepositoryImplTest extends DataComparisonTest {
     }
 
     @Test
+    public void testGetUniqueUsers() {
+        final int result = coreExorderRepository.getDailyUniqueUsersQuantity();
+        assertEquals(3, result);
+    }
+
+    @Test
     public void getPercentage_bothGtZero() {
         Map<String, BigDecimal> values = new HashMap<>();
         values.put("buy", BigDecimal.valueOf(25));

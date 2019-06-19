@@ -24,4 +24,6 @@ public interface CoreExorderRepository {
     String COL_BASE_TYPE = "base_type";
 
     Map<String, Integer> getDailyBuySellVolume();
+
+    int getDailyUniqueUsersQuantity();
 }

@@ -10,7 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public class CoreExorderRepositoryImpl implements CoreExorderRepository {
@@ -43,6 +45,24 @@ public class CoreExorderRepositoryImpl implements CoreExorderRepository {
             return values;
         });
         return getPercentage(rawValues);
+    }
+
+    @Override
+    public int getDailyUniqueUsersQuantity() {
+        String sql = "SELECT " + COL_USER_ID + ", " + COL_USER_ACCEPTOR_ID +
+                " FROM " + TABLE +
+                " WHERE " + COL_STATUS_ID + " = 3" +
+                " AND "+ COL_DATE_ACCEPTION + " > CURRENT_TIMESTAMP - INTERVAL 1 DAY;";
+        final Set<Integer> uniqUsers = namedParameterJdbcOperations.query(sql, Collections.emptyMap(), rs -> {
+            final Set<Integer> users = new HashSet<>();
+            while (rs.next()) {
+                users.add(rs.getInt(COL_USER_ID));
+                users.add(rs.getInt(COL_USER_ACCEPTOR_ID));
+            }
+            return users;
+        });
+        return uniqUsers.size();
+
     }
 
     @VisibleForTesting
