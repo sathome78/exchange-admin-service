@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class UserInsightMapper {
@@ -89,24 +91,33 @@ public class UserInsightMapper {
     }
 
     private static BigDecimal sumDecimal(Set<UserInsight> entries, Field field, Predicate<UserInsight> predicate) {
+        Function<UserInsight, BigDecimal> mappingFunction;
         switch (field) {
             case REFILL_AMOUNT:
-                return entries.stream().filter(predicate).map(UserInsight::getRefillAmountUsd).reduce(BigDecimal.ZERO, BigDecimal::add);
+                mappingFunction = UserInsight::getRefillAmountUsd;
+                break;
             case WITHDRAW_AMOUNT:
-                return entries.stream().filter(predicate).map(UserInsight::getWithdrawAmountUsd).reduce(BigDecimal.ZERO, BigDecimal::add);
+                mappingFunction = UserInsight::getWithdrawAmountUsd;
+                break;
             case TRADE_COMMISSION:
-                return entries.stream().filter(predicate).map(UserInsight::getTradeCommissionUsd).reduce(BigDecimal.ZERO, BigDecimal::add);
+                mappingFunction = UserInsight::getTradeCommissionUsd;
+                break;
             case TRANSFER_COMMISSION:
-                return entries.stream().filter(predicate).map(UserInsight::getTransferCommissionUsd).reduce(BigDecimal.ZERO, BigDecimal::add);
+                mappingFunction = UserInsight::getTransferCommissionUsd;
+                break;
             case INOUT_COMMISSION:
-                return entries.stream().filter(predicate).map(UserInsight::getInoutCommissionUsd).reduce(BigDecimal.ZERO, BigDecimal::add);
+                mappingFunction = UserInsight::getInoutCommissionUsd;
+                break;
             case BALANCE:
-                return entries.stream().filter(predicate).map(UserInsight::getBalanceDynamicsUsd).reduce(BigDecimal.ZERO, BigDecimal::add);
+                mappingFunction = UserInsight::getBalanceDynamicsUsd;
+                break;
             case TRADE_AMOUNT:
-                return entries.stream().filter(predicate).map(UserInsight::getTradeAmountUsd).reduce(BigDecimal.ZERO, BigDecimal::add);
+                mappingFunction = UserInsight::getTradeAmountUsd;
+                break;
             default:
                 throw new UnsupportedOperationException("NO DOUBLE OPS FOR FIELD: " + field.toString());
         }
+        return entries.stream().filter(predicate).map(mappingFunction).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private static String manageTrades(Set<UserInsight> entries, Field field, Predicate<UserInsight> predicate) {
