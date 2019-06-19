@@ -5,24 +5,24 @@
   </div>
 </div>
 <div class="d-flex justify-content-between">
-  <div class="p-2">
-    <div><span>Email:</span></div>
-    <div><span>ID user:</span></div>
-    <div><span>Nikname:</span></div>
-    <div><span>IP регистрации:</span></div>
-    <div><span>Дата регистрации:</span></div>
-    <div><span>Дата последнего входа:</span></div>
-    <div><span>Номер телефона:</span></div>
+  <div class="p-2 ml-2">
+    <div><span>Email: </span></div>
+    <div><span>ID user: </span></div>
+    <div><span>Nikname: </span></div>
+    <div><span>IP регистрации: </span></div>
+    <div><span>Дата регистрации: </span></div>
+    <div><span>Дата последнего входа: </span></div>
+    <div><span>Номер телефона: </span></div>
     <div class="d-flex align-items-center">
-      <span>Тип юзера:</span>
-      <select class="form-control">
+      <span>Тип юзера: </span>
+      <select class="form-control ml-5">
         <option *ngFor="let type of userTypes">{{type}}</option>
       </select>
     </div>
-    <div><span>Статус:</span></div>
-    <div><span>Пройдена или нет верификация:</span></div>
-    <div><span>Страна регистрации:</span></div>
-    <div><span>Эквивалентный баланс в долларах:</span></div>
+    <div><span>Статус: </span></div>
+    <div><span>Пройдена или нет верификация: </span></div>
+    <div><span>Страна регистрации: </span></div>
+    <div><span>Эквивалентный баланс в долларах: </span></div>
   </div>
   <div class="p-2">
     <select class="form-control">
@@ -49,14 +49,14 @@
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="isOutput">
-        <label class="form-check-label" for="isOutput">
+        <input class="form-check-input" type="checkbox" value="" id="isTransfer">
+        <label class="form-check-label" for="isTransfer">
           Перевод
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="transfer">
-        <label class="form-check-label" for="transfer">
+        <input class="form-check-input" type="checkbox" value="" id="isTrading">
+        <label class="form-check-label" for="isTrading">
           Торги
         </label>
       </div>
@@ -67,7 +67,16 @@
       <h4>Рейтинг</h4>
       <h4 class="primary">100%</h4>
     </div>
-    <button class="btn border-secondary p-2 m-5">Добавить комментарий</button>
+    <button class="btn border-secondary bg-light p-2 m-5">Добавить комментарий</button>
   </div>
 </div>
-<app-user-table></app-user-table>
+<ul class="nav nav-tabs mt-2">
+  <li class="nav-item"><a class="nav-link" [ngClass]="{'active': activeTab === 'balance'}" (click)="changeActiveTab('balance')">Баланс</a></li>
+  <li class="nav-item"><a class="nav-link" [ngClass]="{'active': activeTab === 'logs'}" (click)="changeActiveTab('logs')">Логи действий в кабинете</a></li>
+  <li class="nav-item"><a class="nav-link" [ngClass]="{'active': activeTab === 'links'}" (click)="changeActiveTab('links')">Связи</a></li>
+  <li class="nav-item"><a class="nav-link" [ngClass]="{'active': activeTab === 'referal'}" (click)="changeActiveTab('referal')">Реферальная программа</a></li>
+</ul>
+<app-user-balance-table *ngIf="activeTab === 'balance'"></app-user-balance-table>
+<app-user-logs-table *ngIf="activeTab === 'logs'"></app-user-logs-table>
+<app-user-links-table *ngIf="activeTab === 'links'"></app-user-links-table>
+<app-user-referal-table *ngIf="activeTab === 'referal'"></app-user-referal-table>

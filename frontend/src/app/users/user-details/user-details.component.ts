@@ -8,10 +8,15 @@ import { Component, OnInit } from '@angular/core';
 export class UserDetailsComponent implements OnInit {
 
   userTypes = [ 'User', 'Admin', 'Super Admin', 'VIP User', 'BOT'];
+  activeTab = 'balance';
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  changeActiveTab(newActiveTab: string){
+    this.activeTab = newActiveTab;
   }
 
 }
