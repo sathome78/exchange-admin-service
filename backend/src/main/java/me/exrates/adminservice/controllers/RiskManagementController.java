@@ -1,7 +1,9 @@
 package me.exrates.adminservice.controllers;
 
 import me.exrates.adminservice.domain.PagedResult;
+import me.exrates.adminservice.domain.api.RiskManagementBoardDTO;
 import me.exrates.adminservice.domain.api.UserInsightDTO;
+import me.exrates.adminservice.services.RiskManagementService;
 import me.exrates.adminservice.services.UserInsightsService;
 import me.exrates.adminservice.utils.AppConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -16,18 +18,21 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Objects;
 
 @RestController
-@RequestMapping(value = "/api/risks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "/api/risks/management", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class RiskManagementController {
 
     private final UserInsightsService userInsightsService;
+    private final RiskManagementService riskManagementService;
 
     @Autowired
-    public RiskManagementController(UserInsightsService userInsightsService) {
+    public RiskManagementController(UserInsightsService userInsightsService,
+                                    RiskManagementService riskManagementService) {
         this.userInsightsService = userInsightsService;
+        this.riskManagementService = riskManagementService;
     }
 
     // /api/risks/management/table
-    @GetMapping("/management/table")
+    @GetMapping("/table")
     @ResponseBody
     public PagedResult<UserInsightDTO> getRiskManagementTable(@RequestParam(required = false) Integer limit,
                                                               @RequestParam(required = false) Integer offset,
@@ -42,6 +47,13 @@ public class RiskManagementController {
             offset = AppConstants.checkOffset(offset);
             return userInsightsService.findAll(limit, offset);
         }
+    }
+
+    // /api/risks/management/board
+    @GetMapping("/board")
+    @ResponseBody
+    public RiskManagementBoardDTO getRiskManagementBoard() {
+        return riskManagementService.getRiskManagementBoard();
     }
 
 }
