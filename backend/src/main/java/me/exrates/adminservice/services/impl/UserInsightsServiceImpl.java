@@ -131,8 +131,9 @@ public class UserInsightsServiceImpl implements UserInsightsService {
         int chunkSize = 100;
         int offset = 0;
         Map<Integer, Set<UserInsight>> data = new HashMap<>();
-        final List<UserInsight> userInsights = userInsightRepository.findAll(chunkSize, offset, userIds);
-        while (!userInsights.isEmpty()) {
+        final List<UserInsight> userInsights = new ArrayList<>();
+        do {
+            userInsights.addAll(userInsightRepository.findAll(chunkSize, offset, userIds));
             userInsights.forEach(userInsight -> {
                 if (data.containsKey(userInsight.getUserId())) {
                     data.get(userInsight.getUserId()).add(userInsight);
@@ -140,8 +141,9 @@ public class UserInsightsServiceImpl implements UserInsightsService {
                     data.put(userInsight.getUserId(), new HashSet<>(ImmutableList.of(userInsight)));
                 }
             });
+            userInsights.clear();
             offset += chunkSize;
-        }
+        } while (!userInsights.isEmpty());
         return data;
     }
 

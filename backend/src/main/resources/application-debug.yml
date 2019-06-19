@@ -11,16 +11,19 @@ spring:
     mapper:
       default_view_inclusion: true
     default-property-inclusion: 'non_null'
-#  flyway:
+  flyway:
+    locations: classpath:db/migration, classpath:db/data
+    table: debug-schema-history
 #    url: ${db-admin.datasource.url}
 #    user: ${db-admin.datasource.username}
 #    password: ${db-admin.datasource.password}
-#    baseline-on-migrate: true
+    baseline-on-migrate: true
+
 
 db-admin:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:5506/admin_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/admin_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
     password: root
   ssm:
