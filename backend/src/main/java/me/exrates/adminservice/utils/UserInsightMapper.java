@@ -121,11 +121,12 @@ public class UserInsightMapper {
     }
 
     private static String manageTrades(Set<UserInsight> entries, Field field, Predicate<UserInsight> predicate) {
+        int tradesNumber = sumInt(entries, Field.TRADE_COUNT, predicate);
         switch (field) {
             case REFILL_AMOUNT:
-                return sumInt(entries, Field.TRADE_COUNT, predicate) + " / " + gtZero(sumDecimal(entries, Field.REFILL_AMOUNT, predicate));
+                return tradesNumber + " / " + gtZero(sumDecimal(entries, Field.REFILL_AMOUNT, predicate));
             case WITHDRAW_AMOUNT:
-                return sumInt(entries, Field.TRADE_COUNT, predicate) + " / " + gtZero(sumDecimal(entries, Field.WITHDRAW_AMOUNT, predicate));
+                return tradesNumber + " / " + gtZero(sumDecimal(entries, Field.WITHDRAW_AMOUNT, predicate));
             default:
                 throw new UnsupportedOperationException("NO CHECK OPS FOR FIELD: " + field.toString());
         }
