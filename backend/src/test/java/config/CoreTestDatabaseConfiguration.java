@@ -17,6 +17,7 @@ import javax.sql.DataSource;
 import static config.AbstractDatabaseContextTest.TEST_ADMIN_JDBC_OPS;
 import static config.AbstractDatabaseContextTest.TEST_CORE_DATASOURCE;
 import static config.AbstractDatabaseContextTest.TEST_CORE_NP_TEMPLATE;
+import static config.AbstractDatabaseContextTest.TEST_CORE_TEMPLATE;
 
 @Configuration
 @Profile("test")
@@ -54,7 +55,7 @@ public class CoreTestDatabaseConfiguration {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 
-    @Bean(name = TEST_ADMIN_JDBC_OPS)
+    @Bean(name = TEST_CORE_TEMPLATE)
     public JdbcOperations coreTemplate(@Qualifier(TEST_CORE_DATASOURCE) DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
