@@ -1,5 +1,6 @@
 package me.exrates.adminservice.utils;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.time.temporal.WeekFields;
 import java.util.Locale;
 
 @Data
+@AllArgsConstructor
 public class RiskManagementDateFilter {
 
     private final int DAY;
