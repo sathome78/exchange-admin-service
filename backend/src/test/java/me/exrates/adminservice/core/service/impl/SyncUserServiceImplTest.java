@@ -59,7 +59,7 @@ public class SyncUserServiceImplTest extends DataComparisonTest {
         protected NamedParameterJdbcOperations adminNPJdbcOperations;
 
         @Autowired
-        @Qualifier(TEST_ADMIN_TEMPLATE)
+        @Qualifier(TEST_ADMIN_JDBC_OPS)
         protected JdbcOperations adminJdbcOperations;
 
         @Autowired
@@ -67,7 +67,7 @@ public class SyncUserServiceImplTest extends DataComparisonTest {
         protected NamedParameterJdbcOperations coreNPJdbcOperations;
 
         @Autowired
-        @Qualifier(TEST_ADMIN_JDBC_OPS)
+        @Qualifier(TEST_CORE_TEMPLATE)
         protected JdbcOperations coreJdbcOperations;
 
         @Bean

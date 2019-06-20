@@ -89,7 +89,7 @@ public class UserRepositoryImplTest extends DataComparisonTest {
         private NamedParameterJdbcOperations namedParameterJdbcOperations;
 
         @Autowired
-        @Qualifier(TEST_ADMIN_TEMPLATE)
+        @Qualifier(TEST_ADMIN_JDBC_OPS)
         private JdbcOperations jdbcOperations;
 
         @Override

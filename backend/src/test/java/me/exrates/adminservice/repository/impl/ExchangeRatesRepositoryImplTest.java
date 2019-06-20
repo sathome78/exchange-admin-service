@@ -119,7 +119,7 @@ public class ExchangeRatesRepositoryImplTest extends DataComparisonTest {
         protected NamedParameterJdbcOperations adminNPJdbcOperations;
 
         @Autowired
-        @Qualifier(TEST_ADMIN_TEMPLATE)
+        @Qualifier(TEST_ADMIN_JDBC_OPS)
         protected JdbcOperations adminJdbcOperations;
 
         @Override
