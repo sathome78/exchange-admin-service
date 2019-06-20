@@ -1,5 +1,5 @@
 server:
-  port: 6666
+  port: 7777
 
 
 spring:
@@ -12,21 +12,19 @@ spring:
       default_view_inclusion: true
     default-property-inclusion: 'non_null'
   flyway:
-    locations: classpath:db/migration, classpath:db/data
-    table: debug-schema-history
-#    url: ${db-admin.datasource.url}
-#    user: ${db-admin.datasource.username}
-#    password: ${db-admin.datasource.password}
+    url: ${db-admin.datasource.url}
+    user: ${db-admin.datasource.username}
+    password: ${db-admin.datasource.password}
     baseline-on-migrate: true
 
 db-admin:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/admin_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: root
-    password: root
+    url: ${placeholder}
+    username: ${placeholder}
+    password: ${placeholder}
   ssm:
-    password-path: admin
+    password-path:
 
 db-core:
   datasource:
@@ -35,10 +33,10 @@ db-core:
     username: exdevdb
     password: KQmK82dd
   ssm:
-    password-path: core
+    password-path:
 
 ssm:
-  develop-mode: true
+  mode: develop
 
 api:
   exchange:
@@ -70,4 +68,4 @@ logging:
 
 angular:
   allowed:
-    origins: http://localhost
+    origins: ${placeholder}

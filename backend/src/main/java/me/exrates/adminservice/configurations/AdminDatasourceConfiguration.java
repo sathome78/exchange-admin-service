@@ -3,11 +3,13 @@ package me.exrates.adminservice.configurations;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.SSMGetter;
+import me.exrates.adminservice.utils.NonDevelopmentCondition;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
@@ -25,7 +27,7 @@ import javax.sql.DataSource;
 @Log4j2
 @Configuration
 @Order(1)
-@Profile("!light")
+@Conditional(NonDevelopmentCondition.class)
 public class AdminDatasourceConfiguration extends DatabaseConfiguration {
 
     public static final String ADMIN_DATASOURCE = "adminDataSource";

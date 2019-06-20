@@ -37,7 +37,7 @@ public class CoreTestDatabaseConfiguration {
     @Bean(name = TEST_CORE_DATASOURCE)
     public DataSource coreDataSource() {
         final HikariDataSource hikariDataSource =
-                HikariDataSourceFactory.createDataSource(dbUsername, dbPassword, dbUrl, dbDriverClassname);
+                HikariDataSourceFactory.createCoreDataSource();
 
         Flyway flyway = Flyway.configure()
                 .dataSource(hikariDataSource)
