@@ -22,6 +22,7 @@ db-admin:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${placeholder}
     username: ${placeholder}
+    password: ${placeholder}
   ssm:
     password-path: admin
 
@@ -30,6 +31,7 @@ db-core:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://exdbdev.cedlveyttji9.us-east-2.rds.amazonaws.com:3306/dbdev2?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: exdevdb
+    password: KQmK82dd
   ssm:
     password-path: core
 

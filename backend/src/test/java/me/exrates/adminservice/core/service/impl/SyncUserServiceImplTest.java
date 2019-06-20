@@ -47,7 +47,7 @@ public class SyncUserServiceImplTest extends DataComparisonTest {
     @Test
     public void syncUsers() {
         around()
-                .withSQL("SELECT * FROM "+ TABLE)
+                .withSQL("SELECT * FROM " + TABLE)
                 .run(() -> syncUserService.syncUsers());
     }
 
@@ -67,7 +67,7 @@ public class SyncUserServiceImplTest extends DataComparisonTest {
         protected NamedParameterJdbcOperations coreNPJdbcOperations;
 
         @Autowired
-        @Qualifier(TEST_CORE_TEMPLATE)
+        @Qualifier(TEST_ADMIN_JDBC_OPS)
         protected JdbcOperations coreJdbcOperations;
 
         @Bean
