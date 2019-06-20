@@ -49,9 +49,10 @@ public abstract class AbstractDatabaseContextTest {
 
     protected static final String TEST_ADMIN_DATASOURCE = "testAdminDataSource";
     protected static final String TEST_CORE_DATASOURCE = "testCoreDataSource";
-    protected static final String TEST_ADMIN_NP_TEMPLATE = "testAdminTemplate";
-    protected static final String TEST_CORE_NP_TEMPLATE = "testCoreTemplate";
+    protected static final String TEST_ADMIN_NP_TEMPLATE = "testAdminNPTemplate";
     protected static final String TEST_ADMIN_JDBC_OPS = "adminJdbcOperations";
+    protected static final String TEST_CORE_NP_TEMPLATE = "testCoreNPTemplate";
+    protected static final String TEST_CORE_TEMPLATE = "testCoreTemplate";
 
 
     @Autowired

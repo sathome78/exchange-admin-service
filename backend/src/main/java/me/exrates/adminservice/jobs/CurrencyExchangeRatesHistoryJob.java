@@ -25,6 +25,10 @@ public class CurrencyExchangeRatesHistoryJob {
 
     @Scheduled(cron = "${scheduled.update.rates-history}")
     public void updateCurrencyRateHistory() {
-        exchangeRatesService.updateCurrencyExchangeRateHistory();
+        try {
+            exchangeRatesService.updateCurrencyExchangeRateHistory();
+        } catch (Exception ex) {
+            log.info("--> In processing 'CurrencyExchangeRatesHistoryJob' occurred error", ex);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package me.exrates.adminservice.core.repository;
 
 import me.exrates.adminservice.core.domain.CoreTransaction;
+import me.exrates.adminservice.core.domain.CoreTransactionDto;
 
 import java.util.List;
 
@@ -18,7 +19,11 @@ public interface CoreTransactionRepository {
     String COL_RATE_IN_USD = "rate_in_usd";
     String COL_RATE_IN_BTC = "rate_in_btc";
     String COL_SOURCE_ID = "source_id";
-    String UPDATE_CURSOR_SQL =  "REPLACE INTO CURSORS (last_id, table_name, table_column) SELECT MAX(id), 'TRANSACTION', 'id' FROM TRANSACTIONS;";
+    String UPDATE_CURSOR_SQL = "REPLACE INTO CURSORS (last_id, table_name, table_column) SELECT MAX(id), 'TRANSACTION', 'id' FROM TRANSACTIONS;";
 
     List<CoreTransaction> findAllLimited(int limit, long position);
+
+    CoreTransactionDto create(CoreTransactionDto transaction);
+
+    boolean updateForProvided(CoreTransactionDto transaction);
 }

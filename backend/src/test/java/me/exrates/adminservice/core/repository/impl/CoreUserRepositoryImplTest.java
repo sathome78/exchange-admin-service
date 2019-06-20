@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -84,6 +85,10 @@ public class CoreUserRepositoryImplTest extends DataComparisonTest {
         @Qualifier(TEST_CORE_NP_TEMPLATE) // it's ok bean will be imported later
         private NamedParameterJdbcOperations coreNPJdbcOperations;
 
+        @Autowired
+        @Qualifier(TEST_CORE_TEMPLATE)
+        private JdbcOperations coreJdbcOperations;
+
         @Override
         protected String getSchema() {
             return "CoreUserRepositoryImplTest";
@@ -91,8 +96,7 @@ public class CoreUserRepositoryImplTest extends DataComparisonTest {
 
         @Bean
         CoreUserRepository coreUserRepository() {
-            return new CoreUserRepositoryImpl(coreNPJdbcOperations);
+            return new CoreUserRepositoryImpl(coreNPJdbcOperations, coreJdbcOperations);
         }
-
     }
 }

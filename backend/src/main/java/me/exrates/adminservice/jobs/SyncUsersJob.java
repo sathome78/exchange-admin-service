@@ -26,6 +26,10 @@ public class SyncUsersJob {
 
     @Scheduled(cron = "${scheduled.update.sync-users}")
     public void update() {
-        syncUserService.syncUsers();
+        try {
+            syncUserService.syncUsers();
+        } catch (Exception ex) {
+            log.info("--> In processing 'SyncUsersJob' occurred error", ex);
+        }
     }
 }

@@ -25,6 +25,10 @@ public class CurrencyExchangeRatesJob {
 
     @Scheduled(initialDelay = 0, fixedDelay = 30 * 60 * 1000)
     public void update() {
-        exchangeRatesService.updateCurrencyExchangeRates();
+        try {
+            exchangeRatesService.updateCurrencyExchangeRates();
+        } catch (Exception ex) {
+            log.info("--> In processing 'CurrencyExchangeRatesJob' occurred error", ex);
+        }
     }
 }
