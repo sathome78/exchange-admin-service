@@ -1,15 +1,18 @@
-package me.exrates.adminservice.services;
+package me.exrates.adminservice.services.impl;
 
 import config.AbstractDatabaseContextTest;
 import config.AsyncTransactionsTestConfig;
 import config.DataComparisonTest;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
+import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.core.repository.impl.CoreTransactionRepositoryImpl;
+import me.exrates.adminservice.core.repository.impl.CoreUserRepositoryImpl;
 import me.exrates.adminservice.domain.api.RateDto;
-import me.exrates.adminservice.repository.AdminTransactionRepository;
+import me.exrates.adminservice.repository.TransactionRepository;
 import me.exrates.adminservice.repository.UserInsightRepository;
-import me.exrates.adminservice.repository.impl.AdminTransactionRepositoryImpl;
-import me.exrates.adminservice.services.impl.SyncTransactionServiceImpl;
+import me.exrates.adminservice.repository.impl.TransactionRepositoryImpl;
+import me.exrates.adminservice.services.ExchangeRatesService;
+import me.exrates.adminservice.services.TransactionService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +34,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.awaitility.Awaitility.await;
-import static org.awaitility.Awaitility.fieldIn;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,13 +42,13 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {
         AsyncTransactionsTestConfig.class,
-        SyncTransactionServiceTest.InnerConfig.class
+        TransactionServiceTest.InnerConfig.class
 })
-public class SyncTransactionServiceTest extends DataComparisonTest {
+public class TransactionServiceTest extends DataComparisonTest {
 
 
     @Autowired
-    private SyncTransactionService syncTransactionService;
+    private TransactionService transactionService;
 
     @Autowired
     private ExchangeRatesService exchangeRatesService;
@@ -60,12 +60,28 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
 
     @Test
     public void syncTransactions_nonEmpty() {
-        final String selectAllInsights = "SELECT * FROM " + AdminTransactionRepository.TABLE;
+        final String selectAllInsights = "SELECT * FROM " + TransactionRepository.TABLE;
         final String selectInsights = "SELECT * FROM " + UserInsightRepository.TABLE;
 
         around()
                 .withSQL(selectAllInsights, selectInsights)
-                .run(() -> syncTransactionService.syncTransactions());
+                .run(() -> transactionService.syncTransactions());
+    }
+
+    @Test
+    public void testGetDailyCommissionRevenue() {
+        final Map<String, BigDecimal> revenue = transactionService.getDailyCommissionRevenue();
+
+        assertEquals("0.402", revenue.get("BTC").stripTrailingZeros().toPlainString());
+        assertEquals("4960", revenue.get("USD").stripTrailingZeros().toPlainString());
+    }
+
+    @Test
+    public void testGetDailyInnerTradeVolume() {
+        final Map<String, BigDecimal> revenue = transactionService.getDailyInnerTradeVolume();
+
+        assertEquals("4.02", revenue.get("BTC").stripTrailingZeros().toPlainString());
+        assertEquals("49600", revenue.get("USD").stripTrailingZeros().toPlainString());
     }
 
     private Map<String, RateDto> getTestRates() {
@@ -97,8 +113,13 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
         private ApplicationEventPublisher applicationEventPublisher;
 
         @Bean
-        public AdminTransactionRepository adminTransactionRepository() {
-            return new AdminTransactionRepositoryImpl(adminJdbcOperations, adminNPJdbcOperations);
+        CoreUserRepository coreUserRepository() {
+            return new CoreUserRepositoryImpl(coreNPJdbcOperations);
+        }
+
+        @Bean
+        public TransactionRepository adminTransactionRepository() {
+            return new TransactionRepositoryImpl(adminJdbcOperations, adminNPJdbcOperations, coreUserRepository());
         }
 
         @Bean
@@ -112,14 +133,9 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
         }
 
         @Bean
-        public SyncTransactionService testSyncTransactionService() {
-            return new SyncTransactionServiceImpl(adminTransactionRepository(), applicationEventPublisher,
+        public TransactionService transactionService() {
+            return new TransactionServiceImpl(adminTransactionRepository(), applicationEventPublisher,
                     testCoreTransactionRepository(), testExchangeRatesService());
-        }
-
-        @Bean
-        public UpdateTransactionService updateTransactionService() {
-            return Mockito.mock(UpdateTransactionService.class);
         }
 
         @Override

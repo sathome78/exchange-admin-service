@@ -2,6 +2,7 @@ package me.exrates.adminservice.core.repository;
 
 import me.exrates.adminservice.core.domain.CoreUser;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,4 +29,6 @@ public interface CoreUserRepository {
     Optional<CoreUser> findByUsername(String username);
 
     Map<Integer, String> findAllUsersIdAndEmail();
+
+    Collection<Integer> getBotsIds();
 }

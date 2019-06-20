@@ -46,15 +46,15 @@ public class RiskManagementBoardDTO {
     @JsonSerialize(using = BigDecimalSerializer.class)
     public BigDecimal outerCommissionUSD;
 
-    @JsonProperty("inner_trade_usd")
+    @JsonProperty("trade_revenue_btc")
     @JsonSerialize(using = BigDecimalSerializer.class)
     public BigDecimal tradeIncomeBTC;
 
-    @JsonProperty("inner_trade_usd")
+    @JsonProperty("trade_revenue_usd")
     @JsonSerialize(using = BigDecimalSerializer.class)
     public BigDecimal tradeIncomeUSD;
 
-    @JsonProperty("commission_revenue_usd")
+    @JsonProperty("commission_revenue_btc")
     @JsonSerialize(using = BigDecimalSerializer.class)
     public BigDecimal commissionRevenueBTC;
 

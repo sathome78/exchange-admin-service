@@ -6,14 +6,11 @@ import me.exrates.adminservice.core.repository.CoreUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,6 +76,13 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
             }
             return users;
         });
+    }
+
+    @Override
+    public Collection<Integer> getBotsIds() {
+        String sql = "SELECT u.id FROM USER u" +
+                " WHERE u.roleid IN (SELECT ur.id FROM USER_ROLE ur WHERE ur.name IN (\'BOT_TRADER\', \'OUTER_MARKET_BOT\'))";
+        return coreTemplate.query(sql, Collections.emptyMap(), (rs, rowNum) -> rs.getInt(1));
     }
 
     private RowMapper<CoreUser> getCoreUserRowMapper() {

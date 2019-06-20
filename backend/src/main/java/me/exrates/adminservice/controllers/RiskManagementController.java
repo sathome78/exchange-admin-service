@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @RestController
@@ -56,4 +57,12 @@ public class RiskManagementController {
         return riskManagementService.getRiskManagementBoard();
     }
 
+    @GetMapping("/test")
+    @ResponseBody
+    public RiskManagementBoardDTO test() {
+        return RiskManagementBoardDTO.builder()
+                .tradeBotCoverageBTC(BigDecimal.valueOf(1.00001))
+                .tradeBotCoverageUSD(BigDecimal.valueOf(9003))
+                .build();
+    }
 }

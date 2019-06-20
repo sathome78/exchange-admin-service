@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @Repository
@@ -32,15 +33,15 @@ public class CoreExorderRepositoryImpl implements CoreExorderRepository {
     public Map<String, Integer> getDailyBuySellVolume() {
         String sql = "SELECT" +
                 " SUM(CASE WHEN " + COL_OPERATION_TYPE_ID + " = 3 THEN " + COL_AMOUNT_BASE + " ELSE 0 END) AS " + SELL + "," +
-                " SUM(CASE WHEN " + COL_OPERATION_TYPE_ID + " = 4 THEN " + COL_AMOUNT_BASE + " ELSE 0 END) AS " + BUY  +
+                " SUM(CASE WHEN " + COL_OPERATION_TYPE_ID + " = 4 THEN " + COL_AMOUNT_BASE + " ELSE 0 END) AS " + BUY +
                 " FROM " + TABLE +
                 " WHERE " + COL_STATUS_ID + " = 3" +
-                " AND "+ COL_DATE_ACCEPTION + " > CURRENT_TIMESTAMP - INTERVAL 1 DAY;";
+                " AND " + COL_DATE_ACCEPTION + " > CURRENT_TIMESTAMP - INTERVAL 1 DAY;";
         final Map<String, BigDecimal> rawValues = namedParameterJdbcOperations.query(sql, Collections.emptyMap(), rs -> {
             final Map<String, BigDecimal> values = new HashMap<>(2);
             while (rs.next()) {
-                values.put(BUY, rs.getBigDecimal(BUY));
-                values.put(SELL, rs.getBigDecimal(SELL));
+                values.put(BUY, Objects.nonNull(rs.getBigDecimal(BUY)) ? rs.getBigDecimal(BUY) : BigDecimal.ZERO);
+                values.put(SELL, Objects.nonNull(rs.getBigDecimal(SELL)) ? rs.getBigDecimal(SELL) : BigDecimal.ZERO);
             }
             return values;
         });
@@ -52,7 +53,7 @@ public class CoreExorderRepositoryImpl implements CoreExorderRepository {
         String sql = "SELECT " + COL_USER_ID + ", " + COL_USER_ACCEPTOR_ID +
                 " FROM " + TABLE +
                 " WHERE " + COL_STATUS_ID + " = 3" +
-                " AND "+ COL_DATE_ACCEPTION + " > CURRENT_TIMESTAMP - INTERVAL 1 DAY;";
+                " AND " + COL_DATE_ACCEPTION + " > CURRENT_TIMESTAMP - INTERVAL 1 DAY;";
         final Set<Integer> uniqUsers = namedParameterJdbcOperations.query(sql, Collections.emptyMap(), rs -> {
             final Set<Integer> users = new HashSet<>();
             while (rs.next()) {
@@ -68,7 +69,7 @@ public class CoreExorderRepositoryImpl implements CoreExorderRepository {
     @VisibleForTesting
     protected Map<String, Integer> getPercentage(Map<String, BigDecimal> rawValues) {
         Map<String, Integer> result = new HashMap<>(2);
-        if (rawValues.isEmpty()) {
+        if (rawValues.isEmpty() || rawValues.values().stream().allMatch(bigDecimal -> bigDecimal.compareTo(BigDecimal.ZERO) < 1)) {
             result.put(BUY, 0);
             result.put(SELL, 0);
             return result;
