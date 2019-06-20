@@ -3,9 +3,12 @@ package me.exrates.adminservice.core.repository.impl;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreUser;
 import me.exrates.adminservice.core.domain.FilterDto;
+import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
-import me.exrates.adminservice.core.domain.UserOperationAuthorityOption;
+import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
+import me.exrates.adminservice.core.domain.enums.UserOperationAuthority;
+import me.exrates.adminservice.core.exceptions.UserNotFoundException;
 import me.exrates.adminservice.core.exceptions.UserRoleNotFoundException;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.domain.enums.UserRole;
@@ -86,6 +89,20 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
     }
 
     @Override
+    public Integer getIdByEmail(String email) {
+        final String sql = "SELECT u.id FROM USER u WHERE u.email = :email";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("email", email);
+
+        try {
+            return coreNPTemplate.queryForObject(sql, params, Integer.class);
+        } catch (Exception ex) {
+            throw new UserNotFoundException(String.format("User: %s not found", email));
+        }
+    }
+
+    @Override
     public Map<Integer, String> findAllUsersIdAndEmail() {
         String sql = "SELECT u.id, u.email FROM USER u";
         return coreNPTemplate.query(sql, Collections.emptyMap(), rs -> {
@@ -104,36 +121,11 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "JOIN USER_ROLE ur on ur.id = u.roleid " +
                 "WHERE u.id = :user_id ";
 
-        Map<String, Object> params = Collections.singletonMap("user_id", userId);
-
         try {
-            return coreNPTemplate.queryForObject(sql, params, (rs, row) -> UserRole.valueOf(rs.getString("role_name")));
+            return coreNPTemplate.queryForObject(sql, Collections.singletonMap("user_id", userId), (rs, row) -> UserRole.valueOf(rs.getString("role_name")));
         } catch (Exception ex) {
             throw new UserRoleNotFoundException(String.format("User role for user: %d not found", userId));
         }
-    }
-
-    @Override
-    public void updateUserOperationAuthority(List<UserOperationAuthorityOption> options, Integer userId) {
-        final String sql = "UPDATE USER_OPERATION_AUTHORITY uoa" +
-                " SET uoa.enabled = ?" +
-                " WHERE uoa.user_id = ? AND uoa.user_operation_id = ?";
-
-        coreTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                UserOperationAuthorityOption authorityOption = options.get(i);
-                ps.setBoolean(1, authorityOption.getEnabled());
-                ps.setInt(2, userId);
-                ps.setInt(3, authorityOption.getUserOperationAuthority().getOperationId());
-            }
-
-            @Override
-            public int getBatchSize() {
-                return options.size();
-            }
-        });
     }
 
     @Override
@@ -159,7 +151,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
     }
 
     @Override
-    public int getUserInfoListCount(FilterDto filter, Integer limit, Integer offset) {
+    public Integer getUserInfoListCount(FilterDto filter, Integer limit, Integer offset) {
         String balanceClause = StringUtils.EMPTY;
         if (nonNull(filter.getMinBalance()) && nonNull(filter.getMaxBalance())) {
             balanceClause = "AGR.balance BETWEEN :min_balance AND :max_balance AND ";
@@ -217,7 +209,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         String offsetStr = offset < 1 ? StringUtils.EMPTY : String.format(" OFFSET %d ", offset);
 
         String sql = "SELECT " +
-                "AGR.user_id " +
+                "COUNT(AGR.user_id) AS records_count " +
                 "FROM " +
                 "(SELECT " +
                 "u.id AS user_id, " +
@@ -235,7 +227,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "JOIN WALLET w ON w.user_id = u.id " +
                 "JOIN CURRENT_CURRENCY_RATES ccr ON ccr.currency_id = w.currency_id " +
                 "JOIN CURRENCY cur ON cur.id = w.currency_id " +
-                (isNotEmpty(filter.getCurrencies()) ? "AND cur.name IN (:currencies) " : StringUtils.EMPTY) +
+                (isNotEmpty(filter.getCurrencyNames()) ? "AND cur.name IN (:currencies) " : StringUtils.EMPTY) +
                 "GROUP BY w.user_id) AGR " +
                 "WHERE " +
                 balanceClause +
@@ -293,11 +285,15 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         if (nonNull(filter.getRole())) {
             params.put("user_role", filter.getRole().name());
         }
-        if (isNotEmpty(filter.getCurrencies())) {
-            params.put("user_role", String.join(",", filter.getCurrencies()));
+        if (isNotEmpty(filter.getCurrencyNames())) {
+            params.put("currencies", String.join(",", filter.getCurrencyNames()));
         }
 
-        return coreNPTemplate.query(sql, params, getUserInfoDtoShortRowMapper()).size();
+        try {
+            return coreNPTemplate.queryForObject(sql, params, Integer.class);
+        } catch (Exception ex) {
+            return 0;
+        }
     }
 
     @Override
@@ -394,7 +390,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "JOIN WALLET w ON w.user_id = u.id " +
                 "JOIN CURRENT_CURRENCY_RATES ccr ON ccr.currency_id = w.currency_id " +
                 "JOIN CURRENCY cur ON cur.id = w.currency_id " +
-                (isNotEmpty(filter.getCurrencies()) ? "AND cur.name IN (:currencies) " : StringUtils.EMPTY) +
+                (isNotEmpty(filter.getCurrencyNames()) ? "AND cur.name IN (:currencies) " : StringUtils.EMPTY) +
                 "GROUP BY w.user_id) AGR " +
                 "WHERE " +
                 balanceClause +
@@ -452,8 +448,8 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         if (nonNull(filter.getRole())) {
             params.put("user_role", filter.getRole().name());
         }
-        if (isNotEmpty(filter.getCurrencies())) {
-            params.put("user_role", String.join(",", filter.getCurrencies()));
+        if (isNotEmpty(filter.getCurrencyNames())) {
+            params.put("currencies", String.join(",", filter.getCurrencyNames()));
         }
 
         return coreNPTemplate.query(sql, params, getUserInfoDtoRowMapper());
@@ -461,7 +457,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
 
     @Override
     public UserInfoDto getUserInfo(int userId) {
-        String sql = "SELECT " +
+        final String sql = "SELECT " +
                 "AGR.user_id, " +
                 "AGR.user_nickname, " +
                 "AGR.ip_address, " +
@@ -504,6 +500,128 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         }
     }
 
+    @Override
+    public Integer getUserBalancesInfoListCount(int userId, boolean withoutZeroBalances, List<String> currencyNames) {
+        String sql = "SELECT COUNT(w.id) AS records_count " +
+                "FROM WALLET w " +
+                "JOIN CURRENCY cur ON cur.id = w.currency_id " +
+                (isNotEmpty(currencyNames) ? "AND cur.name IN (:currencies) " : StringUtils.EMPTY) +
+                "WHERE w.user_id = :user_id " +
+                (withoutZeroBalances ? "AND IFNULL(w.active_balance + w.reserved_balance, 0) > 0 " : StringUtils.EMPTY);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+        if (isNotEmpty(currencyNames)) {
+            params.put("currencies", String.join(",", currencyNames));
+        }
+
+        try {
+            return coreNPTemplate.queryForObject(sql, params, Integer.class);
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    @Override
+    public List<UserBalancesInfoDto> getUserBalancesInfoList(int userId, boolean withoutZeroBalances, List<String> currencyNames, int limit, int offset) {
+        String limitStr = limit < 1 ? StringUtils.EMPTY : String.format(" LIMIT %d ", limit);
+        String offsetStr = offset < 1 ? StringUtils.EMPTY : String.format(" OFFSET %d ", offset);
+
+        String sql = "SELECT " +
+                "cur.name AS currency_name, " +
+                "(SELECT rra.address " +
+                " FROM REFILL_REQUEST rr " +
+                " JOIN REFILL_REQUEST_ADDRESS rra ON rra.id = rr.refill_request_address_id " +
+                " WHERE rr.user_id = w.user_id AND rr.currency_id = cur.id AND rr.status_id IN (9, 10) " +
+                " ORDER BY rr.status_modification_date DESC " +
+                " LIMIT 1) AS last_refill_address, " +
+                "IFNULL((SELECT SUM(rr.amount) AS refill_sum " +
+                " FROM REFILL_REQUEST rr " +
+                " WHERE rr.user_id = w.user_id AND rr.currency_id = cur.id AND rr.status_id IN (9, 10)), 0) AS all_refill_sum, " +
+                "(SELECT wr.wallet " +
+                " FROM WITHDRAW_REQUEST wr " +
+                " WHERE wr.user_id = w.user_id AND wr.currency_id = cur.id AND wr.status_id IN (9, 10) " +
+                " ORDER BY wr.date_creation DESC " +
+                " LIMIT 1) AS last_withdraw_address, " +
+                "IFNULL((SELECT SUM(wr.amount) AS withdraw_sum " +
+                " FROM WITHDRAW_REQUEST wr " +
+                " WHERE wr.user_id = w.user_id AND wr.currency_id = cur.id AND wr.status_id IN (9, 10)), 0) AS all_withdraw_sum, " +
+                "IFNULL(w.active_balance, 0) AS active_balance, " +
+                "IFNULL(w.reserved_balance, 0) AS reserved_balance, " +
+                "IFNULL(w.active_balance + w.reserved_balance, 0) AS common_balance " +
+                "FROM WALLET w " +
+                "JOIN CURRENCY cur ON cur.id = w.currency_id " +
+                (isNotEmpty(currencyNames) ? "AND cur.name IN (:currencies) " : StringUtils.EMPTY) +
+                "WHERE w.user_id = :user_id " +
+                (withoutZeroBalances ? "AND IFNULL(w.active_balance + w.reserved_balance, 0) > 0 " : StringUtils.EMPTY) +
+                limitStr +
+                offsetStr;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+        if (isNotEmpty(currencyNames)) {
+            params.put("currencies", String.join(",", currencyNames));
+        }
+
+        return coreNPTemplate.query(sql, params, getUserBalancesInfoDtoRowMapper());
+    }
+
+    @Override
+    public void updateUserOperationAuthority(List<CoreUserOperationAuthorityOptionDto> options, Integer userId) {
+        final String sql = "UPDATE USER_OPERATION_AUTHORITY uoa" +
+                " SET uoa.enabled = ?" +
+                " WHERE uoa.user_id = ? AND uoa.user_operation_id = ?";
+
+        coreTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                CoreUserOperationAuthorityOptionDto authorityOption = options.get(i);
+                ps.setBoolean(1, authorityOption.getEnabled());
+                ps.setInt(2, userId);
+                ps.setInt(3, authorityOption.getUserOperationAuthority().getOperationId());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return options.size();
+            }
+        });
+    }
+
+    @Override
+    public List<CoreUserOperationAuthorityOptionDto> getUserOperationTypeAuthorities(Integer userId) {
+        final String sql = "SELECT uoa.user_operation_id, uoa.enabled " +
+                "FROM USER_OPERATION_AUTHORITY uoa " +
+                "WHERE uoa.user_id = :user_id";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+
+        return coreNPTemplate.query(sql, params, (rs, i) -> CoreUserOperationAuthorityOptionDto.builder()
+                .userOperationAuthority(UserOperationAuthority.convert(rs.getInt("user_operation_id")))
+                .enabled(rs.getBoolean("enabled"))
+                .build());
+    }
+
+    public List<UserRole> getAllRoles() {
+        final String sql = "SELECT ur.name FROM USER_ROLE ur";
+
+        return coreNPTemplate.query(sql, (rs, row) -> UserRole.valueOf(rs.getString("name")));
+    }
+
+    @Override
+    public void updateUserRole(UserRole newRole, Integer userId) {
+        final String sql = "UPDATE USER u " +
+                "SET u.roleid = :role " +
+                "WHERE u.id = :user_id";
+
+        boolean updated = coreNPTemplate.update(sql, Collections.singletonMap("user_id", userId)) > 0;
+        if (!updated) {
+            log.error("User role not updated (user id: {}, new role: {})", userId, newRole);
+        }
+    }
+
     private RowMapper<CoreUser> getCoreUserRowMapper() {
         return (rs, i) -> CoreUser.builder()
                 .userId(rs.getInt(CoreUserRepository.COL_USER_ID))
@@ -536,9 +654,16 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 .build();
     }
 
-    private RowMapper<UserInfoDto> getUserInfoDtoShortRowMapper() {
-        return (rs, idx) -> UserInfoDto.builder()
-                .userId(rs.getInt("user_id"))
+    private RowMapper<UserBalancesInfoDto> getUserBalancesInfoDtoRowMapper() {
+        return (rs, idx) -> UserBalancesInfoDto.builder()
+                .currencyName(rs.getString("currency_name"))
+                .lastRefillAddress(rs.getString("last_refill_address"))
+                .summaryRefill(rs.getBigDecimal("all_refill_sum"))
+                .lastWithdrawAddress(rs.getString("last_withdraw_address"))
+                .summaryWithdraw(rs.getBigDecimal("all_withdraw_sum"))
+                .activeBalance(rs.getBigDecimal("active_balance"))
+                .reservedBalance(rs.getBigDecimal("reserved_balance"))
+                .commonBalance(rs.getBigDecimal("common_balance"))
                 .build();
     }
 }

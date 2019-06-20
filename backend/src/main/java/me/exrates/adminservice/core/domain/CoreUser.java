@@ -21,5 +21,4 @@ public class CoreUser {
     private String userRole;
     private boolean use2fa;
     private String kycStatus;
-
 }

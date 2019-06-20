@@ -45,7 +45,7 @@ public class FilterDto {
     private boolean isActive;
 
     @Null
-    private List<String> currencies;
+    private List<String> currencyNames;
 
     @Null
     private Integer minClosedOrders;
@@ -74,7 +74,7 @@ public class FilterDto {
                 String.valueOf(isVerified),
                 nonNull(role) ? role.name() : null,
                 String.valueOf(isActive),
-                isNotEmpty(currencies) ? String.join("_", currencies) : null,
+                isNotEmpty(currencyNames) ? String.join("_", currencyNames) : null,
                 nonNull(minClosedOrders) ? minClosedOrders.toString() : null,
                 nonNull(maxClosedOrders) ? maxClosedOrders.toString() : null,
                 nonNull(minRefillRequests) ? minRefillRequests.toString() : null,

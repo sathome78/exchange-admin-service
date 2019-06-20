@@ -1,11 +1,11 @@
-package me.exrates.adminservice.services;
+package me.exrates.adminservice.core.service;
 
 
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
 
 import java.util.List;
 
-public interface CurrencyService {
+public interface CoreCurrencyService {
 
     CoreCurrencyDto findById(int id);
 

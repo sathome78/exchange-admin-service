@@ -2,11 +2,15 @@ package me.exrates.adminservice.core.service;
 
 import me.exrates.adminservice.core.domain.FilterDto;
 import me.exrates.adminservice.core.domain.ReportDto;
+import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
-import me.exrates.adminservice.core.domain.UserOperationAuthorityOption;
+import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityDto;
+import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
 import me.exrates.adminservice.domain.PagedResult;
+import me.exrates.adminservice.domain.enums.UserRole;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface CoreUserService {
@@ -17,5 +21,17 @@ public interface CoreUserService {
 
     UserDashboardDto getDashboardOne();
 
-    void updateUserOperationAuthority(List<UserOperationAuthorityOption> options, Integer userId);
+    UserInfoDto getUserInfo(int userId);
+
+    PagedResult<UserBalancesInfoDto> getUserBalancesInfo(Integer userId, boolean withoutZeroBalances, List<String> currencyNames, Integer limit, Integer offset);
+
+    void manualBalanceChange(Integer userId, Integer currencyId, BigDecimal amount);
+
+    void updateUserOperationAuthority(CoreUserOperationAuthorityDto authority);
+
+    List<CoreUserOperationAuthorityOptionDto> getUserOperationTypeAuthorities(Integer userId);
+
+    List<UserRole> getAllRoles();
+
+    void updateUserRole(UserRole newRole, Integer userId);
 }
