@@ -3,8 +3,8 @@ package me.exrates.adminservice.core.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.exrates.adminservice.domain.enums.UserRole;
-import me.exrates.adminservice.domain.enums.UserStatus;
+import me.exrates.adminservice.core.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserStatus;
 
 import java.io.Serializable;
 import java.util.Collections;

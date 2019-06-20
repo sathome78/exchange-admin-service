@@ -27,7 +27,7 @@ import me.exrates.adminservice.core.service.CoreCurrencyService;
 import me.exrates.adminservice.core.service.CoreUserService;
 import me.exrates.adminservice.core.service.CoreWalletService;
 import me.exrates.adminservice.domain.PagedResult;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.utils.BigDecimalProcessingUtil;
 import me.exrates.adminservice.utils.ReportOneExcelGeneratorUtil;
 import org.springframework.beans.factory.annotation.Autowired;

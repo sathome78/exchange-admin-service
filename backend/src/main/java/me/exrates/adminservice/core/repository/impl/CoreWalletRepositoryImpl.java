@@ -12,7 +12,7 @@ import me.exrates.adminservice.core.domain.enums.WalletTransferStatus;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.core.repository.CoreWalletRepository;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.utils.BigDecimalProcessingUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package me.exrates.adminservice.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 
 import java.io.Serializable;
 

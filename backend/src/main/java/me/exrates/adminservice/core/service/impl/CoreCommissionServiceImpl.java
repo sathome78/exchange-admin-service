@@ -5,7 +5,7 @@ import me.exrates.adminservice.core.domain.CoreCommissionDto;
 import me.exrates.adminservice.core.domain.enums.OperationType;
 import me.exrates.adminservice.core.repository.CoreCommissionRepository;
 import me.exrates.adminservice.core.service.CoreCommissionService;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

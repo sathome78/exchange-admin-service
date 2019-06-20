@@ -8,7 +8,7 @@ import me.exrates.adminservice.core.domain.UserInfoDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
 import me.exrates.adminservice.domain.PagedResult;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 
 import java.math.BigDecimal;
 import java.util.List;

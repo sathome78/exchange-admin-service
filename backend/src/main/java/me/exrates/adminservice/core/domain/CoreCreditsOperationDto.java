@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.exrates.adminservice.core.domain.enums.OperationType;
 import me.exrates.adminservice.core.domain.enums.TransactionSourceType;
-import me.exrates.adminservice.serializers.SpringOptionalDeserializer;
+import me.exrates.adminservice.serializers.OptionalDeserializer;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -28,9 +28,9 @@ public class CoreCreditsOperationDto {
     private CoreWalletDto wallet;
     private CoreMerchantDto merchant;
     private BigDecimal merchantCommissionAmount;
-    @JsonDeserialize(using = SpringOptionalDeserializer.class)
+    @JsonDeserialize(using = OptionalDeserializer.class)
     private Optional<String> destination;
-    @JsonDeserialize(using = SpringOptionalDeserializer.class)
+    @JsonDeserialize(using = OptionalDeserializer.class)
     private Optional<String> destinationTag;
     private TransactionSourceType transactionSourceType;
     private Boolean generateAdditionalRefillAddressAvailable;

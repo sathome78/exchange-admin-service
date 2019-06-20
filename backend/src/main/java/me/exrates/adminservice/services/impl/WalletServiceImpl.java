@@ -14,7 +14,7 @@ import me.exrates.adminservice.domain.PagedResult;
 import me.exrates.adminservice.domain.api.BalanceDto;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.domain.enums.DeviationStatus;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.repository.WalletRepository;
 import me.exrates.adminservice.core.service.CoreCurrencyService;
 import me.exrates.adminservice.services.ExchangeRatesService;

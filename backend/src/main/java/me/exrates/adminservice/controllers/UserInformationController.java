@@ -11,7 +11,7 @@ import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
 import me.exrates.adminservice.core.service.CoreUserService;
 import me.exrates.adminservice.domain.PagedResult;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.security.Principal;
 import java.util.List;
 
 @Log4j2

@@ -6,7 +6,7 @@ import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 
 import java.util.List;
 import java.util.Map;

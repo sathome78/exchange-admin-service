@@ -2,7 +2,7 @@ package me.exrates.adminservice.repository.impl;
 
 import me.exrates.adminservice.core.domain.CoreUser;
 import me.exrates.adminservice.domain.User;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

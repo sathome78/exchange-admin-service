@@ -1,4 +1,4 @@
-package me.exrates.adminservice.domain.enums;
+package me.exrates.adminservice.core.domain.enums;
 
 import java.util.stream.Stream;
 
