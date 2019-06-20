@@ -86,7 +86,7 @@ public class CoreUserRepositoryImplTest extends DataComparisonTest {
         private NamedParameterJdbcOperations coreNPJdbcOperations;
 
         @Autowired
-        @Qualifier(TEST_ADMIN_JDBC_OPS)
+        @Qualifier(TEST_CORE_TEMPLATE)
         private JdbcOperations coreJdbcOperations;
 
         @Override

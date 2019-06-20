@@ -158,7 +158,7 @@ public class UserInsightsServiceImplTest extends DataComparisonTest {
         private NamedParameterJdbcOperations coreParameterJdbcOperations;
 
         @Autowired
-        @Qualifier(TEST_ADMIN_JDBC_OPS)
+        @Qualifier(TEST_CORE_TEMPLATE)
         private JdbcOperations coreJdbcOperations;
 
         @Autowired
