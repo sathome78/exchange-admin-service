@@ -1,0 +1,7 @@
+[ {
+  "sql" : "SELECT * FROM TRANSACTIONS",
+  "content" : [ ]
+}, {
+  "sql" : "SELECT * FROM USER_ANNUAL_INSIGHTS",
+  "content" : [ ]
+} ]

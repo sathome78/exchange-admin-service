@@ -54,6 +54,7 @@ public class WalletRepositoryImpl implements WalletRepository {
                 "cewb.total_balance_usd, " +
                 "cewb.total_balance_btc, " +
                 "cewb.last_updated_at, " +
+                "cewb.sign_of_certainty, " +
                 "cewb.sign_of_monitoring, " +
                 "cewb.coin_range, " +
                 "cewb.check_coin_range, " +
@@ -74,6 +75,7 @@ public class WalletRepositoryImpl implements WalletRepository {
                 .totalBalanceUSD(rs.getBigDecimal("total_balance_usd"))
                 .totalBalanceBTC(rs.getBigDecimal("total_balance_btc"))
                 .lastUpdatedDate(rs.getTimestamp("last_updated_at").toLocalDateTime())
+                .signOfCertainty(rs.getBoolean("sign_of_certainty"))
                 .signOfMonitoring(rs.getBoolean("sign_of_monitoring"))
                 .coinRange(rs.getBigDecimal("coin_range"))
                 .checkCoinRange(rs.getBoolean("check_coin_range"))
@@ -338,6 +340,25 @@ public class WalletRepositoryImpl implements WalletRepository {
         int updated = npJdbcTemplate.update(sql, params);
         if (updated <= 0) {
             throw new RuntimeException("Accounting imbalance has not updated");
+        }
+    }
+
+    @Override
+    public void updateSignOfCertaintyForCurrency(int currencyId, boolean signOfCertainty) {
+        final String sql = "UPDATE COMPANY_EXTERNAL_WALLET_BALANCES cewb" +
+                " SET cewb.sign_of_certainty = :sign_of_certainty, last_updated_at = CURRENT_TIMESTAMP" +
+                " WHERE currency_id = :currency_id";
+
+        Map<String, Object> params = new HashMap<String, Object>() {
+            {
+                put("sign_of_certainty", signOfCertainty);
+                put("currency_id", currencyId);
+            }
+        };
+
+        int updated = npJdbcTemplate.update(sql, params);
+        if (updated <= 0) {
+            throw new RuntimeException("Sign of certainty has not updated");
         }
     }
 

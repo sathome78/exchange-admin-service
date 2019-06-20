@@ -20,12 +20,15 @@ public class RateDto {
     private BigDecimal usdRate;
     @JsonProperty("btc_rate")
     private BigDecimal btcRate;
+    @JsonProperty("rate_btc_for_one_usd")
+    private BigDecimal rateBtcForOneUsd;
 
     public static RateDto zeroRate(String currencyName) {
         return RateDto.builder()
                 .currencyName(currencyName)
                 .usdRate(BigDecimal.ZERO)
                 .btcRate(BigDecimal.ZERO)
+                .rateBtcForOneUsd(BigDecimal.ZERO)
                 .build();
     }
 }

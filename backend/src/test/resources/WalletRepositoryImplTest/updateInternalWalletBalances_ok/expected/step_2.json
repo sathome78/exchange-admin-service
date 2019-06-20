@@ -1,0 +1,16 @@
+{
+  "sql" : "SELECT * FROM INTERNAL_WALLET_BALANCES",
+  "content" : [ {
+    "id" : "1",
+    "currency_id" : "1",
+    "currency_name" : "TEST_COIN",
+    "role_id" : "1",
+    "role_name" : "USER",
+    "usd_rate" : "1.000000000000",
+    "btc_rate" : "1.000000000000",
+    "total_balance" : "10.00000000",
+    "total_balance_usd" : "10.00000000",
+    "total_balance_btc" : "10.00000000",
+    "last_updated_at" : "p(any)"
+  } ]
+}

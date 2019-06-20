@@ -1,0 +1,10 @@
+{
+  "sql" : "SELECT * FROM COMPANY_WALLET_EXTERNAL_RESERVED_ADDRESS",
+  "content" : [ {
+    "id" : "1",
+    "currency_id" : "1",
+    "name" : "wallet_name",
+    "wallet_address" : "wallet_address",
+    "balance" : "0E-8"
+  } ]
+}

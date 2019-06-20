@@ -1,6 +1,5 @@
 package me.exrates.adminservice.configurations;
 
-import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.SSMGetter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,24 +11,19 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Objects;
 
-@Configuration
-@Order(1)
-@Profile("light")
 @Log4j2
+@Order(1)
+@Configuration
+@Profile({"light", "debug"})
 public class AdminLightDatasourceConfiguration extends DatabaseConfiguration {
 
     @Value("${db-admin.datasource.url}")
@@ -50,13 +44,7 @@ public class AdminLightDatasourceConfiguration extends DatabaseConfiguration {
     @Primary
     @Bean(name = "adminDataSource")
     public DataSource dataSource() {
-        final HikariDataSource dataSource = createDataSource();
-        try {
-            populateDefaultData(dataSource);
-        } catch (SQLException e) {
-            log.error("FAILED to populate default data", e);
-        }
-        return dataSource;
+        return createDataSource();
     }
 
     @Primary
@@ -100,16 +88,4 @@ public class AdminLightDatasourceConfiguration extends DatabaseConfiguration {
         return databaseDriverName;
     }
 
-    private void populateDefaultData(DataSource dataSource) throws SQLException {
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("db/structure/structure.sql"));
-        populator.addScript(new ClassPathResource("db/structure/insert-data.sql"));
-        // test data
-
-
-        Connection connection = dataSource.getConnection();
-        populator.populate(connection);
-
-        connection.close();
-    }
 }
