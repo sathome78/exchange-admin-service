@@ -6,11 +6,13 @@ import { UsersComponent } from '../users/users/users.component';
 import { AnalyticsComponent } from '../analytics/analytics/analytics.component';
 import { NotificationsComponent } from '../notifications/notifications/notifications.component';
 import { LoginComponent } from '../auth/login/login.component';
+import { UserDetailsComponent } from '../users/user-details/user-details.component';
 
 const routes: Routes = [
   {path: 'fin-monitoring', component: FinMonitoringComponent},
   {path: 'liquidity', component: LiquidityComponent},
   {path: 'users', component: UsersComponent},
+  {path: 'users/:id', component: UserDetailsComponent},
   {path: 'analytics', component: AnalyticsComponent},
   {path: 'notifications', component: NotificationsComponent},
   {path: 'login', component: LoginComponent},
