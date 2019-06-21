@@ -95,7 +95,8 @@ VALUES (1, 4, 2, 'BTC/USD', 13, 0, 'USD', 'BTC/USD', 0, 'MAIN', 2),
        (5, 5, 2, 'LTC/USD', 220, 0, 'USD', 'LTC/USD', 0, 'MAIN', 2);
 
 INSERT IGNORE INTO EXORDERS (user_id, currency_pair_id, operation_type_id, exrate, amount_base, amount_convert,
-                             user_acceptor_id, date_creation, date_acception, status_id, order_source_id, counter_order_id)
+                             user_acceptor_id, date_creation, date_acception, status_id, order_source_id,
+                             counter_order_id)
 VALUES (1, 1, 3, 0.25, 1.24, 0.41, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
        (1, 2, 3, 0.50, 1.33, 0.62, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
        (1, 3, 4, 0.75, 1.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
@@ -103,3 +104,15 @@ VALUES (1, 1, 3, 0.25, 1.24, 0.41, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4
        (1, 1, 3, 0.25, 11.04, 0.41, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
        (1, 1, 3, 0.25, 100.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
        (1, 1, 4, 0.25, 10.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1);
+
+INSERT INTO REFILL_REQUEST (id, amount, date_creation, status_id, currency_id, user_id,
+                            commission_id, merchant_id, merchant_transaction_id, refill_request_param_id,
+                            refill_request_address_id)
+VALUES (1, 1.000000000, CURRENT_TIMESTAMP - INTERVAL 88 DAY, 12, 2, 1, 15, 15, null, null, null),
+       (2, 1.000000000, CURRENT_TIMESTAMP - INTERVAL 28 DAY, 12, 5, 1, 15, 15, null, null, null),
+       (3, 1.000000000, CURRENT_TIMESTAMP - INTERVAL 6 DAY, 12, 4, 1, 15, 15, null, null, null),
+       (4, 1.000000000, CURRENT_TIMESTAMP - INTERVAL 1 DAY, 12, 2, 1, 15, 15, null, null, null),
+       (5, 1.000000000, CURRENT_TIMESTAMP - INTERVAL 88 DAY, 12, 2, 2, 15, 15, null, null, null),
+       (6, 1.000000000, CURRENT_TIMESTAMP - INTERVAL 28 DAY, 12, 5, 2, 15, 15, null, null, null),
+       (7, 1.000000000, CURRENT_TIMESTAMP - INTERVAL 6 DAY, 12, 4, 2, 15, 15, null, null, null),
+       (8, 1.000000000, CURRENT_TIMESTAMP - INTERVAL 1 DAY, 12, 2, 2, 15, 15, null, null, null);

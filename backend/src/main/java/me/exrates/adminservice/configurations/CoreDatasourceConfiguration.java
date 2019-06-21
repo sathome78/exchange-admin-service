@@ -23,6 +23,9 @@ import javax.sql.DataSource;
 @Order(2)
 public class CoreDatasourceConfiguration extends DatabaseConfiguration {
 
+    public final static String CORE_TEMPLATE = "coreTemplate";
+    public final static String CORE_NP_TEMPLATE = "coreNPTemplate";
+
     @Value("${db-core.datasource.url}")
     private String databaseUrl;
 
@@ -44,7 +47,7 @@ public class CoreDatasourceConfiguration extends DatabaseConfiguration {
     }
 
     @DependsOn("coreDataSource")
-    @Bean(name = "coreTemplate")
+    @Bean(name = CORE_TEMPLATE)
     public JdbcOperations jdbcTemplate(@Qualifier("coreDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
