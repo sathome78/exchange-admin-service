@@ -29,7 +29,7 @@ public class SyncUsersJob {
         try {
             syncUserService.syncUsers();
         } catch (Exception ex) {
-            log.info("--> In processing 'SyncUsersJob' occurred error", ex);
+            log.error("--> In processing 'SyncUsersJob' occurred error", ex);
         }
     }
 }

@@ -28,7 +28,7 @@ public class TransactionJob {
         try {
             syncTransactionService.syncTransactions();
         } catch (Exception ex) {
-            log.info("--> In processing 'TransactionJob' occurred error", ex);
+            log.error("--> In processing 'TransactionJob' occurred error", ex);
         }
     }
 }

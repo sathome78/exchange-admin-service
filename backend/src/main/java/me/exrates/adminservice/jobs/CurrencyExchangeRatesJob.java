@@ -28,7 +28,7 @@ public class CurrencyExchangeRatesJob {
         try {
             exchangeRatesService.updateCurrencyExchangeRates();
         } catch (Exception ex) {
-            log.info("--> In processing 'CurrencyExchangeRatesJob' occurred error", ex);
+            log.error("--> In processing 'CurrencyExchangeRatesJob' occurred error", ex);
         }
     }
 }

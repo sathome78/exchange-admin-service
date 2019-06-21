@@ -28,7 +28,7 @@ public class InternalWalletBalancesJob {
         try {
             walletService.updateInternalWalletBalances();
         } catch (Exception ex) {
-            log.info("--> In processing 'InternalWalletBalancesJob' occurred error", ex);
+            log.error("--> In processing 'InternalWalletBalancesJob' occurred error", ex);
         }
     }
 }
