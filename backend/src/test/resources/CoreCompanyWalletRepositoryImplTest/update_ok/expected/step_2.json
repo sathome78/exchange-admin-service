@@ -1,0 +1,14 @@
+{
+  "sql" : "SELECT * FROM COMPANY_WALLET",
+  "content" : [ {
+    "id" : "1",
+    "currency_id" : "4",
+    "balance" : "1.0E8",
+    "commission_balance" : "1.0E8"
+  }, {
+    "id" : "2",
+    "currency_id" : "5",
+    "balance" : "20.0",
+    "commission_balance" : "20.0"
+  } ]
+}

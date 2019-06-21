@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CoreTransactionRepository {
 
-    String TABLE = "TRANSACTION";
+    String TABLE_NAME = "TRANSACTION";
     String COL_ID = "id";
     String COL_USER_ID = "user_id";
     String COL_CURRENCY_NAME = "currency_name";

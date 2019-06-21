@@ -120,10 +120,13 @@ public class CoreUserServiceImpl implements CoreUserService {
             throw new Exception("No users information found");
         }
 
+        LocalDateTime now = LocalDateTime.now();
+
         return ReportDto.builder()
-                .fileName(String.format("report_users_information_page_%d_date_%s", offset / limit + 1, LocalDateTime.now().format(FORMATTER_FOR_NAME)))
+                .fileName(String.format("report_users_information_page_%d_date_%s", offset / limit + 1, now.format(FORMATTER_FOR_NAME)))
                 .content(ReportOneExcelGeneratorUtil.generate(
                         userInfoList))
+                .createdAt(now)
                 .build();
     }
 
@@ -223,12 +226,6 @@ public class CoreUserServiceImpl implements CoreUserService {
         return coreUserRepository.getUserOperationTypeAuthorities(userId);
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<UserRole> getAllRoles() {
-        return coreUserRepository.getAllRoles();
-    }
-
     @Override
     public void updateUserRole(UserRole newRole, Integer userId) {
         final UserRole forUpdate = coreUserRepository.getUserRoleById(userId);
@@ -239,6 +236,12 @@ public class CoreUserServiceImpl implements CoreUserService {
         coreUserRepository.updateUserRole(newRole, userId);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<UserRole> getAllRoles() {
+        return coreUserRepository.getAllRoles();
+    }
+
     private String getUserEmailFromSecurityContext() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (Objects.isNull(auth)) {
@@ -247,7 +250,7 @@ public class CoreUserServiceImpl implements CoreUserService {
         return auth.getName();
     }
 
-    public UserRole getUserRoleFromSecurityContext() {
+    private UserRole getUserRoleFromSecurityContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (Objects.isNull(authentication)) {

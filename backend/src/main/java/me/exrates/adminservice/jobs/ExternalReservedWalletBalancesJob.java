@@ -28,7 +28,7 @@ public class ExternalReservedWalletBalancesJob {
         try {
             walletService.updateExternalReservedWalletBalances();
         } catch (Exception ex) {
-            log.info("--> In processing 'ExternalReservedWalletBalancesJob' occurred error", ex);
+            log.error("--> In processing 'ExternalReservedWalletBalancesJob' occurred error", ex);
         }
     }
 }

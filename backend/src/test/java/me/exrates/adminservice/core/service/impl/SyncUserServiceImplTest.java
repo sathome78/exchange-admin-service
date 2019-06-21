@@ -37,6 +37,7 @@ public class SyncUserServiceImplTest extends DataComparisonTest {
 
     @Override
     protected void before() {
+        setDatabaseType(ADMIN_DATABASE_TYPE);
         try {
             truncateTables(TABLE);
         } catch (SQLException e) {

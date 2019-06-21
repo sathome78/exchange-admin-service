@@ -1,5 +1,7 @@
 package me.exrates.adminservice.core.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -11,8 +13,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@ToString
+@Builder(builderClassName = "Builder", toBuilder = true)
 @NoArgsConstructor
+@AllArgsConstructor
 public class CoreCommissionDto implements Serializable {
 
     private int id;

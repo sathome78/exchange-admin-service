@@ -35,10 +35,15 @@ import java.util.regex.Pattern;
 @Log4j2
 public class DataComparisonTest extends AbstractDatabaseContextTest {
 
+    private DatabaseType type;
+
     private static final String JSON_SUFFIX = ".json";
     private static final String ACTUAL = "actual/";
     private static final String any_PATTERN =
             "yyyy-MM-dd [012][0-9]:[0-5][0-9]:[0-5][0-9](?:\\.[0-9]+)?";
+
+    protected static final DatabaseType ADMIN_DATABASE_TYPE = DatabaseType.ADMIN;
+    protected static final DatabaseType CORE_DATABASE_TYPE = DatabaseType.CORE;
 
     private final ObjectMapper objectMapper = createObjectMapper();
 
@@ -164,7 +169,15 @@ public class DataComparisonTest extends AbstractDatabaseContextTest {
         List<Table> read(String[] sqls) throws SQLException {
             QueryRunner run = new QueryRunner();
 
-            Connection conn = DataSourceUtils.getConnection(dataSource);
+            Connection connection;
+            if (DatabaseType.ADMIN == type) {
+                connection = DataSourceUtils.getConnection(adminDataSource);
+            } else if (DatabaseType.CORE == type) {
+                connection = DataSourceUtils.getConnection(coreDataSource);
+            } else {
+                throw new RuntimeException("Database type has not recognized");
+            }
+
             List<Table> tables = new ArrayList<>();
             try {
                 for (String sql : sqls) {
@@ -176,10 +189,10 @@ public class DataComparisonTest extends AbstractDatabaseContextTest {
                         }
                         return table;
                     };
-                    tables.add(run.query(conn, sql, h));
+                    tables.add(run.query(connection, sql, h));
                 }
             } finally {
-//                conn.close();
+//                connection.close();
             }
             return tables;
         }
@@ -200,38 +213,54 @@ public class DataComparisonTest extends AbstractDatabaseContextTest {
         }
     }
 
-    protected void truncateTables(String ... tableNames) throws SQLException {
-        Connection conn = null;
+    protected void setDatabaseType(DatabaseType type) {
+        this.type = type;
+    }
+
+    protected void truncateTables(String... tableNames) throws SQLException {
+        Connection connection = null;
         try {
-            conn = DataSourceUtils.getConnection(dataSource);
-            for(String table : tableNames) {
-                conn.createStatement().execute("SET FOREIGN_KEY_CHECKS = 0");
-                conn.createStatement().execute(String.format("TRUNCATE TABLE %s", table));
+            connection = getConnection(type);
+            for (String table : tableNames) {
+                connection.createStatement().execute("SET FOREIGN_KEY_CHECKS = 0");
+                connection.createStatement().execute(String.format("TRUNCATE TABLE %s", table));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            if (Objects.nonNull(conn)) {
-//                conn.close();
+            if (Objects.nonNull(connection)) {
+                connection.close();
             }
         }
     }
 
-    protected void prepareTestData(String ... sqls) throws SQLException {
-        Connection conn = null;
+    protected void prepareTestData(String... sqls) throws SQLException {
+        Connection connection = null;
         try {
-            conn = dataSource.getConnection();
-            conn.createStatement().execute("SET FOREIGN_KEY_CHECKS = 0");
-            for(String sql : sqls) {
-                conn.createStatement().execute(sql);
+            connection = getConnection(type);
+            connection.createStatement().execute("SET FOREIGN_KEY_CHECKS = 0");
+            for (String sql : sqls) {
+                connection.createStatement().execute(sql);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            if (Objects.nonNull(conn)) {
-                conn.close();
+            if (Objects.nonNull(connection)) {
+                connection.close();
             }
         }
+    }
+
+    private Connection getConnection(DatabaseType type) throws SQLException {
+        Connection connection;
+        if (DatabaseType.ADMIN == type) {
+            connection = adminDataSource.getConnection();
+        } else if (DatabaseType.CORE == type) {
+            connection = coreDataSource.getConnection();
+        } else {
+            throw new RuntimeException("Database type has not recognized");
+        }
+        return connection;
     }
 
     protected class AssertWrapperBuilder {
@@ -266,5 +295,9 @@ public class DataComparisonTest extends AbstractDatabaseContextTest {
         void addRow(Map<String, String> row) {
             this.content.add(row);
         }
+    }
+
+    protected enum DatabaseType {
+        ADMIN, CORE
     }
 }
