@@ -14,9 +14,9 @@ import me.exrates.adminservice.domain.PagedResult;
 import me.exrates.adminservice.domain.api.BalanceDto;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.domain.enums.DeviationStatus;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.repository.WalletRepository;
-import me.exrates.adminservice.services.CurrencyService;
+import me.exrates.adminservice.core.service.CoreCurrencyService;
 import me.exrates.adminservice.services.ExchangeRatesService;
 import me.exrates.adminservice.services.WalletBalancesService;
 import me.exrates.adminservice.services.WalletService;
@@ -53,7 +53,7 @@ public class WalletServiceImpl implements WalletService {
     private final CoreWalletRepository coreWalletRepository;
     private final ExchangeRatesService exchangeRatesService;
     private final WalletBalancesService walletBalancesService;
-    private final CurrencyService currencyService;
+    private final CoreCurrencyService coreCurrencyService;
     private final WalletsApi walletsApi;
 
     @Autowired
@@ -61,13 +61,13 @@ public class WalletServiceImpl implements WalletService {
                              CoreWalletRepository coreWalletRepository,
                              ExchangeRatesService exchangeRatesService,
                              WalletBalancesService walletBalancesService,
-                             CurrencyService currencyService,
+                             CoreCurrencyService coreCurrencyService,
                              WalletsApi walletsApi) {
         this.walletRepository = walletRepository;
         this.coreWalletRepository = coreWalletRepository;
         this.exchangeRatesService = exchangeRatesService;
         this.walletBalancesService = walletBalancesService;
-        this.currencyService = currencyService;
+        this.coreCurrencyService = coreCurrencyService;
         this.walletsApi = walletsApi;
     }
 
@@ -106,9 +106,9 @@ public class WalletServiceImpl implements WalletService {
 
         final BigDecimal deviation = exWalletSum.subtract(inWalletSum);
 
-        final int allCurrenciesCount = currencyService.getCachedCurrencies().size();
+        final int allCurrenciesCount = coreCurrencyService.getCachedCurrencies().size();
 
-        final int activeCurrenciesCount = currencyService.getActiveCachedCurrencies().size();
+        final int activeCurrenciesCount = coreCurrencyService.getActiveCachedCurrencies().size();
 
         return DashboardOneDto.builder()
                 .exWalletBalancesUSDSum(exWalletSum)
@@ -154,7 +154,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     private Map<String, CoreCurrencyDto> getActiveCurrenciesMap() {
-        return currencyService.getActiveCachedCurrencies().stream()
+        return coreCurrencyService.getActiveCachedCurrencies().stream()
                 .collect(toMap(
                         CoreCurrencyDto::getName,
                         Function.identity()
@@ -229,7 +229,7 @@ public class WalletServiceImpl implements WalletService {
                     ? LocalDateTime.parse(data[3], FORMATTER)
                     : null;
 
-            CoreCurrencyDto currency = currencyService.findByName(currencySymbol);
+            CoreCurrencyDto currency = coreCurrencyService.findByName(currencySymbol);
             if (isNull(currency)) {
                 return;
             }
@@ -295,7 +295,7 @@ public class WalletServiceImpl implements WalletService {
     public void deleteWalletAddress(int id, int currencyId, String walletAddress) {
         walletRepository.deleteReservedWalletAddress(id, currencyId);
 
-        final String currencySymbol = currencyService.getCurrencyName(currencyId);
+        final String currencySymbol = coreCurrencyService.getCurrencyName(currencyId);
         if (isNull(currencySymbol)) {
             log.info("External reserved address have not been deleted from WalletChecker Service");
             return;
@@ -317,7 +317,7 @@ public class WalletServiceImpl implements WalletService {
             final int currencyId = externalReservedWalletAddressDto.getCurrencyId();
             final String walletAddress = externalReservedWalletAddressDto.getWalletAddress();
 
-            final String currencySymbol = currencyService.getCurrencyName(currencyId);
+            final String currencySymbol = coreCurrencyService.getCurrencyName(currencyId);
             if (isNull(currencySymbol)) {
                 log.info("External reserved address have not been saved in WalletChecker Service");
                 return;
@@ -340,7 +340,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public BigDecimal getExternalReservedWalletBalance(Integer currencyId, String walletAddress) {
-        CoreCurrencyDto currency = currencyService.findById(currencyId);
+        CoreCurrencyDto currency = coreCurrencyService.findById(currencyId);
         if (isNull(currency)) {
             log.info("Currency with id: {} not found", currencyId);
             return null;
@@ -449,7 +449,7 @@ public class WalletServiceImpl implements WalletService {
 
         final int monitoredCurrenciesCount = redDeviationCount + greenDeviationCount + yellowDeviationCount;
 
-        final int activeCurrenciesCount = currencyService.getActiveCachedCurrencies().size();
+        final int activeCurrenciesCount = coreCurrencyService.getActiveCachedCurrencies().size();
 
         return DashboardTwoDto.builder()
                 .exWalletBalancesUSDSum(exWalletBalancesUSDSum)

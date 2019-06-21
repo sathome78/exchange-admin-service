@@ -24,7 +24,7 @@ db-admin:
     username: ${placeholder}
     password: ${placeholder}
   ssm:
-    password-path:
+    password-path: admin
 
 db-core:
   datasource:
@@ -33,10 +33,10 @@ db-core:
     username: exdevdb
     password: KQmK82dd
   ssm:
-    password-path:
+    password-path: core
 
 ssm:
-  mode: develop
+  develop-mode: true
 
 api:
   exchange:

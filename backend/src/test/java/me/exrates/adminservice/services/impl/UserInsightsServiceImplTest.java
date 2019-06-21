@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -157,6 +158,10 @@ public class UserInsightsServiceImplTest extends DataComparisonTest {
         private NamedParameterJdbcOperations coreParameterJdbcOperations;
 
         @Autowired
+        @Qualifier(TEST_CORE_TEMPLATE)
+        private JdbcOperations coreJdbcOperations;
+
+        @Autowired
         @Qualifier(TEST_ADMIN_NP_TEMPLATE)
         private NamedParameterJdbcOperations adminParameterJdbcOperations;
 
@@ -167,7 +172,7 @@ public class UserInsightsServiceImplTest extends DataComparisonTest {
 
         @Bean
         CoreUserRepository coreUserRepository() {
-            return new CoreUserRepositoryImpl(coreParameterJdbcOperations);
+            return new CoreUserRepositoryImpl(coreParameterJdbcOperations, coreJdbcOperations);
         }
 
         @Bean

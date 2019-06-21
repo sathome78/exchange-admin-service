@@ -24,6 +24,10 @@ public class TransactionJob {
 
     @Scheduled(cron = "${scheduled.update.sync-transactions}")
     public void update() {
-        syncTransactionService.syncTransactions();
+        try {
+            syncTransactionService.syncTransactions();
+        } catch (Exception ex) {
+            log.info("--> In processing 'TransactionJob' occurred error", ex);
+        }
     }
 }

@@ -1,9 +1,9 @@
-package me.exrates.adminservice.services.impl;
+package me.exrates.adminservice.core.service.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
 import me.exrates.adminservice.core.repository.CoreCurrencyRepository;
-import me.exrates.adminservice.services.CurrencyService;
+import me.exrates.adminservice.core.service.CoreCurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
@@ -21,7 +21,7 @@ import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY
 @Log4j2
 @Service
 @Transactional
-public class CurrencyServiceImpl implements CurrencyService {
+public class CoreCurrencyServiceImpl implements CoreCurrencyService {
 
     private final CoreCurrencyRepository coreCurrencyRepository;
     private final Cache currencyCacheByName;
@@ -30,11 +30,11 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final Cache activeCurrenciesCache;
 
     @Autowired
-    public CurrencyServiceImpl(CoreCurrencyRepository coreCurrencyRepository,
-                               @Qualifier(CURRENCY_CACHE_BY_NAME) Cache currencyCacheByName,
-                               @Qualifier(CURRENCY_CACHE_BY_ID) Cache currencyCacheById,
-                               @Qualifier(ALL_CURRENCIES_CACHE) Cache allCurrenciesCache,
-                               @Qualifier(ACTIVE_CURRENCIES_CACHE) Cache activeCurrenciesCache) {
+    public CoreCurrencyServiceImpl(CoreCurrencyRepository coreCurrencyRepository,
+                                   @Qualifier(CURRENCY_CACHE_BY_NAME) Cache currencyCacheByName,
+                                   @Qualifier(CURRENCY_CACHE_BY_ID) Cache currencyCacheById,
+                                   @Qualifier(ALL_CURRENCIES_CACHE) Cache allCurrenciesCache,
+                                   @Qualifier(ACTIVE_CURRENCIES_CACHE) Cache activeCurrenciesCache) {
         this.coreCurrencyRepository = coreCurrencyRepository;
         this.currencyCacheByName = currencyCacheByName;
         this.currencyCacheById = currencyCacheById;

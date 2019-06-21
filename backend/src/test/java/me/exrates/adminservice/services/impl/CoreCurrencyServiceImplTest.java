@@ -1,13 +1,10 @@
 package me.exrates.adminservice.services.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
 import me.exrates.adminservice.core.repository.CoreCurrencyRepository;
-import me.exrates.adminservice.domain.RateHistoryDto;
-import me.exrates.adminservice.domain.api.RateDto;
-import me.exrates.adminservice.services.CurrencyService;
+import me.exrates.adminservice.core.service.CoreCurrencyService;
+import me.exrates.adminservice.core.service.impl.CoreCurrencyServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,35 +18,28 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static me.exrates.adminservice.configurations.CacheConfiguration.ACTIVE_CURRENCIES_CACHE;
 import static me.exrates.adminservice.configurations.CacheConfiguration.ALL_CURRENCIES_CACHE;
-import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY_CACHE_BY_ID;
-import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY_CACHE_BY_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = CurrencyServiceImplTest.InnerConfig.class)
-public class CurrencyServiceImplTest {
+@ContextConfiguration(classes = CoreCurrencyServiceImplTest.InnerConfig.class)
+public class CoreCurrencyServiceImplTest {
 
     private static final String ALL_CURRENCIES_CACHE_TEST = "all-currencies-cache-test";
     private static final String ACTIVE_CURRENCIES_CACHE_TEST = "active-currencies-cache-test";
@@ -71,7 +61,7 @@ public class CurrencyServiceImplTest {
     @Qualifier(ACTIVE_CURRENCIES_CACHE_TEST)
     private Cache activeCurrenciesCache;
 
-    private CurrencyService currencyService;
+    private CoreCurrencyService coreCurrencyService;
 
     @Before
     public void setUp() throws Exception {
@@ -80,7 +70,7 @@ public class CurrencyServiceImplTest {
         allCurrenciesCache.put(ALL_CURRENCIES_CACHE, Collections.singletonList(CoreCurrencyDto.builder().build()));
         activeCurrenciesCache.put(ACTIVE_CURRENCIES_CACHE, Collections.singletonList(CoreCurrencyDto.builder().build()));
 
-        currencyService = spy(new CurrencyServiceImpl(
+        coreCurrencyService = spy(new CoreCurrencyServiceImpl(
                 coreCurrencyRepository,
                 currencyCacheByName,
                 currencyCacheById,
@@ -96,7 +86,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .findById(anyInt());
 
-        CoreCurrencyDto currencyDto = currencyService.findById(1);
+        CoreCurrencyDto currencyDto = coreCurrencyService.findById(1);
 
         assertNotNull(currencyDto);
 
@@ -109,7 +99,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .findById(anyInt());
 
-        CoreCurrencyDto currencyDto = currencyService.findById(1);
+        CoreCurrencyDto currencyDto = coreCurrencyService.findById(1);
 
         assertNotNull(currencyDto);
 
@@ -124,7 +114,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .findByName(anyString());
 
-        CoreCurrencyDto currencyDto = currencyService.findByName("BTC");
+        CoreCurrencyDto currencyDto = coreCurrencyService.findByName("BTC");
 
         assertNotNull(currencyDto);
 
@@ -137,7 +127,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .findByName(anyString());
 
-        CoreCurrencyDto currencyDto = currencyService.findByName("BTC");
+        CoreCurrencyDto currencyDto = coreCurrencyService.findByName("BTC");
 
         assertNotNull(currencyDto);
 
@@ -152,7 +142,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getAllCurrencies();
 
-        List<CoreCurrencyDto> cachedCurrencies = currencyService.getCachedCurrencies();
+        List<CoreCurrencyDto> cachedCurrencies = coreCurrencyService.getCachedCurrencies();
 
         assertNotNull(cachedCurrencies);
         assertFalse(cachedCurrencies.isEmpty());
@@ -167,7 +157,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getAllCurrencies();
 
-        List<CoreCurrencyDto> cachedCurrencies = currencyService.getCachedCurrencies();
+        List<CoreCurrencyDto> cachedCurrencies = coreCurrencyService.getCachedCurrencies();
 
         assertNotNull(cachedCurrencies);
         assertFalse(cachedCurrencies.isEmpty());
@@ -184,7 +174,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getActiveCurrencies();
 
-        List<CoreCurrencyDto> activeCachedCurrencies = currencyService.getActiveCachedCurrencies();
+        List<CoreCurrencyDto> activeCachedCurrencies = coreCurrencyService.getActiveCachedCurrencies();
 
         assertNotNull(activeCachedCurrencies);
         assertFalse(activeCachedCurrencies.isEmpty());
@@ -199,7 +189,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getActiveCurrencies();
 
-        List<CoreCurrencyDto> activeCachedCurrencies = currencyService.getActiveCachedCurrencies();
+        List<CoreCurrencyDto> activeCachedCurrencies = coreCurrencyService.getActiveCachedCurrencies();
 
         assertNotNull(activeCachedCurrencies);
         assertFalse(activeCachedCurrencies.isEmpty());
@@ -216,7 +206,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getActiveCurrencies();
 
-        List<String> activeCurrencyNames = currencyService.getActiveCurrencyNames();
+        List<String> activeCurrencyNames = coreCurrencyService.getActiveCurrencyNames();
 
         assertNotNull(activeCurrencyNames);
         assertTrue(activeCurrencyNames.isEmpty());
@@ -232,7 +222,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getActiveCurrencies();
 
-        List<String> activeCurrencyNames = currencyService.getActiveCurrencyNames();
+        List<String> activeCurrencyNames = coreCurrencyService.getActiveCurrencyNames();
 
         assertNotNull(activeCurrencyNames);
         assertFalse(activeCurrencyNames.isEmpty());
@@ -247,7 +237,7 @@ public class CurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getCurrencyName(anyInt());
 
-        String currencyName = currencyService.getCurrencyName(1);
+        String currencyName = coreCurrencyService.getCurrencyName(1);
 
         assertNotNull(currencyName);
         assertEquals("BTC", currencyName);

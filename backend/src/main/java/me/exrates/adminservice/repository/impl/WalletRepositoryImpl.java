@@ -4,7 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.domain.ExternalReservedWalletAddressDto;
 import me.exrates.adminservice.domain.ExternalWalletBalancesDto;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
-import me.exrates.adminservice.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.repository.WalletRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
