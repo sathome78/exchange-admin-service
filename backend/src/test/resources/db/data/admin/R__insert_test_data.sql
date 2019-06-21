@@ -4043,3 +4043,18 @@ INSERT IGNORE INTO INTERNAL_WALLET_BALANCES (currency_id, currency_name, role_id
 (278,'LHT',10,'BOT_TRADER'),
 (278,'LHT',11,'ICO_MARKET_MAKER'),
 (278,'LHT',12,'OUTER_MARKET_BOT');
+
+INSERT INTO TRANSACTIONS (id, user_id, currency_name, amount, commission_amount, source_type, operation_type, datetime,
+                          rate_in_usd, rate_in_btc, rate_btc_for_one_usd, source_id)
+VALUES (21, 1, 'USD', 10, 1, 'ORDER', 'OUTPUT', CURRENT_TIMESTAMP, 10, 0.00015, 0.000015, 1),
+       (22, 1, 'USD', 10, 1, 'ORDER', 'OUTPUT', CURRENT_TIMESTAMP, 10, 0.00015, 0.000015, 2),
+       (23, 1, 'USD', 10, 1, 'ORDER', 'INPUT', CURRENT_TIMESTAMP, 10, 0.00015, 0.000015, 3),
+       (24, 1, 'USD', 10, 1, 'ORDER', 'INPUT', CURRENT_TIMESTAMP, 10, 0.00015, 0.000015, 4),
+       (25, 1, 'USD', 10, 1, 'ORDER', 'OUTPUT', CURRENT_TIMESTAMP, 10, 0.00015, 0.000015, 5),
+       (26, 1, 'USD', 10, 1, 'ORDER', 'OUTPUT', CURRENT_TIMESTAMP, 10, 0.00015, 0.000015, 6),
+       (27, 1, 'BTC', 1, 0.1, 'ORDER', 'INPUT', CURRENT_TIMESTAMP, 8500, 1, 0.000015, 7),
+       (28, 1, 'BTC', 1, 0.1, 'ORDER', 'OUTPUT', CURRENT_TIMESTAMP, 8500, 1, 0.000015, 8),
+       (29, 1, 'BTC', 1, 0.1, 'ORDER', 'INPUT', CURRENT_TIMESTAMP, 8500, 1, 0.000015, 9),
+       (30, 1, 'BTC', 1, 0.1, 'ORDER', 'INPUT', CURRENT_TIMESTAMP, 8500, 1, 0.000015, 10),
+       (31, 1, 'ETH', 50, 5, 'ORDER', 'OUTPUT', CURRENT_TIMESTAMP, 150, 0.00011, 0.000015, 11),
+       (32, 1, 'ETH', 50, 5, 'ORDER', 'INPUT', CURRENT_TIMESTAMP, 150, 0.00011, 0.000015, 12);

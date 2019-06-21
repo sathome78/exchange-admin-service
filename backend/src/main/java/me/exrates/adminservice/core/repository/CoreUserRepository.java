@@ -8,6 +8,7 @@ import me.exrates.adminservice.core.domain.UserInfoDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
 import me.exrates.adminservice.core.domain.enums.UserRole;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,6 +56,8 @@ public interface CoreUserRepository {
     void updateUserOperationAuthority(List<CoreUserOperationAuthorityOptionDto> options, Integer userId);
 
     List<CoreUserOperationAuthorityOptionDto> getUserOperationTypeAuthorities(Integer userId);
+
+    Collection<Integer> getBotsIds();
 
     void updateUserRole(UserRole newRole, Integer userId);
 

@@ -2,9 +2,7 @@ package me.exrates.adminservice.repository;
 
 import me.exrates.adminservice.domain.UserInsight;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public interface UserInsightRepository {
