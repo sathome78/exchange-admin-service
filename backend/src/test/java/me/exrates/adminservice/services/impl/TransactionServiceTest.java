@@ -102,6 +102,10 @@ public class TransactionServiceTest extends DataComparisonTest {
         private NamedParameterJdbcOperations coreNPJdbcOperations;
 
         @Autowired
+        @Qualifier(TEST_CORE_TEMPLATE) // it's ok bean will be imported later
+        private JdbcOperations corJdbcOperations;
+
+        @Autowired
         @Qualifier(TEST_ADMIN_NP_TEMPLATE)
         private NamedParameterJdbcOperations adminNPJdbcOperations;
 
@@ -114,7 +118,7 @@ public class TransactionServiceTest extends DataComparisonTest {
 
         @Bean
         CoreUserRepository coreUserRepository() {
-            return new CoreUserRepositoryImpl(coreNPJdbcOperations);
+            return new CoreUserRepositoryImpl(coreNPJdbcOperations, corJdbcOperations);
         }
 
         @Bean

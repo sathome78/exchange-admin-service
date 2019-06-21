@@ -17,51 +17,51 @@ import java.math.BigDecimal;
 public class RiskManagementBoardDTO {
 
     @JsonProperty("pie_chart_sell")
-    public int diagramSellPercentage;
+    private int diagramSellPercentage;
 
     @JsonProperty("pie_chart_buy")
-    public int diagramBuyPercentage;
+    private int diagramBuyPercentage;
 
     @JsonProperty("coverage_btc")
     @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal tradeBotCoverageBTC;
+    private BigDecimal tradeBotCoverageBTC;
 
     @JsonProperty("coverage_usd")
     @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal tradeBotCoverageUSD;
+    private BigDecimal tradeBotCoverageUSD;
 
     @JsonProperty("inner_trade_btc")
     @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal innerTradeVolumeDayBTC;
+    private BigDecimal innerTradeVolumeDayBTC;
 
     @JsonProperty("inner_trade_usd")
     @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal innerTradeVolumeDayUSD;
+    private BigDecimal innerTradeVolumeDayUSD;
 
     @JsonProperty("bot_commission_btc")
     @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal outerCommissionBTC;
+    private BigDecimal outerCommissionBTC;
 
     @JsonProperty("bot_commission_usd")
     @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal outerCommissionUSD;
+    private BigDecimal outerCommissionUSD;
 
     @JsonProperty("trade_revenue_btc")
     @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal tradeIncomeBTC;
+    private BigDecimal tradeIncomeBTC;
 
     @JsonProperty("trade_revenue_usd")
     @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal tradeIncomeUSD;
+    private BigDecimal tradeIncomeUSD;
 
     @JsonProperty("commission_revenue_btc")
     @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal commissionRevenueBTC;
+    private BigDecimal commissionRevenueBTC;
 
     @JsonProperty("commission_revenue_usd")
     @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal commissionRevenueUSD;
+    private BigDecimal commissionRevenueUSD;
 
     @JsonProperty("unique_clients_quantity")
-    public int uniqueClientsQuantity;
+    private int uniqueClientsQuantity;
 }
