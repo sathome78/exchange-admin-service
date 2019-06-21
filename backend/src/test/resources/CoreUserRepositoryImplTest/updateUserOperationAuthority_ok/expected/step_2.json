@@ -1,0 +1,10 @@
+{
+  "sql" : "SELECT * FROM USER_OPERATION_AUTHORITY",
+  "content" : [ {
+    "user_id" : "1",
+    "user_operation_id" : "1",
+    "enabled" : "1",
+    "created_date" : "p(any)",
+    "modified_date" : "p(any)"
+  } ]
+}
