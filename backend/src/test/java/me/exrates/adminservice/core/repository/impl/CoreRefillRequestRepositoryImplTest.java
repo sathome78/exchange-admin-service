@@ -36,8 +36,8 @@ public class CoreRefillRequestRepositoryImplTest extends DataComparisonTest {
         final Map<Integer, Integer> generatedByUserIds = coreRefillRequestRepository.getRefillAddressGeneratedByUserIds(userIds);
 
         assertEquals(userIds.size(), generatedByUserIds.size());
-        assertEquals(4, (int)generatedByUserIds.get(1));
-        assertEquals(4, (int)generatedByUserIds.get(2));
+        assertEquals(3, (int)generatedByUserIds.get(1));
+        assertEquals(3, (int)generatedByUserIds.get(2));
         assertEquals(0, (int)generatedByUserIds.get(666));
     }
 

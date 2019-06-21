@@ -26,7 +26,7 @@ public class CoreRefillRequestRepositoryImpl implements CoreRefillRequestReposit
         if (userIds.isEmpty()) {
             return Collections.emptyMap();
         }
-        String sql = "SELECT " + COL_USER_ID + ", COUNT(" + COL_ID + ") FROM " + TABLE +
+        String sql = "SELECT " + COL_USER_ID + ", COUNT(DISTINCT(" + COL_CURRENCY_ID + ")) FROM " + TABLE +
                 " WHERE " + COL_USER_ID + " IN (:ids)" +
                 " GROUP BY " + COL_USER_ID;
         Map<String, Object> params = new HashMap<>();
