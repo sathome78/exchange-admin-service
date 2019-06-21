@@ -2,17 +2,17 @@ package me.exrates.adminservice.core.repository.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreUser;
+import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
 import me.exrates.adminservice.core.domain.FilterDto;
 import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
-import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
 import me.exrates.adminservice.core.domain.enums.UserOperationAuthority;
+import me.exrates.adminservice.core.domain.enums.UserRole;
+import me.exrates.adminservice.core.domain.enums.UserStatus;
 import me.exrates.adminservice.core.exceptions.UserNotFoundException;
 import me.exrates.adminservice.core.exceptions.UserRoleNotFoundException;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
-import me.exrates.adminservice.core.domain.enums.UserRole;
-import me.exrates.adminservice.core.domain.enums.UserStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +28,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -112,6 +113,13 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
             }
             return users;
         });
+    }
+
+    @Override
+    public Collection<Integer> getBotsIds() {
+        String sql = "SELECT u.id FROM USER u" +
+                " WHERE u.roleid IN (SELECT ur.id FROM USER_ROLE ur WHERE ur.name IN (\'BOT_TRADER\', \'OUTER_MARKET_BOT\'))";
+        return coreNPTemplate.query(sql, Collections.emptyMap(), (rs, rowNum) -> rs.getInt(1));
     }
 
     @Override
@@ -621,6 +629,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
             log.error("User role not updated (user id: {}, new role: {})", userId, newRole);
         }
     }
+
 
     private RowMapper<CoreUser> getCoreUserRowMapper() {
         return (rs, i) -> CoreUser.builder()

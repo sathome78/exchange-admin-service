@@ -23,16 +23,19 @@ spring:
   #      validation-timeout: 5000
   #    ssm:
   #      password-path:
-  jpa:
-    hibernate:
-      ddl-auto: none
-    open-in-view: false
+#  jpa:
+#    hibernate:
+#      ddl-auto: none
+#    open-in-view: false
   jackson:
     serialization:
       write_dates_as_timestamps: false
     mapper:
       default_view_inclusion: true
     default-property-inclusion: 'non_null'
+  http:
+    converters:
+      preferred-json-mapper: jackson
 #  flyway:
 #    url: ${spring.datasource.url}
 #    user: ${spring.datasource.username}
