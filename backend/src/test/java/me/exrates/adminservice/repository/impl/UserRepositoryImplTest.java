@@ -23,7 +23,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -35,6 +36,11 @@ public class UserRepositoryImplTest extends DataComparisonTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Override
+    protected void before() {
+        setDatabaseType(ADMIN_DATABASE_TYPE);
+    }
 
     @Test
     public void findOne() {

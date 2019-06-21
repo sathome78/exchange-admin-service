@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public interface CoreUserRepository {
 
-    String TABLE = "USER";
+    String TABLE_NAME = "USER";
     String COL_USER_ID = "id";
     String COL_PUBLIC_ID = "pub_id";
     String COL_EMAIL = "email";
@@ -25,6 +25,8 @@ public interface CoreUserRepository {
     String COL_USER_ROLE = "user_role";
     String COL_IS_2FA_ENABLED = "use2fa";
     String COL_KYC_STATUS = "kyc_status";
+
+    String TABLE_NAME_1 = "USER_OPERATION_AUTHORITY";
 
     List<CoreUser> findAllAdmins();
 
@@ -54,7 +56,7 @@ public interface CoreUserRepository {
 
     List<CoreUserOperationAuthorityOptionDto> getUserOperationTypeAuthorities(Integer userId);
 
-    List<UserRole> getAllRoles();
-
     void updateUserRole(UserRole newRole, Integer userId);
+
+    List<UserRole> getAllRoles();
 }

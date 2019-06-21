@@ -213,6 +213,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "FROM " +
                 "(SELECT " +
                 "u.id AS user_id, " +
+                "u.status AS status_id, " +
                 "SUM((w.active_balance + w.reserved_balance) * ccr.usd_rate) AS balance, " +
                 "u.regdate AS registration_date, " +
                 "u.kyc_status AS verification_status, " +
@@ -496,7 +497,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         try {
             return coreNPTemplate.queryForObject(sql, params, getUserInfoDtoRowMapper());
         } catch (Exception ex) {
-            throw new RuntimeException(String.format("Do not found user: %d", userId));
+            throw new RuntimeException(String.format("Do not found user info (user id: %d)", userId));
         }
     }
 
@@ -604,22 +605,26 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 .build());
     }
 
+    @Override
+    public void updateUserRole(UserRole newRole, Integer userId) {
+        final String sql = "UPDATE USER u " +
+                "SET u.roleid = :role_id " +
+                "WHERE u.id = :user_id";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+        params.put("role_id", newRole.getRole());
+
+        boolean updated = coreNPTemplate.update(sql, params) > 0;
+        if (!updated) {
+            log.error("User role not updated (user id: {}, new role: {})", userId, newRole);
+        }
+    }
+
     public List<UserRole> getAllRoles() {
         final String sql = "SELECT ur.name FROM USER_ROLE ur";
 
         return coreNPTemplate.query(sql, (rs, row) -> UserRole.valueOf(rs.getString("name")));
-    }
-
-    @Override
-    public void updateUserRole(UserRole newRole, Integer userId) {
-        final String sql = "UPDATE USER u " +
-                "SET u.roleid = :role " +
-                "WHERE u.id = :user_id";
-
-        boolean updated = coreNPTemplate.update(sql, Collections.singletonMap("user_id", userId)) > 0;
-        if (!updated) {
-            log.error("User role not updated (user id: {}, new role: {})", userId, newRole);
-        }
     }
 
     private RowMapper<CoreUser> getCoreUserRowMapper() {

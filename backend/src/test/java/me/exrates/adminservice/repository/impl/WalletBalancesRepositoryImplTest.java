@@ -37,6 +37,7 @@ public class WalletBalancesRepositoryImplTest extends DataComparisonTest {
 
     @Override
     protected void before() {
+        setDatabaseType(ADMIN_DATABASE_TYPE);
         try {
             truncateTables(WalletBalancesRepository.TABLE_NAME);
 

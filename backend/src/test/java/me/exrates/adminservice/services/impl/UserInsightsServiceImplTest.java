@@ -58,6 +58,7 @@ public class UserInsightsServiceImplTest extends DataComparisonTest {
 
     @Override
     protected void before() {
+        setDatabaseType(ADMIN_DATABASE_TYPE);
         try {
             MockitoAnnotations.initMocks(this);
             when(insightsCache.get(anyInt())).thenReturn(new HashSet<>(getTestUserInsights()));

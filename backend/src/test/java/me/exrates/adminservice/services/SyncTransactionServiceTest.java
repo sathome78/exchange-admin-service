@@ -55,6 +55,8 @@ public class SyncTransactionServiceTest extends DataComparisonTest {
 
     @Before
     public void before() {
+        setDatabaseType(ADMIN_DATABASE_TYPE);
+
         when(exchangeRatesService.getCachedRates()).thenReturn(getTestRates());
     }
 

@@ -46,8 +46,7 @@ public class CoreWalletRepositoryImpl implements CoreWalletRepository {
                 "cur.name AS currency_name, " +
                 "ur.id AS role_id, " +
                 "ur.name AS role_name, " +
-                "w.active_balance, " +
-                "w.reserved_balance" +
+                "SUM(w.active_balance + w.reserved_balance) AS total_balance" +
                 " FROM WALLET w" +
                 " JOIN CURRENCY cur ON cur.id = w.currency_id AND cur.hidden = 0" +
                 " JOIN USER u ON u.id = w.user_id" +
@@ -60,7 +59,7 @@ public class CoreWalletRepositoryImpl implements CoreWalletRepository {
                 .currencyName(rs.getString("currency_name"))
                 .roleId(rs.getInt("role_id"))
                 .roleName(UserRole.valueOf(rs.getString("role_name")))
-                .totalBalance(rs.getBigDecimal("active_balance").add(rs.getBigDecimal("reserved_balance")))
+                .totalBalance(rs.getBigDecimal("total_balance"))
                 .build());
     }
 
