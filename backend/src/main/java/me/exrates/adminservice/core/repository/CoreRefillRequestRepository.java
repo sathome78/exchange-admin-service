@@ -1,6 +1,10 @@
 package me.exrates.adminservice.core.repository;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public interface CoreRefillRequestRepository {
@@ -24,4 +28,6 @@ public interface CoreRefillRequestRepository {
     String COL_INNER_TRANSFER_HASH = "inner_transfer_hash";
 
     Map<Integer, Integer> getRefillAddressGeneratedByUserIds(Collection<Integer> userIds);
+
+    List<Pair<Integer, LocalDateTime>> findGeneratedUnpaidAddressesByUserIds(Collection<Integer> userIds);
 }
