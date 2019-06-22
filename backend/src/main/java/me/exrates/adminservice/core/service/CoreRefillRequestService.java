@@ -8,5 +8,7 @@ import java.util.Set;
 
 public interface CoreRefillRequestService {
 
+    boolean hasUnrefilledAccounts(Map<Integer, Set<RefillAddressEnum>> data, int userId, RefillAddressEnum period);
+
     Map<Integer, Set<RefillAddressEnum>> findAllAddressesByUserIds(Collection<Integer> userIds);
 }

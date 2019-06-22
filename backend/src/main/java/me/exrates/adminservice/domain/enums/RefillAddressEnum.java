@@ -2,7 +2,7 @@ package me.exrates.adminservice.domain.enums;
 
 public enum  RefillAddressEnum {
 
-    LAST_48_DAYS(2), LAST_7_DAYS(7), LAST_30_DAYS(30), LAST_90_DAYS(90);
+    LAST_2_DAYS(2), LAST_7_DAYS(7), LAST_30_DAYS(30), LAST_90_DAYS(90);
 
     private final int days;
 
