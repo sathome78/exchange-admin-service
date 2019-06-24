@@ -14,10 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static me.exrates.adminservice.domain.enums.RefillAddressEnum.LAST_2_DAYS;
@@ -37,43 +35,37 @@ public class CoreRefillRequestServiceImpl implements CoreRefillRequestService {
     }
 
     @Override
-    public boolean hasUnrefilledAccounts(Map<Integer, Set<RefillAddressEnum>> data, int userId, RefillAddressEnum period) {
+    public int countNonRefilledCoins(Map<Integer, Map<RefillAddressEnum, Integer>> data, int userId, RefillAddressEnum period) {
         if (! data.containsKey(userId)) {
             final String message = "Failed processing, as userId: " + userId + " not specified in requested ids: " + data.keySet();
             log.error(message);
             throw new CommonAPIException(ApiErrorsEnum.UNREQUESTED_USER_ERROR, message);
         }
-        return data.get(userId).contains(period);
+        return data.get(userId).getOrDefault(period, 0);
     }
 
     @Override
-    public Map<Integer, Set<RefillAddressEnum>> findAllAddressesByUserIds(Collection<Integer> userIds) {
+    public Map<Integer, Map<RefillAddressEnum, Integer>> findAllAddressesByUserIds(Collection<Integer> userIds) {
         final List<Pair<Integer, LocalDateTime>> unpaidAddressesByUserIds = coreRefillRequestRepository.findGeneratedUnpaidAddressesByUserIds(userIds);
-        Map<Integer, Set<RefillAddressEnum>> results = new HashMap<>(userIds.size());
-        userIds.forEach(userId -> results.put(userId, getAddressesByPeriods(userId, unpaidAddressesByUserIds)));
+        Map<Integer, Map<RefillAddressEnum, Integer>> results = new HashMap<>(userIds.size());
+        userIds.forEach(userId -> results.put(userId, getCoinsByPeriods(userId, unpaidAddressesByUserIds)));
         return results;
     }
 
-    private Set<RefillAddressEnum> getAddressesByPeriods(int userId, List<Pair<Integer, LocalDateTime>> values) {
+    private Map<RefillAddressEnum, Integer> getCoinsByPeriods(int userId, List<Pair<Integer, LocalDateTime>> values) {
         final List<LocalDateTime> userDates = values.stream()
                 .filter(p -> p.getKey() == userId)
                 .map(Pair::getRight)
                 .collect(Collectors.toList());
-        Set<RefillAddressEnum> set = new HashSet<>();
+        Map<RefillAddressEnum, Integer> results = new HashMap<>();
         ImmutableList.of(LAST_2_DAYS, LAST_7_DAYS, LAST_30_DAYS, LAST_90_DAYS)
-                .forEach(period -> addPeriodIfPresent(set, userDates, period));
-        return set;
+                .forEach(period -> results.put(period, countRecords(userDates, period)));
+        return results;
     }
 
-    private void addPeriodIfPresent(Set<RefillAddressEnum> set, List<LocalDateTime> userDates, RefillAddressEnum period) {
-        if (hasRecords(userDates, period)) {
-            set.add(period);
-        }
-    }
-
-    private boolean hasRecords(List<LocalDateTime> filteredDates, RefillAddressEnum period) {
-        return filteredDates.stream()
-                .anyMatch(value -> value.isEqual(getBound(period)) || value.isAfter(getBound(period)));
+    private int countRecords(List<LocalDateTime> filteredDates, RefillAddressEnum period) {
+        return (int) filteredDates.stream()
+                .filter(value -> value.isEqual(getBound(period)) || value.isAfter(getBound(period))).count();
     }
 
     private LocalDateTime getBound(RefillAddressEnum period) {

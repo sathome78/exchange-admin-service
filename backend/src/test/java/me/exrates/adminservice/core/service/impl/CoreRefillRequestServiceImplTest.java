@@ -19,12 +19,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -42,28 +39,33 @@ public class CoreRefillRequestServiceImplTest extends DataComparisonTest {
     @Test
     public void testFindAllAddressesByUserIds () {
         final ImmutableList<Integer> userIds = ImmutableList.of(1, 2, 666);
-        final Map<Integer, Set<RefillAddressEnum>> byUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
+        final Map<Integer, Map<RefillAddressEnum, Integer>> byUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
 
         assertEquals(userIds.size(), byUserIds.keySet().size());
-        assertEquals(8, byUserIds.values().stream().mapToLong(Collection::size).sum());
+        assertEquals(12, byUserIds.values().stream().mapToLong(p -> p.values().size()).sum());
     }
 
     @Test
-    public void hasUnrefilledAccounts() {
+    public void countNonRefilledCoins() {
         final ImmutableList<Integer> userIds = ImmutableList.of(1, 2, 666);
-        final Map<Integer, Set<RefillAddressEnum>> byUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
+        final Map<Integer, Map<RefillAddressEnum, Integer>> byUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
 
-        assertTrue(coreRefillRequestService.hasUnrefilledAccounts(byUserIds, 1, RefillAddressEnum.LAST_2_DAYS));
-        assertTrue(coreRefillRequestService.hasUnrefilledAccounts(byUserIds, 2, RefillAddressEnum.LAST_2_DAYS));
-        assertFalse(coreRefillRequestService.hasUnrefilledAccounts(byUserIds, 666, RefillAddressEnum.LAST_2_DAYS));
+        assertEquals(1, coreRefillRequestService.countNonRefilledCoins(byUserIds, 1, RefillAddressEnum.LAST_2_DAYS));
+        assertEquals(2, coreRefillRequestService.countNonRefilledCoins(byUserIds, 1, RefillAddressEnum.LAST_7_DAYS));
+
+        assertEquals(3, coreRefillRequestService.countNonRefilledCoins(byUserIds, 2, RefillAddressEnum.LAST_30_DAYS));
+        assertEquals(4, coreRefillRequestService.countNonRefilledCoins(byUserIds, 2, RefillAddressEnum.LAST_90_DAYS));
+
+        assertEquals(0, coreRefillRequestService.countNonRefilledCoins(byUserIds, 666, RefillAddressEnum.LAST_2_DAYS));
+        assertEquals(0, coreRefillRequestService.countNonRefilledCoins(byUserIds, 666, RefillAddressEnum.LAST_90_DAYS));
     }
 
     @Test
-    public void hasUnrefilledAccounts_withException() {
+    public void countNonRefilledCoins_withException() {
         final ImmutableList<Integer> userIds = ImmutableList.of(1, 2, 666);
-        final Map<Integer, Set<RefillAddressEnum>> byUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
+        final Map<Integer, Map<RefillAddressEnum, Integer>> addressesByUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
         try {
-            coreRefillRequestService.hasUnrefilledAccounts(byUserIds, 77, RefillAddressEnum.LAST_30_DAYS);
+            coreRefillRequestService.countNonRefilledCoins(addressesByUserIds, 77, RefillAddressEnum.LAST_30_DAYS);
             fail();
         } catch (RuntimeException e) {
             assertTrue(e instanceof CommonAPIException);

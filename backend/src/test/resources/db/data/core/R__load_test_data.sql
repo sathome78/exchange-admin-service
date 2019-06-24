@@ -15,7 +15,7 @@ VALUES (1, 'ADMINISTRATOR', 1, 1, 1),
        (11, 'ICO_MARKET_MAKER', 7, 2, 2),
        (12, 'OUTER_MARKET_BOT', 9, 3, 4);
 
-INSERT INTO USER_STATUS (id, name, description)
+INSERT IGNORE INTO USER_STATUS (id, name, description)
 VALUES (1, 'registered', 'without email confirmation'),
        (2, 'activated', 'with email confirmation'),
        (3, 'blocked', 'blocked by admin'),
@@ -212,3 +212,11 @@ VALUES (1, 10, CURRENT_TIMESTAMP - INTERVAL 92 DAY, 9, 1, 1),
        (43, 10, CURRENT_TIMESTAMP - INTERVAL 30 HOUR, 9, 3, 43),
        (44, 10, CURRENT_TIMESTAMP - INTERVAL 30 HOUR, 7, 3, 44),
        (45, 10, CURRENT_TIMESTAMP - INTERVAL 30 HOUR, 4, 3, null);
+
+INSERT INTO IP_Log (ip, user_id, date, event)
+VALUES ('123.12.12.12', 1, CURRENT_TIMESTAMP - INTERVAL 3 DAY, 'LOGIN_SUCCESS'),
+       ('123.12.12.12', 1, CURRENT_TIMESTAMP - INTERVAL 1 DAY, 'LOGIN_SUCCESS'),
+       ('123.12.12.12', 1, CURRENT_TIMESTAMP - INTERVAL 1 HOUR, 'WITHDRAW'),
+       ('123.12.12.12', 2, CURRENT_TIMESTAMP - INTERVAL 2 DAY, 'LOGIN_SUCCESS'),
+       ('123.12.12.12', 2, CURRENT_TIMESTAMP - INTERVAL 1 DAY, 'WITHDRAW'),
+       ('123.12.12.12', 2, CURRENT_TIMESTAMP - INTERVAL 1 HOUR, 'LOGIN_SUCCESS');

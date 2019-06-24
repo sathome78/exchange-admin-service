@@ -12,7 +12,7 @@ import me.exrates.adminservice.repository.UserInoutStatusRepository;
 import me.exrates.adminservice.repository.UserInsightRepository;
 import me.exrates.adminservice.repository.impl.UserInoutStatusRepositoryImpl;
 import me.exrates.adminservice.repository.impl.UserInsightRepositoryImpl;
-import me.exrates.adminservice.services.UserInsightsService;
+import me.exrates.adminservice.services.InsightService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -47,12 +47,12 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {
-        UserInsightsServiceImplTest.InnerConfig.class
+        UserInsightServiceImplTest.InnerConfig.class
 })
-public class UserInsightsServiceImplTest extends DataComparisonTest {
+public class UserInsightServiceImplTest extends DataComparisonTest {
 
     @Autowired
-    private UserInsightsService userInsightsService;
+    private InsightService userInsightsService;
 
     static LoadingCache<Integer, Set<UserInsight>> insightsCache = Mockito.mock(LoadingCache.class);
 
@@ -186,8 +186,8 @@ public class UserInsightsServiceImplTest extends DataComparisonTest {
         }
 
         @Bean
-        UserInsightsService userInsightsService() {
-            return new UserInsightsServiceImpl(coreUserRepository(), userInsightRepository(), userInoutStatusRepository(), insightsCache);
+        InsightService userInsightsService() {
+            return new UserInsightServiceImpl(coreUserRepository(), userInsightRepository(), userInoutStatusRepository(), insightsCache);
         }
     }
 }
