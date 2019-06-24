@@ -27,14 +27,14 @@ INSERT IGNORE INTO USER (id, pub_id, nickname, email, password, regdate, phone, 
                          GA, kyc_verification_step, kyc_status, kyc_reference, country, firstName, lastName, birthDay)
     VALUE
     (1, 'HJGFJHFGSDASDGFSD', 'admin', 'admin@exrates.me',
-     '$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.', '2019-04-16 10:05:29', '+380672223344', null, 2,
+     '$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.', '2019-04-16 10:05:29', '+380672223344', null, 3,
      '127.0.0.1', 1, 'en', null, 1, null, 0, null, null, null, 0,
-     '$2a$10$oyFeDvhk55fpvUKxvtcsI.zrUC669qcnN1iB4QMjY2obPgxLSQOR.', null, 'GA1.2.1627413492.1555445430', 0, 'success',
+     '$2a$10$oyFeDvhk55fpvUKxvtcsI.zrUC669qcnN1iB4QMjY2obPgxLSQOR.', null, 'GA1.2.1627413492.1555445430', 0, 'SUCCESS',
      'none', 'UK', 'Charles', 'James', null),
     (2, 'SIAAWWASADDWDDWAW', 'admin1', 'admin1@exrates.me',
      '$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.', '2019-04-16 10:05:29', '+380672223344', null, 2,
      '127.0.0.1', 1, 'en', null, 1, null, 0, null, null, null, 0,
-     '$2a$10$oyFeDvhk55fpvUKxvtcsI.zrUC669qcnN1iB4QMjY2obPgxLSQOR.', null, 'GA1.2.1627413492.1555445430', 0, 'success',
+     '$2a$10$oyFeDvhk55fpvUKxvtcsI.zrUC669qcnN1iB4QMjY2obPgxLSQOR.', null, 'GA1.2.1627413492.1555445430', 0, 'SUCCESS',
      'none', 'UK', 'Charles', 'James', null),
     (3, 'JHGGGJHGJHGHGJGJG', 'user', 'user@exrates.me', '$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.',
      '2019-04-16 10:05:29', '+380672223344', null, 2, '127.0.0.1', 4, 'en', null, 1, null, 0, null, null, null, 0,
@@ -67,6 +67,9 @@ VALUES (1, 4, 1, 100000000, 0, 0),
        (4, 2, 1, 100000000, 0, 0),
        (5, 23, 1, 100000000, 0, 0);
 
+INSERT IGNORE INTO COMPANY_WALLET (id, currency_id, balance, commission_balance)
+VALUES (1, 4, 100000000, 100000000);
+
 INSERT IGNORE INTO TRANSACTION (id, user_wallet_id, currency_id, amount, commission_amount, source_type,
                                 operation_type_id, source_id)
 VALUES (1, 1, 4, 1.0, 0.1, 'REFILL', 1, 1),
@@ -94,16 +97,15 @@ VALUES (1, 4, 2, 'BTC/USD', 13, 0, 'USD', 'BTC/USD', 0, 'MAIN', 2),
        (4, 5, 4, 'LTC/BTC', 219, 0, 'BTC', 'LTC/BTC', 0, 'MAIN', 8),
        (5, 5, 2, 'LTC/USD', 220, 0, 'USD', 'LTC/USD', 0, 'MAIN', 2);
 
-INSERT IGNORE INTO EXORDERS (user_id, currency_pair_id, operation_type_id, exrate, amount_base, amount_convert,
-                             user_acceptor_id, date_creation, date_acception, status_id, order_source_id,
-                             counter_order_id)
-VALUES (1, 1, 3, 0.25, 1.24, 0.41, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
-       (1, 2, 3, 0.50, 1.33, 0.62, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
-       (1, 3, 4, 0.75, 1.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
-       (1, 1, 4, 0.25, 2.55, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
-       (1, 1, 3, 0.25, 11.04, 0.41, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
-       (1, 1, 3, 0.25, 100.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
-       (1, 1, 4, 0.25, 10.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1);
+INSERT IGNORE INTO EXORDERS (id, user_id, currency_pair_id, operation_type_id, exrate, amount_base, amount_convert,
+                             user_acceptor_id, date_creation, date_acception, status_id, order_source_id, counter_order_id)
+VALUES (1, 1, 1, 3, 0.25, 1.24, 0.41, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
+       (2, 1, 2, 3, 0.50, 1.33, 0.62, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
+       (3, 1, 3, 4, 0.75, 1.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
+       (4, 1, 1, 4, 0.25, 2.55, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
+       (5, 1, 1, 3, 0.25, 11.04, 0.41, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
+       (6, 1, 1, 3, 0.25, 100.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
+       (7, 1, 1, 4, 0.25, 10.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1);
 
 TRUNCATE TABLE REFILL_REQUEST;
 INSERT INTO REFILL_REQUEST (id, amount, date_creation, status_id, currency_id, user_id,
@@ -220,3 +222,20 @@ VALUES ('123.12.12.12', 1, CURRENT_TIMESTAMP - INTERVAL 3 DAY, 'LOGIN_SUCCESS'),
        ('123.12.12.12', 2, CURRENT_TIMESTAMP - INTERVAL 2 DAY, 'LOGIN_SUCCESS'),
        ('123.12.12.12', 2, CURRENT_TIMESTAMP - INTERVAL 1 DAY, 'WITHDRAW'),
        ('123.12.12.12', 2, CURRENT_TIMESTAMP - INTERVAL 1 HOUR, 'LOGIN_SUCCESS');
+
+INSERT IGNORE INTO TRANSACTION_STATUS (id)
+VALUES (1);
+
+INSERT IGNORE INTO COMMISSION (id, operation_type, user_role)
+VALUES (1, 1, 1);
+
+INSERT IGNORE INTO USER_ADMIN_AUTHORITY_ROLE_APPLICATION (user_id, admin_authority_id, applied_to_role_id)
+VALUES (1, 8, 1);
+
+INSERT IGNORE INTO CURRENT_CURRENCY_RATES (currency_id, currency_name)
+SELECT cur.id, cur.name
+FROM CURRENCY cur;
+
+INSERT IGNORE INTO CURRENT_CURRENCY_BALANCES (currency_id, currency_name)
+SELECT cur.id, cur.name
+FROM CURRENCY cur;

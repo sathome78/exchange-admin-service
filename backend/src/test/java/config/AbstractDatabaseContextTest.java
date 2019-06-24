@@ -57,7 +57,11 @@ public abstract class AbstractDatabaseContextTest {
 
     @Autowired
     @Qualifier(TEST_ADMIN_DATASOURCE)
-    protected DataSource dataSource;
+    protected DataSource adminDataSource;
+
+    @Autowired
+    @Qualifier(TEST_CORE_DATASOURCE)
+    protected DataSource coreDataSource;
 
     @Autowired
     @Qualifier(TEST_ADMIN_NP_TEMPLATE)
@@ -105,9 +109,14 @@ public abstract class AbstractDatabaseContextTest {
     }
 
     @After
-    public void after() {
+    public final void tearDown() {
 //        dataSources.values().forEach(HikariDataSource::close);
 //        dataSources.clear();
+        after();
+    }
+
+    protected void after() {
+
     }
 
     private void createFileTreeForTesting() throws IOException {

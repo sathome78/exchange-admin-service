@@ -41,6 +41,7 @@ public class WalletRepositoryImplTest extends DataComparisonTest {
 
     @Override
     protected void before() {
+        setDatabaseType(ADMIN_DATABASE_TYPE);
         try {
             truncateTables(WalletRepository.TABLE_NAME_1, WalletRepository.TABLE_NAME_2, WalletRepository.TABLE_NAME_3);
 

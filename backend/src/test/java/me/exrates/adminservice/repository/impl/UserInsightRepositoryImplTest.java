@@ -48,6 +48,7 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
 
     @Override
     protected void before() {
+        setDatabaseType(ADMIN_DATABASE_TYPE);
         try {
             truncateTables(TABLE);
         } catch (SQLException e) {
@@ -73,12 +74,12 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
     public void findAllByUserId_whenOk() throws SQLException {
         prepareTestData(getInsertData());
         final List<UserInsight> userInsights = new ArrayList<>();
-        
+
         around()
                 .withSQL(SELECT_ALL_SQL)
                 .withObject(getTestUserInsights())
                 .run(() -> userInsights.addAll(userInsightRepository.findAllByUserId(1)));
-        
+
         assertEquals(2, userInsights.size());
     }
 
@@ -111,7 +112,7 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
                 .tradeAmountUsd(new BigDecimal(20))
                 .tradeCommissionUsd(BigDecimal.ONE)
                 .balanceDynamicsUsd(new BigDecimal(-10))
-                .sourceIds(ImmutableList.of(1,2,3,4))
+                .sourceIds(ImmutableList.of(1, 2, 3, 4))
                 .build();
         UserInsight insight2 = UserInsight.builder()
                 .created(LocalDate.of(2019, 3, 4))
@@ -128,9 +129,9 @@ public class UserInsightRepositoryImplTest extends DataComparisonTest {
                 .tradeAmountUsd(new BigDecimal(20))
                 .tradeCommissionUsd(BigDecimal.ONE)
                 .balanceDynamicsUsd(new BigDecimal(-10))
-                .sourceIds(ImmutableList.of(1,2,3,4))
+                .sourceIds(ImmutableList.of(1, 2, 3, 4))
                 .build();
-        
+
         return ImmutableList.of(insight1, insight2);
     }
 

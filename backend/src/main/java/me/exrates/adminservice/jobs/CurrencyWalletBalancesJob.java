@@ -28,7 +28,7 @@ public class CurrencyWalletBalancesJob {
         try {
             walletBalancesService.updateCurrencyBalances();
         } catch (Exception ex) {
-            log.info("--> In processing 'CurrencyWalletBalancesJob' occurred error", ex);
+            log.error("--> In processing 'CurrencyWalletBalancesJob' occurred error", ex);
         }
     }
 }

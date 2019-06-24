@@ -1,10 +1,9 @@
-package me.exrates.adminservice.services.impl;
+package me.exrates.adminservice.core.service.impl;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
 import me.exrates.adminservice.core.repository.CoreCurrencyRepository;
 import me.exrates.adminservice.core.service.CoreCurrencyService;
-import me.exrates.adminservice.core.service.impl.CoreCurrencyServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -31,7 +31,7 @@ public interface CoreUserService {
 
     List<CoreUserOperationAuthorityOptionDto> getUserOperationTypeAuthorities(Integer userId);
 
-    List<UserRole> getAllRoles();
-
     void updateUserRole(UserRole newRole, Integer userId);
+
+    List<UserRole> getAllRoles();
 }
