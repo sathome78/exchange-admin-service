@@ -1,9 +1,11 @@
 package me.exrates.adminservice.core.repository.impl;
 
+import com.google.common.collect.Maps;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.domain.CoreTransactionDto;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
+import me.exrates.adminservice.core.repository.CoreWalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +29,18 @@ import java.util.Objects;
 public class CoreTransactionRepositoryImpl implements CoreTransactionRepository {
 
     private final NamedParameterJdbcOperations coreJdbcTemplate;
+    private final CoreWalletRepository coreWalletRepository;
 
     @Autowired
-    public CoreTransactionRepositoryImpl(@Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreJdbOps) {
+    public CoreTransactionRepositoryImpl(@Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreJdbOps,
+                                         CoreWalletRepository coreWalletRepository) {
         this.coreJdbcTemplate = coreJdbOps;
+        this.coreWalletRepository = coreWalletRepository;
     }
 
     @Override
     public List<CoreTransaction> findAllLimited(int limit, long position) {
+        final Collection<Integer> botWalletIds = coreWalletRepository.findAllBotsWalletIds();
         String sql = "SELECT t.id, w.user_id, C.name as currency_name, t.amount, t.commission_amount, t.source_type, " +
                 "UPPER(OT.name) as operation_type, t.datetime, t.source_id as source_id, " +
                 "CASE C.name WHEN 'USD' THEN 1 ELSE NULL END AS rate_in_usd, " +
@@ -43,10 +50,13 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
                 "LEFT JOIN CURRENCY C on t.currency_id = C.id " +
                 "LEFT JOIN OPERATION_TYPE OT on t.operation_type_id = OT.id " +
                 "WHERE t.id > :position " +
+                "AND t.user_wallet_id NOT IN (:wids) " +
                 "ORDER BY t.id ASC " +
                 "LIMIT :size";
-        MapSqlParameterSource params = new MapSqlParameterSource("size", limit)
-                .addValue("position", position);
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("size", limit);
+        params.put("position", position);
+        params.put("wids", botWalletIds);
         return coreJdbcTemplate.query(sql, params, getRowMapper());
     }
 

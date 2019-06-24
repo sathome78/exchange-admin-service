@@ -32,4 +32,6 @@ public interface TransactionRepository {
     Collection<CurrencyTuple> getDailyTradeCommission();
 
     Map<String, BigDecimal> getDailyInnerTradeVolume();
+
+    Map<Integer, List<Integer>> findUsersRefills(Collection<Integer> usersIds);
 }

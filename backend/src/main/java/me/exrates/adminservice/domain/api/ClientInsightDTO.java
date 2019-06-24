@@ -28,9 +28,9 @@ public class ClientInsightDTO {
     @JsonProperty("messenger")
     private String messenger;
 
-    @JsonProperty("last_visit")
+    @JsonProperty("last_login")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime lastVisit;
+    private LocalDateTime lastLogin;
 
     @JsonProperty("not_refilled_coins_48_hours")
     private int notRefilledCoins48Hours;
@@ -43,6 +43,24 @@ public class ClientInsightDTO {
 
     @JsonProperty("not_refilled_coins_90_days")
     private int notRefilledCoins90Days;
+
+    @JsonProperty("first_refill")
+    private boolean firstRefill;
+
+    @JsonProperty("first_refill_no_ops_24_hours")
+    private boolean firstRefillNoOps24Hours;
+
+    @JsonProperty("first_refill_no_ops_7_days")
+    private boolean firstRefillNoOps7Days;
+
+    @JsonProperty("first_refill_no_ops_30_days")
+    private boolean firstRefillNoOps30Days;
+
+    @JsonProperty("first_refill_no_ops_90_days")
+    private boolean firstRefillNoOps90Days;
+
+    @JsonProperty("first_refill_no_ops_365_days")
+    private boolean firstRefillNoOps365Days;
 
 
 }

@@ -133,7 +133,7 @@ public class TransactionServiceTest extends DataComparisonTest {
 
         @Bean
         public CoreTransactionRepository testCoreTransactionRepository() {
-            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations);
+            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations, coreWalletRepository);
         }
 
         @Bean

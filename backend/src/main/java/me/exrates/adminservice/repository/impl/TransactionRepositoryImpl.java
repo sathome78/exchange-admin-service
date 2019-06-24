@@ -119,6 +119,11 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         });
     }
 
+    @Override
+    public Map<Integer, List<Integer>> findUsersRefills(Collection<Integer> usersIds) {
+        return null;
+    }
+
     private RowMapper<CurrencyTuple> getCurrencyTupleRowMapper() {
         return (rs, i) -> CurrencyTuple.builder()
                 .currencyName(rs.getString(COL_CURRENCY_NAME))

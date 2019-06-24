@@ -95,6 +95,11 @@ public class TransactionServiceImpl implements TransactionService {
         return result;
     }
 
+    @Override
+    public Map<Integer, List<Integer>> getAllUsersRefills(Collection<Integer> usersIds) {
+        return transactionRepository.findUsersRefills(usersIds);
+    }
+
     private BigDecimal reduce(Collection<CurrencyTuple> items, Function<CurrencyTuple, BigDecimal> mapFunction) {
         return items.stream().map(mapFunction).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
