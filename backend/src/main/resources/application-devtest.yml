@@ -1,6 +1,3 @@
-server:
-  port: 7777
-
 
 spring:
   application:
@@ -12,26 +9,26 @@ spring:
       default_view_inclusion: true
     default-property-inclusion: 'non_null'
   flyway:
-    url: ${db-admin.datasource.url}
-    user: ${db-admin.datasource.username}
+    url: ${DB_ANDMIN_URL}
+    user: ${DB_ANDMIN_USERNAME}
     password: ${db-admin.datasource.password}
     baseline-on-migrate: true
 
 db-admin:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${placeholder}
-    username: ${placeholder}
-    password: ${placeholder}
+    url: ${DB_ANDMIN_URL}
+    username: ${DB_ANDMIN_USERNAME}
+    password: ${DB_ANDMIN_PASSWORD}
   ssm:
     password-path: admin
 
 db-core:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://exdbdev.cedlveyttji9.us-east-2.rds.amazonaws.com:3306/dbdev2?useUnicode=true&characterEncoding=UTF-8&useSSL=false
-    username: exdevdb
-    password: KQmK82dd
+    url: ${DB_CORE_URL}
+    username: ${DB_CORE_USERNAME}
+    password: ${DB_CORE_PASSWORD}
   ssm:
     password-path: core
 
@@ -41,12 +38,12 @@ ssm:
 api:
   exchange:
     url: http://172.50.10.10:80/currency/rates
-    username: varvatos
-    password: qGbxQ466NWpB3W5G
+    username: ${API_EXCHANGE_USERNAME}
+    password: ${API_EXCHANGE_PASSWORD}
   wallets:
     url: http://172.31.3.72:80/currencies
-    username: varvatos
-    password: qGbxQ466NWpB3W5G
+    username: ${API_WALLETS_USERNAME}
+    password: ${API_WALLETS_PASSWORD}
 
 scheduled:
   update:
