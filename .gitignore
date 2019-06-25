@@ -74,3 +74,5 @@ Thumbs.db
 /out/
 /dist/
 
+#ansible
+*.retry

@@ -1,0 +1,26 @@
+---
+- hosts: all
+  become: no
+  tasks:
+    - name: flyway job
+      include_role:
+        name: flyway
+      vars:
+        service_playbook_dir: "{{ service_playbook_dir }}"
+        tolerations_node: "{{ env_specific_vars[deployment_env].tolerations_node }}"
+        affinity_node: "{{ env_specific_vars[deployment_env].affinity_node }}"
+        active_spring_profile: "{{ env_specific_vars[deployment_env].active_spring_profile }}"
+        spot: false
+        chart_group: batch
+        chart_name: flyway
+        flywayJobEnabled: yes
+        flywayJobName: "{{ deployment_flyway_job_name }}"
+        chart_version: v1.0.0
+        global_chart_name: core-flyway-chart
+        global_app_version: "{{ deployment_app_version }}"
+        image: "{{ env_specific_vars[deployment_env].registry }}/{{ env_specific_vars[deployment_env].flyway_image_repo }}"
+        image_tag: "{{ env_specific_vars[deployment_env].flyway_image_tag |string }}"
+        configMap: "flyway-{{ SERVICE_NAME }}-{{ deployment_env }}"
+        database_host: "{{ env_specific_vars[deployment_env].database_host }}"
+        database_name: "{{ env_specific_vars[deployment_env].database_name }}"
+        database_secrets: "flyway-{{ deployment_env }}-db"

@@ -65,4 +65,4 @@ logging:
 
 angular:
   allowed:
-    origins: ${placeholder}
+    origins: http://admin-service-devtest.service

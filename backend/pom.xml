@@ -16,6 +16,32 @@
 
     <packaging>jar</packaging>
 
+    <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>libs-snapshot</name>
+      <url>http://artifactory.service/artifactory/exrates-libs</url>
+    </repository>
+    <repository>
+      <snapshots />
+      <id>snapshots</id>
+      <name>libs-snapshot</name>
+      <url>http://artifactory.service/artifactory/exrates-libs</url>
+    </repository>
+    <repository>
+      <id>central-maven</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    </repositories>
+
     <properties>
         <java.version>1.8</java.version>
         <scala.version>2.11.7</scala.version>
