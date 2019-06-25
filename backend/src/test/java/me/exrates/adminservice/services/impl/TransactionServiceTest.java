@@ -127,7 +127,7 @@ public class TransactionServiceTest extends DataComparisonTest {
 
         @Bean
         CoreWalletRepository coreWalletRepository() {
-            return new CoreWalletRepositoryImpl(coreUserRepository(), testCoreTransactionRepository(), coreNPJdbcOperations);
+            return new CoreWalletRepositoryImpl(coreUserRepository(), coreNPJdbcOperations, testCoreTransactionRepository());
         }
 
         @Bean
@@ -142,7 +142,7 @@ public class TransactionServiceTest extends DataComparisonTest {
 
         @Bean
         public CoreTransactionRepository testCoreTransactionRepository() {
-            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations, coreWalletRepository());
+            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations, coreUserRepository());
         }
 
         @Bean
@@ -153,7 +153,7 @@ public class TransactionServiceTest extends DataComparisonTest {
 
         @Override
         protected String getSchema() {
-            return "SyncTransactionServiceTest";
+            return "TransactionServiceTest";
         }
     }
 }

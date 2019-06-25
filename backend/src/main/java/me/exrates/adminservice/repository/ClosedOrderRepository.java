@@ -2,7 +2,9 @@ package me.exrates.adminservice.repository;
 
 import me.exrates.adminservice.domain.ClosedOrder;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ClosedOrderRepository {
@@ -22,4 +24,6 @@ public interface ClosedOrderRepository {
     Optional<Integer> findMaxId();
 
     boolean batchInsert(List<ClosedOrder> transactions);
+
+    Map<Integer, List<Integer>> getAllUserClosedOrders(Collection<Integer> userIds);
 }

@@ -138,12 +138,12 @@ public class CoreTransactionRepositoryImplTest extends DataComparisonTest {
 
         @Bean
         CoreWalletRepository coreWalletRepository() {
-            return new CoreWalletRepositoryImpl(coreUserRepository(), coreTransactionRepository(), coreNPJdbcOperations);
+            return new CoreWalletRepositoryImpl(coreUserRepository(), coreNPJdbcOperations, coreTransactionRepository());
         }
 
         @Bean("testCoreTransactionRepository")
         CoreTransactionRepository coreTransactionRepository() {
-            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations, coreWalletRepository());
+            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations, coreUserRepository());
         }
     }
 }

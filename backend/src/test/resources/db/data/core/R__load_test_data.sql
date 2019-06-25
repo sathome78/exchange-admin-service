@@ -39,6 +39,15 @@ INSERT IGNORE INTO USER (id, pub_id, nickname, email, password, regdate, phone, 
     (3, 'JHGGGJHGJHGHGJGJG', 'user', 'user@exrates.me', '$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.',
      '2019-04-16 10:05:29', '+380672223344', null, 2, '127.0.0.1', 4, 'en', null, 1, null, 0, null, null, null, 0,
      '$2a$10$oyFeDvhk55fpvUKxvtcsI.zrUC669qcnN1iB4QMjY2obPgxLSQOR.', null, 'GA1.2.1627413492.1555445430', 0, 'none',
+     'none', null, null, null, null),
+    (4, 'SIAAWWASADDTRYYWAW', 'bot1', 'bot1@exrates.me',
+     '$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.', '2019-04-16 10:05:29', '+380672223344', null, 2,
+     '127.0.0.1', 10, 'en', null, 1, null, 0, null, null, null, 0,
+     '$2a$10$oyFeDvhk55fpvUKxvtcsI.zrUC669qcnN1iB4QMjY2obPgxLSQOR.', null, 'GA1.2.1627413492.1555445430', 0, 'SUCCESS',
+     'none', 'UK', 'Charles', 'James', null),
+    (5, 'JHGGGJHGJHGTRYJGJG', 'bot2', 'bot2@exrates.me', '$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.',
+     '2019-04-16 10:05:29', '+380672223344', null, 2, '127.0.0.1', 12, 'en', null, 1, null, 0, null, null, null, 0,
+     '$2a$10$oyFeDvhk55fpvUKxvtcsI.zrUC669qcnN1iB4QMjY2obPgxLSQOR.', null, 'GA1.2.1627413492.1555445430', 0, 'none',
      'none', null, null, null, null);
 
 INSERT IGNORE INTO OPERATION_TYPE (id, name, description)
@@ -65,29 +74,39 @@ VALUES (1, 4, 1, 100000000, 0, 0),
        (2, 14, 1, 100000000, 0, 0),
        (3, 5, 1, 100000000, 0, 0),
        (4, 2, 1, 100000000, 0, 0),
-       (5, 23, 1, 100000000, 0, 0);
+       (5, 23, 1, 100000000, 0, 0),
+       (6, 4, 4, 100000000, 0, 0),
+       (7, 14, 4, 100000000, 0, 0),
+       (8, 5, 4, 100000000, 0, 0),
+       (9, 2, 4, 100000000, 0, 0),
+       (10, 23, 4, 100000000, 0, 0),
+       (11, 4, 5, 100000000, 0, 0),
+       (12, 14, 5, 100000000, 0, 0),
+       (13, 5, 5, 100000000, 0, 0),
+       (14, 2, 5, 100000000, 0, 0),
+       (15, 23, 5, 100000000, 0, 0);
 
 INSERT IGNORE INTO COMPANY_WALLET (id, currency_id, balance, commission_balance)
 VALUES (1, 4, 100000000, 100000000);
 
-INSERT IGNORE INTO TRANSACTION (id, user_wallet_id, currency_id, amount, commission_amount, source_type,
+INSERT IGNORE INTO TRANSACTION (id, user_wallet_id, currency_id, active_balance_before, amount, commission_amount, source_type,
                                 operation_type_id, source_id)
-VALUES (1, 1, 4, 1.0, 0.1, 'REFILL', 1, 1),
-       (2, 2, 14, 10.0, 1, 'REFILL', 1, 2),
-       (3, 2, 2, 1.0, 0.1, 'REFILL', 1, 3),
-       (4, 5, 23, 10.0, 1, 'REFILL', 1, 4),
-       (5, 1, 4, 1.0, 0.1, 'WITHDRAW', 2, 5),
-       (6, 2, 14, 10.0, 1, 'WITHDRAW', 2, 6),
-       (7, 2, 2, 1.0, 0.1, 'WITHDRAW', 2, 7),
-       (8, 5, 23, 10.0, 1, 'WITHDRAW', 2, 8),
-       (9, 1, 4, 1.0, 0.1, 'USER_TRANSFER', 2, 9),
-       (10, 2, 14, 10.0, 1, 'USER_TRANSFER', 1, 10),
-       (11, 2, 2, 1.0, 0.1, 'USER_TRANSFER', 2, 11),
-       (12, 5, 23, 10.0, 1, 'USER_TRANSFER', 1, 12),
-       (13, 1, 4, 1.0, 0.1, 'ORDER', 2, 13),
-       (14, 2, 14, 10.0, 1, 'ORDER', 1, 14),
-       (15, 2, 2, 1.0, 0.1, 'ORDER', 2, 15),
-       (16, 5, 23, 10.0, 1, 'ORDER', 1, 16);
+VALUES (1, 1, 4, 10, 1.0, 0.1, 'REFILL', 1, 1),
+       (2, 2, 14, 11, 10.0, 1, 'REFILL', 1, 2),
+       (3, 2, 2, 9, 1.0, 0.1, 'REFILL', 1, 3),
+       (4, 5, 23, 10, 10.0, 1, 'REFILL', 1, 4),
+       (5, 1, 4, 12, 1.0, 0.1, 'WITHDRAW', 2, 5),
+       (6, 2, 14, 0, 10.0, 1, 'WITHDRAW', 2, 6),
+       (7, 2, 2, 0, 1.0, 0.1, 'WITHDRAW', 2, 7),
+       (8, 5, 23, 0, 10.0, 1, 'WITHDRAW', 2, 8),
+       (9, 1, 4, 10, 1.0, 0.1, 'USER_TRANSFER', 2, 9),
+       (10, 2, 14, 13, 10.0, 1, 'USER_TRANSFER', 1, 10),
+       (11, 2, 2, 5, 1.0, 0.1, 'USER_TRANSFER', 2, 11),
+       (12, 5, 23, 5, 10.0, 1, 'USER_TRANSFER', 1, 12),
+       (13, 1, 4, 10, 1.0, 0.1, 'ORDER', 2, 13),
+       (14, 2, 14, 3, 10.0, 1, 'ORDER', 1, 14),
+       (15, 2, 2, 66, 1.0, 0.1, 'ORDER', 2, 15),
+       (16, 5, 23, 77, 10.0, 1, 'ORDER', 1, 16);
 
 INSERT INTO CURRENCY_PAIR (id, currency1_id, currency2_id, name, pair_order, hidden, market, ticker_name,
                            permitted_link, type, scale)

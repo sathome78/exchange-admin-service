@@ -1,5 +1,6 @@
 package me.exrates.adminservice.services.impl;
 
+import com.google.common.collect.Maps;
 import me.exrates.adminservice.core.repository.CoreOrderRepository;
 import me.exrates.adminservice.domain.ClosedOrder;
 import me.exrates.adminservice.domain.api.RateDto;
@@ -11,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -52,6 +56,14 @@ public class OrderServiceImpl implements OrderService {
                 closedOrderRepository.batchInsert(orders);
             }
         } while (shouldProceed.getValue());
+    }
+
+    @Override
+    public Map<Integer, List<Integer>> getAllUserClosedOrders(Collection<Integer> userIds) {
+        Map<Integer, List<Integer>> closedOrders = Maps.newHashMap();
+        closedOrders.putAll(closedOrderRepository.getAllUserClosedOrders(userIds));
+        userIds.forEach(id -> closedOrders.putIfAbsent(id, Collections.emptyList()));
+        return closedOrders;
     }
 
     private String getCurrencyName(ClosedOrder closedOrder) {

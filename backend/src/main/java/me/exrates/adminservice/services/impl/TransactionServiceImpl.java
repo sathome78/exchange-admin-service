@@ -1,5 +1,6 @@
 package me.exrates.adminservice.services.impl;
 
+import com.google.common.collect.Maps;
 import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.domain.api.RateDto;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -97,7 +99,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Map<Integer, List<Integer>> getAllUsersRefills(Collection<Integer> usersIds) {
-        return transactionRepository.findUsersRefills(usersIds);
+        Map<Integer, List<Integer>> refills = Maps.newHashMap();
+        refills.putAll(transactionRepository.findUsersRefills(usersIds));
+        usersIds.forEach(id -> refills.putIfAbsent(id, Collections.emptyList()));
+        return refills;
     }
 
     private BigDecimal reduce(Collection<CurrencyTuple> items, Function<CurrencyTuple, BigDecimal> mapFunction) {

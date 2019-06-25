@@ -24,6 +24,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,16 +35,16 @@ import java.util.Map;
 public class CoreWalletRepositoryImpl implements CoreWalletRepository {
 
     private final CoreUserRepository coreUserRepository;
-    private final CoreTransactionRepository coreTransactionRepository;
     private final NamedParameterJdbcOperations coreTemplate;
+    private final CoreTransactionRepository coreTransactionRepository;
 
     @Autowired
     public CoreWalletRepositoryImpl(CoreUserRepository coreUserRepository,
-                                    CoreTransactionRepository transactionRepository,
-                                    @Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreTemplate) {
+                                    @Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreTemplate,
+                                    CoreTransactionRepository coreTransactionRepository) {
         this.coreUserRepository = coreUserRepository;
-        this.coreTransactionRepository = transactionRepository;
         this.coreTemplate = coreTemplate;
+        this.coreTransactionRepository = coreTransactionRepository;
     }
 
     @Override
@@ -234,10 +236,12 @@ public class CoreWalletRepositoryImpl implements CoreWalletRepository {
 
     @Override
     public List<Integer> findAllBotsWalletIds() {
+        final Collection<Integer> botsIds = coreUserRepository.getBotsIds();
+        if (botsIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         String sql = "SELECT id FROM WALLET WHERE user_id IN (:ids)";
-        Map<String, Object> params = new HashMap<String, Object>() {{
-            put("ids", coreUserRepository.getBotsIds());
-        }};
+        Map<String, Object> params = Collections.singletonMap("ids", botsIds);
         return coreTemplate.query(sql, params, rs -> {
             List<Integer> ids = Lists.newArrayList();
             while (rs.next()) {

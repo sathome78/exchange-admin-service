@@ -44,9 +44,6 @@ public class ClientInsightDTO {
     @JsonProperty("not_refilled_coins_90_days")
     private int notRefilledCoins90Days;
 
-    @JsonProperty("first_refill")
-    private boolean firstRefill;
-
     @JsonProperty("first_refill_no_ops_24_hours")
     private boolean firstRefillNoOps24Hours;
 
@@ -61,6 +58,15 @@ public class ClientInsightDTO {
 
     @JsonProperty("first_refill_no_ops_365_days")
     private boolean firstRefillNoOps365Days;
+
+    @JsonProperty("first_refill")
+    private boolean firstRefill;
+
+    @JsonProperty("twin_refill")
+    private boolean twinRefill;
+
+    @JsonProperty("refill_and_trade")
+    private boolean refillAndTrade;
 
 
 }

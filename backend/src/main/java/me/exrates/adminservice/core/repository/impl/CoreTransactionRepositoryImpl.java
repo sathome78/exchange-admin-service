@@ -5,7 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.domain.CoreTransactionDto;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
-import me.exrates.adminservice.core.repository.CoreWalletRepository;
+import me.exrates.adminservice.core.repository.CoreUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,20 +29,28 @@ import java.util.Objects;
 public class CoreTransactionRepositoryImpl implements CoreTransactionRepository {
 
     private final NamedParameterJdbcOperations coreJdbcTemplate;
-    private final CoreWalletRepository coreWalletRepository;
+    private final CoreUserRepository coreUserRepository;
 
     @Autowired
     public CoreTransactionRepositoryImpl(@Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreJdbOps,
-                                         CoreWalletRepository coreWalletRepository) {
+                                         CoreUserRepository coreUserRepository) {
         this.coreJdbcTemplate = coreJdbOps;
-        this.coreWalletRepository = coreWalletRepository;
+        this.coreUserRepository = coreUserRepository;
     }
 
     @Override
     public List<CoreTransaction> findAllLimited(int limit, long position) {
-        final Collection<Integer> botWalletIds = coreWalletRepository.findAllBotsWalletIds();
+        final Collection<Integer> botWalletIds = coreUserRepository.getBotsIds();
+        String botsWalletCondition = "";
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("size", limit);
+        params.put("position", position);
+        if (!botWalletIds.isEmpty()) {
+            botsWalletCondition = "AND t.user_wallet_id NOT IN (SELECT id FROM WALLET WHERE user_id IN (:ids)) ";
+            params.put("ids", botWalletIds);
+        }
         String sql = "SELECT t.id, w.user_id, C.name as currency_name, t.amount, t.commission_amount, t.source_type, " +
-                "UPPER(OT.name) as operation_type, t.datetime, t.source_id as source_id, " +
+                "UPPER(OT.name) as operation_type, t.datetime, t.source_id as source_id, t.active_balance_before, " +
                 "CASE C.name WHEN 'USD' THEN 1 ELSE NULL END AS rate_in_usd, " +
                 "CASE C.name WHEN 'BTC' THEN 1 ELSE NULL END AS rate_in_btc " +
                 "FROM TRANSACTION t " +
@@ -50,13 +58,9 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
                 "LEFT JOIN CURRENCY C on t.currency_id = C.id " +
                 "LEFT JOIN OPERATION_TYPE OT on t.operation_type_id = OT.id " +
                 "WHERE t.id > :position " +
-                "AND t.user_wallet_id NOT IN (:wids) " +
+                botsWalletCondition +
                 "ORDER BY t.id ASC " +
                 "LIMIT :size";
-        Map<String, Object> params = Maps.newHashMap();
-        params.put("size", limit);
-        params.put("position", position);
-        params.put("wids", botWalletIds);
         return coreJdbcTemplate.query(sql, params, getRowMapper());
     }
 
@@ -138,6 +142,7 @@ public class CoreTransactionRepositoryImpl implements CoreTransactionRepository 
                 .id(rs.getInt(COL_ID))
                 .userId(rs.getInt(COL_USER_ID))
                 .currencyName(rs.getString(COL_CURRENCY_NAME))
+                .balanceBefore(rs.getBigDecimal(COL_ACTIVE_BALANCE_BEFORE))
                 .amount(getBigDecimal(rs.getBigDecimal(COL_AMOUNT)))
                 .commissionAmount(getBigDecimal(rs.getBigDecimal(COL_COMMISSION_AMOUNT)))
                 .sourceType(rs.getString(COL_SOURCE_TYPE))

@@ -1,5 +1,7 @@
 package me.exrates.adminservice.repository.impl;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.domain.ClosedOrder;
 import me.exrates.adminservice.repository.ClosedOrderRepository;
@@ -13,8 +15,10 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static me.exrates.adminservice.configurations.AdminDatasourceConfiguration.ADMIN_JDBC_OPS;
@@ -69,5 +73,37 @@ public class ClosedOrderRepositoryImpl implements ClosedOrderRepository {
             }
         });
         return rows.length == orders.size();
+    }
+
+    @Override
+    public Map<Integer, List<Integer>> getAllUserClosedOrders(Collection<Integer> userIds) {
+        String sql = "SELECT " + COL_USER_ID + ", " + COL_USER_ACCEPTOR_ID + " FROM " + TABLE + " WHERE " +
+                COL_USER_ID + " IN (:ids) OR " + COL_USER_ACCEPTOR_ID + " IN (:ids)";
+        Map<String, Object> params = Collections.singletonMap("ids", userIds);
+        return namedParameterJdbcOperations.query(sql, params, rs -> {
+            Map<Integer, List<Integer>> closedOrders = Maps.newHashMap();
+            while (rs.next()) {
+                final int creatorId = rs.getInt(COL_USER_ID);
+                final int acceptorId = rs.getInt(COL_USER_ACCEPTOR_ID);
+                computeClosedOrders(closedOrders, creatorId, acceptorId);
+
+
+            }
+            return closedOrders;
+        });
+    }
+
+    private void computeClosedOrders(Map<Integer, List<Integer>> closedOrders, int creatorId, int acceptorId) {
+        closedOrders.computeIfPresent(creatorId, (k, list) -> {
+            list.add(k);
+            return list;
+        });
+        closedOrders.computeIfPresent(acceptorId, (k, list) -> {
+            list.add(k);
+            return list;
+        });
+        closedOrders.putIfAbsent(creatorId, Lists.newArrayList(creatorId));
+        closedOrders.putIfAbsent(acceptorId, Lists.newArrayList(acceptorId));
+
     }
 }
