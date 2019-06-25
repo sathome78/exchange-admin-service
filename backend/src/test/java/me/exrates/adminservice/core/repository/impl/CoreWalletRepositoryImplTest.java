@@ -8,6 +8,7 @@ import me.exrates.adminservice.core.domain.enums.OperationType;
 import me.exrates.adminservice.core.domain.enums.TransactionSourceType;
 import me.exrates.adminservice.core.domain.enums.WalletTransferStatus;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
+import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.core.repository.CoreWalletRepository;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -136,6 +138,10 @@ public class CoreWalletRepositoryImplTest extends DataComparisonTest {
         @Qualifier(TEST_CORE_NP_TEMPLATE) // it's ok bean will be imported later
         private NamedParameterJdbcOperations coreNPJdbcOperations;
 
+        @Autowired
+        @Qualifier(TEST_CORE_TEMPLATE) // it's ok bean will be imported later
+        private JdbcOperations coreJdbcOperations;
+
         @Override
         protected String getSchema() {
             return "CoreWalletRepositoryImplTest";
@@ -143,12 +149,17 @@ public class CoreWalletRepositoryImplTest extends DataComparisonTest {
 
         @Bean("testCoreTransactionRepository")
         CoreTransactionRepository coreTransactionRepository() {
-            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations);
+            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations, coreWalletRepository());
+        }
+
+        @Bean
+        CoreUserRepository coreUserRepository() {
+            return new CoreUserRepositoryImpl(coreNPJdbcOperations, coreJdbcOperations);
         }
 
         @Bean("testCoreWalletRepository")
         CoreWalletRepository coreWalletRepository() {
-            return new CoreWalletRepositoryImpl(coreTransactionRepository(), coreNPJdbcOperations);
+            return new CoreWalletRepositoryImpl(coreUserRepository(), coreTransactionRepository(), coreNPJdbcOperations);
         }
     }
 }

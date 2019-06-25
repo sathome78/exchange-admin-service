@@ -5,8 +5,10 @@ import config.AsyncTransactionsTestConfig;
 import config.DataComparisonTest;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
+import me.exrates.adminservice.core.repository.CoreWalletRepository;
 import me.exrates.adminservice.core.repository.impl.CoreTransactionRepositoryImpl;
 import me.exrates.adminservice.core.repository.impl.CoreUserRepositoryImpl;
+import me.exrates.adminservice.core.repository.impl.CoreWalletRepositoryImpl;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.repository.TransactionRepository;
 import me.exrates.adminservice.repository.UserInsightRepository;
@@ -124,6 +126,11 @@ public class TransactionServiceTest extends DataComparisonTest {
         }
 
         @Bean
+        CoreWalletRepository coreWalletRepository() {
+            return new CoreWalletRepositoryImpl(coreUserRepository(), testCoreTransactionRepository(), coreNPJdbcOperations);
+        }
+
+        @Bean
         public TransactionRepository adminTransactionRepository() {
             return new TransactionRepositoryImpl(adminJdbcOperations, adminNPJdbcOperations, coreUserRepository());
         }
@@ -135,7 +142,7 @@ public class TransactionServiceTest extends DataComparisonTest {
 
         @Bean
         public CoreTransactionRepository testCoreTransactionRepository() {
-            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations, coreWalletRepository);
+            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations, coreWalletRepository());
         }
 
         @Bean

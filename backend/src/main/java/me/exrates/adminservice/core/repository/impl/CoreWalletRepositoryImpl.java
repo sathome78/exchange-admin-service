@@ -32,16 +32,16 @@ import java.util.Map;
 @Repository
 public class CoreWalletRepositoryImpl implements CoreWalletRepository {
 
-    private final CoreTransactionRepository coreTransactionRepository;
     private final CoreUserRepository coreUserRepository;
+    private final CoreTransactionRepository coreTransactionRepository;
     private final NamedParameterJdbcOperations coreTemplate;
 
     @Autowired
-    public CoreWalletRepositoryImpl(CoreTransactionRepository coreTransactionRepository,
-                                    CoreUserRepository coreUserRepository,
+    public CoreWalletRepositoryImpl(CoreUserRepository coreUserRepository,
+                                    CoreTransactionRepository transactionRepository,
                                     @Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreTemplate) {
-        this.coreTransactionRepository = coreTransactionRepository;
         this.coreUserRepository = coreUserRepository;
+        this.coreTransactionRepository = transactionRepository;
         this.coreTemplate = coreTemplate;
     }
 
