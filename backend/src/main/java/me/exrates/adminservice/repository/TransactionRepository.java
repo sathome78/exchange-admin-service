@@ -15,6 +15,7 @@ public interface TransactionRepository {
     String COL_ID = "id";
     String COL_USER_ID = "user_id";
     String COL_CURRENCY_NAME = "currency_name";
+    String COL_ACTIVE_BALANCE_BEFORE = "active_balance_before";
     String COL_AMOUNT = "amount";
     String COL_COMMISSION_AMOUNT = "commission_amount";
     String COL_SOURCE_TYPE = "source_type";
@@ -34,4 +35,6 @@ public interface TransactionRepository {
     Map<String, BigDecimal> getDailyInnerTradeVolume();
 
     Map<Integer, List<Integer>> findUsersRefills(Collection<Integer> usersIds);
+
+    Map<Integer, List<CoreTransaction>> findRefillEvents(Collection<Integer> userIds);
 }

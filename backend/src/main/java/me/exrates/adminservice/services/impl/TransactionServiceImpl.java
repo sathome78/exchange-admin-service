@@ -1,9 +1,11 @@
 package me.exrates.adminservice.services.impl;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.domain.api.RateDto;
+import me.exrates.adminservice.domain.enums.RefillEventEnum;
 import me.exrates.adminservice.events.TransactionsUpdateEvent;
 import me.exrates.adminservice.repository.TransactionRepository;
 import me.exrates.adminservice.services.ExchangeRatesService;
@@ -25,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -103,6 +106,31 @@ public class TransactionServiceImpl implements TransactionService {
         refills.putAll(transactionRepository.findUsersRefills(usersIds));
         usersIds.forEach(id -> refills.putIfAbsent(id, Collections.emptyList()));
         return refills;
+    }
+
+    @Override
+    public Map<Integer, Set<RefillEventEnum>> getAllUsersRefillEvents(Collection<Integer> usersIds) {
+        final Map<Integer, List<CoreTransaction>> refillEvents = transactionRepository.findRefillEvents(usersIds);
+        Map<Integer, Set<RefillEventEnum>> events = Maps.newHashMap();
+        refillEvents.forEach((id, list) -> events.put(id, getEvents(list)));
+        usersIds.forEach(id -> events.putIfAbsent(id, Sets.newHashSet()));
+        return events;
+    }
+
+    private Set<RefillEventEnum> getEvents(List<CoreTransaction> transactions) {
+        Set<RefillEventEnum> events = Sets.newHashSet();
+        final List<CoreTransaction> sorted = transactions.stream()
+                .sorted((o1, o2) -> o1.getId().compareTo(o2.getUserId()))
+                .collect(Collectors.toList());
+        sorted.forEach(tr -> {
+            if (tr.getSourceType().equalsIgnoreCase("WITHDRAW") &&
+                    tr.getBalanceBefore().compareTo(tr.getAmount().abs()) == 0) {
+                events.add(RefillEventEnum.ZEROED);
+            } else if (events.contains(RefillEventEnum.ZEROED) && tr.getSourceType().equalsIgnoreCase("REFILL")) {
+                events.add(RefillEventEnum.REANIMATED);
+            }
+        });
+        return events;
     }
 
     private BigDecimal reduce(Collection<CurrencyTuple> items, Function<CurrencyTuple, BigDecimal> mapFunction) {

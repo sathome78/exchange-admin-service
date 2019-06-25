@@ -142,6 +142,43 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         });
     }
 
+    @Override
+    public Map<Integer, List<CoreTransaction>> findRefillEvents(Collection<Integer> userIds) {
+        if (userIds.isEmpty()) {
+            return Maps.newHashMap();
+        }
+        String sql = "SELECT * FROM " + TABLE + " WHERE " + COL_USER_ID + " IN (:ids)";
+        Map<String, Object> params = Collections.singletonMap("ids", userIds);
+        final List<CoreTransaction> transactions = namedParameterJdbcOperations.query(sql, params, getTransactionRowMapper());
+        Map<Integer, List<CoreTransaction>> events = Maps.newHashMap();
+        transactions.forEach(tr -> {
+            events.computeIfPresent(tr.getUserId(), (k, list) -> {
+                list.add(tr);
+                return list;
+            });
+            events.putIfAbsent(tr.getUserId(), Lists.newArrayList(tr));
+        });
+        return events;
+    }
+
+    private RowMapper<CoreTransaction> getTransactionRowMapper() {
+        return (rs, rowNum) -> CoreTransaction.builder()
+                .id(rs.getInt(COL_ID))
+                .userId(rs.getInt(COL_USER_ID))
+                .currencyName(rs.getString(COL_CURRENCY_NAME))
+                .balanceBefore(rs.getBigDecimal(COL_ACTIVE_BALANCE_BEFORE))
+                .amount(rs.getBigDecimal(COL_AMOUNT))
+                .commissionAmount(rs.getBigDecimal(COL_COMMISSION_AMOUNT))
+                .sourceType(rs.getString(COL_SOURCE_TYPE))
+                .operationType(rs.getString(COL_OPERATION_TYPE))
+                .dateTime(rs.getTimestamp(COL_DATETIME).toLocalDateTime())
+                .rateInUsd(rs.getBigDecimal(COL_RATE_IN_USD))
+                .rateInBtc(rs.getBigDecimal(COL_RATE_IN_BTC))
+                .sourceId(rs.getInt(COL_SOURCE_ID))
+                .rateBtcForOneUsd(rs.getBigDecimal(COL_RATE_BTC_FOR_ONE_USD))
+                .build();
+    }
+
     private RowMapper<CurrencyTuple> getCurrencyTupleRowMapper() {
         return (rs, i) -> CurrencyTuple.builder()
                 .currencyName(rs.getString(COL_CURRENCY_NAME))
