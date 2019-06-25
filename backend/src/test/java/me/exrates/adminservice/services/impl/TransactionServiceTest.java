@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import config.AbstractDatabaseContextTest;
 import config.AsyncTransactionsTestConfig;
 import config.DataComparisonTest;
+import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.core.repository.CoreWalletRepository;
@@ -36,6 +37,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,7 +97,8 @@ public class TransactionServiceTest extends DataComparisonTest {
     @Test
     public void testGetAllUsersRefillEvents() {
         final ImmutableList<Integer> userIds = ImmutableList.of(1, 2, 3);
-        final Map<Integer, Set<RefillEventEnum>> usersRefillEvents = transactionService.getAllUsersRefillEvents(userIds);
+        final Map<Integer, List<CoreTransaction>> transactions = transactionService.findAllTransactions(userIds);
+        final Map<Integer, Set<RefillEventEnum>> usersRefillEvents = transactionService.getAllUsersRefillEvents(transactions, userIds);
 
         assertTrue(usersRefillEvents.get(1).isEmpty());
 

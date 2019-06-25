@@ -1,7 +1,7 @@
 package config;
 
 import me.exrates.adminservice.events.listeners.TransactionsUpdateEventListener;
-import me.exrates.adminservice.services.InsightService;
+import me.exrates.adminservice.services.UserInsightService;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +17,8 @@ import java.util.concurrent.Executor;
 public class AsyncTransactionsTestConfig {
 
     @Bean
-    public InsightService userInsightsService() {
-      return Mockito.mock(InsightService.class);
+    public UserInsightService userInsightsService() {
+      return Mockito.mock(UserInsightService.class);
     }
 
     @Bean

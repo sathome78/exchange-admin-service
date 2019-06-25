@@ -54,7 +54,7 @@ public class CoreRefillRequestRepositoryImpl implements CoreRefillRequestReposit
         }
         String sql = "SELECT rrr.user_id, rrr.date_generation" +
                 " FROM REFILL_REQUEST_ADDRESS rrr" +
-                " LEFT JOIN refill_request r1 on rrr.user_id = r1.user_id and rrr.id = r1.refill_request_address_id" +
+                " LEFT JOIN REFILL_REQUEST r1 on rrr.user_id = r1.user_id and rrr.id = r1.refill_request_address_id" +
                 " WHERE r1.status_id NOT IN (9, 10)" +
                 " AND rrr.date_generation - INTERVAL 90 DAY" +
                 " AND rrr.user_id IN (:ids)" +

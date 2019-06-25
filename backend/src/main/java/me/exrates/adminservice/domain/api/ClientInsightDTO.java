@@ -110,16 +110,16 @@ public class ClientInsightDTO {
     @JsonProperty("trades_executive")
     private boolean hasTradesExecutive;
 
-    @JsonProperty("trades_24_hours")
+    @JsonProperty("no_trades_24_hours")
     private boolean hasNoTradesIn24Hours;
 
-    @JsonProperty("trades_7_days")
+    @JsonProperty("no_trades_7_days")
     private boolean hasNoTradesIn7Days;
 
-    @JsonProperty("trades_30_days")
+    @JsonProperty("no_trades_30_days")
     private boolean hasNoTradesIn30Days;
 
-    @JsonProperty("trades_90_days")
+    @JsonProperty("no_trades_90_days")
     private boolean hasNoTradesIn90Days;
 
     @JsonProperty("trades_24_hours_withdraw")
