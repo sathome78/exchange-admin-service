@@ -6,7 +6,7 @@ import me.exrates.adminservice.core.exceptions.CommonAPIException;
 import me.exrates.adminservice.core.repository.CoreRefillRequestRepository;
 import me.exrates.adminservice.core.repository.impl.CoreRefillRequestRepositoryImpl;
 import me.exrates.adminservice.core.service.CoreRefillRequestService;
-import me.exrates.adminservice.domain.enums.RefillAddressEnum;
+import me.exrates.adminservice.domain.enums.OperationPeriodEnum;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class CoreRefillRequestServiceImplTest extends DataComparisonTest {
     @Test
     public void testFindAllAddressesByUserIds () {
         final ImmutableList<Integer> userIds = ImmutableList.of(1, 2, 666);
-        final Map<Integer, Map<RefillAddressEnum, Integer>> byUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
+        final Map<Integer, Map<OperationPeriodEnum, Integer>> byUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
 
         assertEquals(userIds.size(), byUserIds.keySet().size());
         assertEquals(12, byUserIds.values().stream().mapToLong(p -> p.values().size()).sum());
@@ -48,24 +48,24 @@ public class CoreRefillRequestServiceImplTest extends DataComparisonTest {
     @Test
     public void countNonRefilledCoins() {
         final ImmutableList<Integer> userIds = ImmutableList.of(1, 2, 666);
-        final Map<Integer, Map<RefillAddressEnum, Integer>> byUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
+        final Map<Integer, Map<OperationPeriodEnum, Integer>> byUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
 
-        assertEquals(1, coreRefillRequestService.countNonRefilledCoins(byUserIds, 1, RefillAddressEnum.LAST_2_DAYS));
-        assertEquals(2, coreRefillRequestService.countNonRefilledCoins(byUserIds, 1, RefillAddressEnum.LAST_7_DAYS));
+        assertEquals(1, coreRefillRequestService.countNonRefilledCoins(byUserIds, 1, OperationPeriodEnum.LAST_2_DAYS));
+        assertEquals(2, coreRefillRequestService.countNonRefilledCoins(byUserIds, 1, OperationPeriodEnum.LAST_7_DAYS));
 
-        assertEquals(3, coreRefillRequestService.countNonRefilledCoins(byUserIds, 2, RefillAddressEnum.LAST_30_DAYS));
-        assertEquals(4, coreRefillRequestService.countNonRefilledCoins(byUserIds, 2, RefillAddressEnum.LAST_90_DAYS));
+        assertEquals(3, coreRefillRequestService.countNonRefilledCoins(byUserIds, 2, OperationPeriodEnum.LAST_30_DAYS));
+        assertEquals(4, coreRefillRequestService.countNonRefilledCoins(byUserIds, 2, OperationPeriodEnum.LAST_90_DAYS));
 
-        assertEquals(0, coreRefillRequestService.countNonRefilledCoins(byUserIds, 666, RefillAddressEnum.LAST_2_DAYS));
-        assertEquals(0, coreRefillRequestService.countNonRefilledCoins(byUserIds, 666, RefillAddressEnum.LAST_90_DAYS));
+        assertEquals(0, coreRefillRequestService.countNonRefilledCoins(byUserIds, 666, OperationPeriodEnum.LAST_2_DAYS));
+        assertEquals(0, coreRefillRequestService.countNonRefilledCoins(byUserIds, 666, OperationPeriodEnum.LAST_90_DAYS));
     }
 
     @Test
     public void countNonRefilledCoins_withException() {
         final ImmutableList<Integer> userIds = ImmutableList.of(1, 2, 666);
-        final Map<Integer, Map<RefillAddressEnum, Integer>> addressesByUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
+        final Map<Integer, Map<OperationPeriodEnum, Integer>> addressesByUserIds = coreRefillRequestService.findAllAddressesByUserIds(userIds);
         try {
-            coreRefillRequestService.countNonRefilledCoins(addressesByUserIds, 77, RefillAddressEnum.LAST_30_DAYS);
+            coreRefillRequestService.countNonRefilledCoins(addressesByUserIds, 77, OperationPeriodEnum.LAST_30_DAYS);
             fail();
         } catch (RuntimeException e) {
             assertTrue(e instanceof CommonAPIException);

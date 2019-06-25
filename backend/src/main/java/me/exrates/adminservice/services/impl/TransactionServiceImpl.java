@@ -11,6 +11,7 @@ import me.exrates.adminservice.repository.TransactionRepository;
 import me.exrates.adminservice.services.ExchangeRatesService;
 import me.exrates.adminservice.services.TransactionService;
 import me.exrates.adminservice.utils.CurrencyTuple;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -109,10 +110,18 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Map<Integer, Set<RefillEventEnum>> getAllUsersRefillEvents(Collection<Integer> usersIds) {
-        final Map<Integer, List<CoreTransaction>> refillEvents = transactionRepository.findRefillEvents(usersIds);
+    public Map<Integer, List<CoreTransaction>> findAllTransactions(Collection<Integer> userIds) {
+        Map<Integer, List<CoreTransaction>> transactions = Maps.newHashMap();
+        transactions.putAll(transactionRepository.findAllTransactions(userIds));
+        userIds.forEach(id -> transactions.putIfAbsent(id, Lists.newArrayList()));
+        return transactions;
+    }
+
+    @Override
+    public Map<Integer, Set<RefillEventEnum>> getAllUsersRefillEvents(Map<Integer, List<CoreTransaction>> data,
+                                                                      Collection<Integer> usersIds) {
         Map<Integer, Set<RefillEventEnum>> events = Maps.newHashMap();
-        refillEvents.forEach((id, list) -> events.put(id, getEvents(list)));
+        data.forEach((id, list) -> events.put(id, getEvents(list)));
         usersIds.forEach(id -> events.putIfAbsent(id, Sets.newHashSet()));
         return events;
     }

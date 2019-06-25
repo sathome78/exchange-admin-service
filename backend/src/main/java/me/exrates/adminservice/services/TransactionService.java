@@ -1,5 +1,6 @@
 package me.exrates.adminservice.services;
 
+import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.domain.enums.RefillEventEnum;
 
 import java.math.BigDecimal;
@@ -18,5 +19,9 @@ public interface TransactionService {
 
     Map<Integer, List<Integer>> getAllUsersRefills(Collection<Integer> usersIds);
 
-    Map<Integer, Set<RefillEventEnum>> getAllUsersRefillEvents(Collection<Integer> usersIds);
+    Map<Integer, List<CoreTransaction>> findAllTransactions(Collection<Integer> userIds);
+
+    Map<Integer, Set<RefillEventEnum>> getAllUsersRefillEvents(Map<Integer, List<CoreTransaction>> data,
+                                                               Collection<Integer> usersIds);
+
 }

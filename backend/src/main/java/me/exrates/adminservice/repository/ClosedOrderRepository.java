@@ -25,5 +25,5 @@ public interface ClosedOrderRepository {
 
     boolean batchInsert(List<ClosedOrder> transactions);
 
-    Map<Integer, List<Integer>> getAllUserClosedOrders(Collection<Integer> userIds);
+    Map<Integer, List<ClosedOrder>> findAllUserClosedOrders(Collection<Integer> userIds);
 }

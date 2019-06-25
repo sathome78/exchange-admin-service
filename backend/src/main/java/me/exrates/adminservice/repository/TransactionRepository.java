@@ -36,5 +36,5 @@ public interface TransactionRepository {
 
     Map<Integer, List<Integer>> findUsersRefills(Collection<Integer> usersIds);
 
-    Map<Integer, List<CoreTransaction>> findRefillEvents(Collection<Integer> userIds);
+    Map<Integer, List<CoreTransaction>> findAllTransactions(Collection<Integer> userIds);
 }

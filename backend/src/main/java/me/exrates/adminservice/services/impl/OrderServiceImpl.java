@@ -59,9 +59,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Map<Integer, List<Integer>> getAllUserClosedOrders(Collection<Integer> userIds) {
-        Map<Integer, List<Integer>> closedOrders = Maps.newHashMap();
-        closedOrders.putAll(closedOrderRepository.getAllUserClosedOrders(userIds));
+    public Map<Integer, List<ClosedOrder>> findAllUserClosedOrders(Collection<Integer> userIds) {
+        Map<Integer, List<ClosedOrder>> closedOrders = Maps.newHashMap();
+        closedOrders.putAll(closedOrderRepository.findAllUserClosedOrders(userIds));
         userIds.forEach(id -> closedOrders.putIfAbsent(id, Collections.emptyList()));
         return closedOrders;
     }

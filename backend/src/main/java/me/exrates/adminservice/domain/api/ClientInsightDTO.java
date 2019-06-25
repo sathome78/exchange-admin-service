@@ -44,8 +44,8 @@ public class ClientInsightDTO {
     @JsonProperty("not_refilled_coins_90_days")
     private int notRefilledCoins90Days;
 
-    @JsonProperty("first_refill_no_ops_24_hours")
-    private boolean firstRefillNoOps24Hours;
+    @JsonProperty("first_refill_no_ops_48_hours")
+    private boolean firstRefillNoOps48Hours;
 
     @JsonProperty("first_refill_no_ops_7_days")
     private boolean firstRefillNoOps7Days;
@@ -55,9 +55,6 @@ public class ClientInsightDTO {
 
     @JsonProperty("first_refill_no_ops_90_days")
     private boolean firstRefillNoOps90Days;
-
-    @JsonProperty("first_refill_no_ops_365_days")
-    private boolean firstRefillNoOps365Days;
 
     @JsonProperty("first_refill")
     private boolean firstRefill;
@@ -74,7 +71,85 @@ public class ClientInsightDTO {
     @JsonProperty("reanimate_account")
     private boolean reanimateBalance;
 
+    @JsonProperty("trades_24_hours")
+    private boolean hasTradesIn24Hours;
 
+    @JsonProperty("trades_7_days")
+    private boolean hasTradesIn7Days;
 
+    @JsonProperty("trades_30_days")
+    private boolean hasTradesIn30Days;
+
+    @JsonProperty("trades_90_days")
+    private boolean hasTradesIn90Days;
+
+    @JsonProperty("trades_365_days")
+    private boolean hasTradesIn365Days;
+
+    @JsonProperty("refill_basic")
+    private boolean hasRefillBasic;
+
+    @JsonProperty("refill_profi")
+    private boolean hasRefillProfi;
+
+    @JsonProperty("refill_gold")
+    private boolean hasRefillGold;
+
+    @JsonProperty("refill_executive")
+    private boolean hasRefillExecutive;
+
+    @JsonProperty("trades_basic")
+    private boolean hasTradesBasic;
+
+    @JsonProperty("trades_profi")
+    private boolean hasTradesProfi;
+
+    @JsonProperty("trades_gold")
+    private boolean hasTradesGold;
+
+    @JsonProperty("trades_executive")
+    private boolean hasTradesExecutive;
+
+    @JsonProperty("trades_24_hours")
+    private boolean hasNoTradesIn24Hours;
+
+    @JsonProperty("trades_7_days")
+    private boolean hasNoTradesIn7Days;
+
+    @JsonProperty("trades_30_days")
+    private boolean hasNoTradesIn30Days;
+
+    @JsonProperty("trades_90_days")
+    private boolean hasNoTradesIn90Days;
+
+    @JsonProperty("trades_24_hours_withdraw")
+    private boolean hasNoTradesIn24HoursWithdraw;
+
+    @JsonProperty("trades_7_days_withdraw")
+    private boolean hasNoTradesIn7DaysWithdraw;
+
+    @JsonProperty("trades_30_days_withdraw")
+    private boolean hasNoTradesIn30DaysWithdraw;
+
+    @JsonProperty("trades_90_days_withdraw")
+    private boolean hasNoTradesIn90DaysWithdraw;
+
+    @JsonProperty("trades_reanimated_24_hours")
+    private boolean hasTradesReanimatedIn24Hours;
+
+    @JsonProperty("trades_reanimated_30_days")
+    private boolean hasTradesReanimatedIn30Days;
+
+    @JsonProperty("trades_reanimated_90_days")
+    private boolean hasTradesReanimatedIn90Days;
+
+    @JsonProperty("trades_reanimated_1_year")
+    private boolean hasTradesReanimatedIn1Year;
+
+    @JsonProperty("trades_reanimated_3_year")
+    private boolean hasTradesReanimatedIn3Years;
+
+    @JsonProperty("trades_reanimated_5_years")
+    private boolean hasTradesReanimatedIn5Years;
 
 }

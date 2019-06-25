@@ -143,7 +143,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     }
 
     @Override
-    public Map<Integer, List<CoreTransaction>> findRefillEvents(Collection<Integer> userIds) {
+    public Map<Integer, List<CoreTransaction>> findAllTransactions(Collection<Integer> userIds) {
         if (userIds.isEmpty()) {
             return Maps.newHashMap();
         }

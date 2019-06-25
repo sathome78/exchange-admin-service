@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
@@ -67,6 +68,7 @@ public class ClosedOrderRepositoryImpl implements ClosedOrderRepository {
                 ps.setDate(9, java.sql.Date.valueOf(order.getClosedDate()));
                 ps.setString(10, order.getBaseType());
             }
+
             @Override
             public int getBatchSize() {
                 return orders.size();
@@ -76,34 +78,41 @@ public class ClosedOrderRepositoryImpl implements ClosedOrderRepository {
     }
 
     @Override
-    public Map<Integer, List<Integer>> getAllUserClosedOrders(Collection<Integer> userIds) {
-        String sql = "SELECT " + COL_USER_ID + ", " + COL_USER_ACCEPTOR_ID + " FROM " + TABLE + " WHERE " +
+    public Map<Integer, List<ClosedOrder>> findAllUserClosedOrders(Collection<Integer> userIds) {
+        String sql = "SELECT * FROM " + TABLE + " WHERE " +
                 COL_USER_ID + " IN (:ids) OR " + COL_USER_ACCEPTOR_ID + " IN (:ids)";
         Map<String, Object> params = Collections.singletonMap("ids", userIds);
-        return namedParameterJdbcOperations.query(sql, params, rs -> {
-            Map<Integer, List<Integer>> closedOrders = Maps.newHashMap();
-            while (rs.next()) {
-                final int creatorId = rs.getInt(COL_USER_ID);
-                final int acceptorId = rs.getInt(COL_USER_ACCEPTOR_ID);
-                computeClosedOrders(closedOrders, creatorId, acceptorId);
-
-
-            }
-            return closedOrders;
-        });
+        Map<Integer, List<ClosedOrder>> closedOrders = Maps.newHashMap();
+        final List<ClosedOrder> orders = namedParameterJdbcOperations.query(sql, params, getClosedOrderRowMapper());
+        orders.forEach(order -> computeClosedOrders(closedOrders, order));
+        return closedOrders;
     }
 
-    private void computeClosedOrders(Map<Integer, List<Integer>> closedOrders, int creatorId, int acceptorId) {
-        closedOrders.computeIfPresent(creatorId, (k, list) -> {
-            list.add(k);
+    private void computeClosedOrders(Map<Integer, List<ClosedOrder>> closedOrders, ClosedOrder order) {
+        closedOrders.computeIfPresent(order.getCreatorId(), (k, list) -> {
+            list.add(order);
             return list;
         });
-        closedOrders.computeIfPresent(acceptorId, (k, list) -> {
-            list.add(k);
+        closedOrders.computeIfPresent(order.getAcceptorId(), (k, list) -> {
+            list.add(order);
             return list;
         });
-        closedOrders.putIfAbsent(creatorId, Lists.newArrayList(creatorId));
-        closedOrders.putIfAbsent(acceptorId, Lists.newArrayList(acceptorId));
+        closedOrders.putIfAbsent(order.getCreatorId(), Lists.newArrayList(order));
+        closedOrders.putIfAbsent(order.getAcceptorId(), Lists.newArrayList(order));
+    }
 
+    private RowMapper<ClosedOrder> getClosedOrderRowMapper() {
+        return (rs, i) -> ClosedOrder.builder()
+                .id(rs.getInt(COL_ID))
+                .currencyPairName(rs.getString(COL_CURRENCY_PAIR_NAME))
+                .creatorId(rs.getInt(COL_USER_ID))
+                .acceptorId(rs.getInt(COL_USER_ACCEPTOR_ID))
+                .rate(rs.getBigDecimal(COL_RATE))
+                .amountBase(rs.getBigDecimal(COL_AMOUNT_BASE))
+                .amountConvert(rs.getBigDecimal(COL_AMOUNT_CONVERT))
+                .amountUsd(rs.getBigDecimal(COL_AMOUNT_USD))
+                .closedDate(rs.getDate(COL_CLOSED).toLocalDate())
+                .baseType(rs.getString(COL_BASE_TYPE))
+                .build();
     }
 }
