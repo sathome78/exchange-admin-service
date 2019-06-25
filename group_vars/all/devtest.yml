@@ -1,0 +1,137 @@
+---
+all_charts_devtest:
+  main-service:
+    chart_name: "{{ admin_service_name }}"
+    chart_version: "{{ deployment_chart_version }}"
+    app_version: "{{ deployment_app_version }}"
+    chart_group: "{{ admin_service_name }}"
+    image_name: "{{ env_specific_vars[deployment_env].registry }}/{{ ecs_registry_prefix }}-{{ admin_service_name }}-backend-{{ deployment_env }}"
+    certificate_arn: "{{ env_specific_vars[deployment_env].ssl_cert_arn }}"
+    ingress_enabled: true
+    # ingress_controller_type: traefik-ingress-controller
+    ingress_controller_type: nginx-ingress-controller
+    ingress_per_one_service: true
+    ingress_per_group_services: false
+    ingress_scheme: internet-facing
+    ingress_url: '{{ admin_service_name }}-{{ env_specific_vars[deployment_env].subdomain_suffix }}.{{ env_specific_vars[deployment_env].main_domain }}'
+    nginx_ingress_elb: '{{ env_specific_vars[deployment_env].nginx_ingress_elb }}'
+    active_spring_profile: "{{ env_specific_vars[deployment_env].Spring_Profile }}"
+    pod_env_vars:
+      Spring_Profile:
+        name: Spring_Profile
+        value: "{{ env_specific_vars[deployment_env].Spring_Profile }}"
+      cs_log_level:
+        name: cs_log_level
+        value: "{{ env_specific_vars[deployment_env].cs_log_level }}"
+      JAVA_OPTS:
+        name: JAVA_OPTS
+        value: -Xmx1500m -Xss1m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseParallelGC -XX:+UseParallelOldGC -Dfile.encoding=UTF-8 -Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true
+    deployment_environment: "{{ deployment_env }}"
+    tolerations_node: "{{ env_specific_vars[deployment_env].tolerations_node }}"
+    affinity_node: "{{ env_specific_vars[deployment_env].affinity_node }}"
+    resources: {}
+      # limits:
+      #   memory: "1.5Gi"
+      #   cpu: "1"
+      # requests:
+      #   memory: "2Gi"
+      #   cpu: "1"
+    replicaCount: 1
+
+    hpa_controller:
+      autoscaling:
+        enabled: False
+
+    mounts:
+      configmap:
+        mountName: nginx-config-volume
+        mountPath: /etc/nginx/conf.d/
+        configMapName: "{{ admin_service_name }}-{{ deployment_env }}-frontend-nginx"
+        readOnly: true
+      # secrets:
+      #   mountName: props
+      #   mountPath: /app/
+      #   secretName: "admin-{{ deployment_env }}"
+      #   readOnly: true
+
+    pod_env_vars_from_secret:
+      DB_ANDMIN_URL:
+        name: "db-admin-{{ deployment_env }}"
+        key: url
+      DB_ANDMIN_USERNAME:
+        name: "db-admin-{{ deployment_env }}"
+        key: user
+      DB_ANDMIN_PASSWORD:
+        name: "db-admin-{{ deployment_env }}"
+        key: password
+      DB_CORE_URL:
+        name: "db-core-{{ deployment_env }}"
+        key: url
+      DB_CORE_USERNAME:
+        name: "db-core-{{ deployment_env }}"
+        key: user
+      DB_CORE_PASSWORD:
+        name: "db-core-{{ deployment_env }}"
+        key: password
+      API_EXCHANGE_USERNAME:
+        name: "api-exchange-{{ deployment_env }}"
+        key: user
+      API_EXCHANGE_PASSWORD:
+        name: "api-exchange-{{ deployment_env }}"
+        key: password
+      API_WALLETS_USERNAME:
+        name: "api-wallets-{{ deployment_env }}"
+        key: user
+      API_WALLETS_PASSWORD:
+        name: "api-wallets-{{ deployment_env }}"
+        key: password
+
+    nginxContainer:
+      serve-frontend:
+        enabled: True
+        PassAllThroughNginx: True
+        CustomConfigMap: True
+        CustomConfigMapName: "{{ admin_service_name }}-{{ deployment_env }}-frontend-nginx"
+
+        CustomConfigMapNameConf: |
+            server {
+              listen 8000;
+              server_name _;
+              location / {
+                try_files $uri $uri/ /index.html?$args;
+                autoindex on;
+              }
+
+              sendfile on;
+
+              default_type application/octet-stream;
+
+              gzip on;
+              gzip_http_version 1.1;
+              gzip_disable      "MSIE [1-6]\.";
+              gzip_min_length   256;
+              gzip_vary         on;
+              gzip_proxied      expired no-cache no-store private auth;
+              gzip_types        text/plain text/css application/json application/javascript application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+              gzip_comp_level   9;
+
+              root /usr/share/nginx/html;
+            }
+        
+        service:
+          serve-frontend:
+            annotations: {}
+            expose: true
+            type: ClusterIP
+
+        image:
+          name: "{{ env_specific_vars[deployment_env].registry }}/{{ ecs_registry_prefix }}-{{ admin_service_name }}-frontend-{{ deployment_env }}"
+          tag: "{{ deploy_image_tag }}"
+          pullPolicy: Always
+
+    custom_redirects: {}
+
+    initContainers: {}
+
+    use_true_probes: true
+

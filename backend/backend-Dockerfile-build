@@ -1,0 +1,33 @@
+ARG build_test_skip
+ARG APP_PORT
+
+FROM maven:3.6.0-jdk-8-alpine as build 
+
+MAINTAINER Dmitry Gamanenko
+
+ARG APP_PORT
+ENV port=$APP_PORT
+# ARG env
+ARG build_test_skip
+ENV test_skip=$build_test_skip
+
+WORKDIR /app
+ADD . /app
+
+RUN apk update && apk add --no-cache python && apk add --no-cache git
+RUN mvn clean package -Dmaven.test.skip=$test_skip -X
+
+FROM java:8
+
+ARG APP_PORT
+ENV port=$APP_PORT
+ARG SPRING_PROFILE
+ENV profile $SPRING_PROFILE
+ARG SERVICE_NAME
+ENV SERVICE_NAME $SERVICE_NAME
+
+WORKDIR /app
+COPY --from=build /app/target/*.jar ./$SERVICE_NAME.jar
+
+EXPOSE ${port}
+CMD java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=${profile} -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar ${SERVICE_NAME}.jar
