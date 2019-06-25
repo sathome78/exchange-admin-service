@@ -72,7 +72,7 @@ public class ClientInsightDTO {
     private boolean zeroedBalance;
 
     @JsonProperty("reanimate_account")
-    private boolean reanimateAccount;
+    private boolean reanimateBalance;
 
 
 

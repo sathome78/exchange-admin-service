@@ -74,7 +74,7 @@ public class ClientInsightServiceImpl implements ClientInsightService {
             dto.setTwinRefill(refillsSize == 2);
             dto.setRefillAndTrade(refillsSize > 0 && usersClosedOrders.get(userId).size() == 1);
             dto.setZeroedBalance(refillEvents.get(userId).contains(RefillEventEnum.ZEROED));
-            dto.setReanimateAccount(refillEvents.get(userId).contains(RefillEventEnum.REANIMATED));
+            dto.setReanimateBalance(refillEvents.get(userId).contains(RefillEventEnum.REANIMATED));
 
 
 
