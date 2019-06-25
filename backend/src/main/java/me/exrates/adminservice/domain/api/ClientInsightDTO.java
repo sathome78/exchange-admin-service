@@ -68,5 +68,13 @@ public class ClientInsightDTO {
     @JsonProperty("refill_and_trade")
     private boolean refillAndTrade;
 
+    @JsonProperty("zero_account")
+    private boolean zeroedBalance;
+
+    @JsonProperty("reanimate_account")
+    private boolean reanimateAccount;
+
+
+
 
 }

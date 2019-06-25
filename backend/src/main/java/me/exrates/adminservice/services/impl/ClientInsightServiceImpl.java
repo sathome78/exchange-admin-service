@@ -8,6 +8,7 @@ import me.exrates.adminservice.core.service.CoreRefillRequestService;
 import me.exrates.adminservice.domain.PagedResult;
 import me.exrates.adminservice.domain.api.ClientInsightDTO;
 import me.exrates.adminservice.domain.enums.RefillAddressEnum;
+import me.exrates.adminservice.domain.enums.RefillEventEnum;
 import me.exrates.adminservice.repository.UserInsightRepository;
 import me.exrates.adminservice.services.ClientInsightService;
 import me.exrates.adminservice.services.OrderService;
@@ -55,6 +56,7 @@ public class ClientInsightServiceImpl implements ClientInsightService {
         final Map<Integer, LocalDateTime> usersIps = ipLogRepository.findAllByUserIds(userIds);
         final Map<Integer, Map<RefillAddressEnum, Integer>> coinsCounter = coreRefillRequestService.findAllAddressesByUserIds(userIds);
         final Map<Integer, List<Integer>> usersRefills = transactionService.getAllUsersRefills(userIds);
+        final Map<Integer, Set<RefillEventEnum>> refillEvents = transactionService.getAllUsersRefillEvents(userIds);
         final Map<Integer, List<Integer>> usersClosedOrders = orderService.getAllUserClosedOrders(userIds);
 
         List<ClientInsightDTO> insightDTOS = Lists.newArrayList();
@@ -71,6 +73,9 @@ public class ClientInsightServiceImpl implements ClientInsightService {
             dto.setFirstRefill(refillsSize == 1);
             dto.setTwinRefill(refillsSize == 2);
             dto.setRefillAndTrade(refillsSize > 0 && usersClosedOrders.get(userId).size() == 1);
+            dto.setZeroedBalance(refillEvents.get(userId).contains(RefillEventEnum.ZEROED));
+            dto.setReanimateAccount(refillEvents.get(userId).contains(RefillEventEnum.REANIMATED));
+
 
 
 
