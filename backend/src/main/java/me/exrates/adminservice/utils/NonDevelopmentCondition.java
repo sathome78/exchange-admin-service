@@ -11,7 +11,7 @@ public class NonDevelopmentCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         final Environment environment = context.getEnvironment();
-        Profiles profiles = Profiles.of("light", "debug");
+        Profiles profiles = Profiles.of("light", "debug", "devtest");
         return ! environment.acceptsProfiles(profiles);
     }
 }
