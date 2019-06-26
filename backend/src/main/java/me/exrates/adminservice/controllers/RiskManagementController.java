@@ -4,7 +4,7 @@ import me.exrates.adminservice.domain.PagedResult;
 import me.exrates.adminservice.domain.api.RiskManagementBoardDTO;
 import me.exrates.adminservice.domain.api.UserInsightDTO;
 import me.exrates.adminservice.services.RiskManagementService;
-import me.exrates.adminservice.services.UserInsightsService;
+import me.exrates.adminservice.services.UserInsightService;
 import me.exrates.adminservice.utils.AppConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +22,13 @@ import java.util.Objects;
 @RequestMapping(value = "/api/risks/management", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class RiskManagementController {
 
-    private final UserInsightsService userInsightsService;
+    private final UserInsightService userInsightService;
     private final RiskManagementService riskManagementService;
 
     @Autowired
-    public RiskManagementController(UserInsightsService userInsightsService,
+    public RiskManagementController(UserInsightService userInsightService,
                                     RiskManagementService riskManagementService) {
-        this.userInsightsService = userInsightsService;
+        this.userInsightService = userInsightService;
         this.riskManagementService = riskManagementService;
     }
 
@@ -40,13 +40,13 @@ public class RiskManagementController {
                                                               @RequestParam(required = false) Integer userId,
                                                               @RequestParam(required = false) String username) {
         if (StringUtils.isNotEmpty(username)) {
-            return userInsightsService.findAll(username);
+            return userInsightService.findAll(username);
         } else if (Objects.nonNull(userId) && userId > 0) {
-            return userInsightsService.findAll(userId);
+            return userInsightService.findAll(userId);
         } else {
             limit = AppConstants.checkLimit(limit);
             offset = AppConstants.checkOffset(offset);
-            return userInsightsService.findAll(limit, offset);
+            return userInsightService.findAll(limit, offset);
         }
     }
 

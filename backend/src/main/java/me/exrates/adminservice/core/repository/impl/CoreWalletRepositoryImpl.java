@@ -1,5 +1,6 @@
 package me.exrates.adminservice.core.repository.impl;
 
+import com.google.common.collect.Lists;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreCompanyWalletDto;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
@@ -8,11 +9,12 @@ import me.exrates.adminservice.core.domain.CoreWalletDto;
 import me.exrates.adminservice.core.domain.CoreWalletOperationDto;
 import me.exrates.adminservice.core.domain.enums.ActionType;
 import me.exrates.adminservice.core.domain.enums.OperationType;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.core.domain.enums.WalletTransferStatus;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
+import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.core.repository.CoreWalletRepository;
 import me.exrates.adminservice.domain.InternalWalletBalancesDto;
-import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.utils.BigDecimalProcessingUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +34,17 @@ import java.util.Map;
 @Repository
 public class CoreWalletRepositoryImpl implements CoreWalletRepository {
 
-    private final CoreTransactionRepository coreTransactionRepository;
+    private final CoreUserRepository coreUserRepository;
     private final NamedParameterJdbcOperations coreTemplate;
+    private final CoreTransactionRepository coreTransactionRepository;
 
     @Autowired
-    public CoreWalletRepositoryImpl(CoreTransactionRepository coreTransactionRepository,
-                                    @Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreTemplate) {
-        this.coreTransactionRepository = coreTransactionRepository;
+    public CoreWalletRepositoryImpl(CoreUserRepository coreUserRepository,
+                                    @Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreTemplate,
+                                    CoreTransactionRepository coreTransactionRepository) {
+        this.coreUserRepository = coreUserRepository;
         this.coreTemplate = coreTemplate;
+        this.coreTransactionRepository = coreTransactionRepository;
     }
 
     @Override
@@ -225,6 +232,23 @@ public class CoreWalletRepositoryImpl implements CoreWalletRepository {
             walletOperation.setTransaction(transaction);
         }
         return WalletTransferStatus.SUCCESS;
+    }
+
+    @Override
+    public List<Integer> findAllBotsWalletIds() {
+        final Collection<Integer> botsIds = coreUserRepository.getBotsIds();
+        if (botsIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        String sql = "SELECT id FROM WALLET WHERE user_id IN (:ids)";
+        Map<String, Object> params = Collections.singletonMap("ids", botsIds);
+        return coreTemplate.query(sql, params, rs -> {
+            List<Integer> ids = Lists.newArrayList();
+            while (rs.next()) {
+                ids.add(rs.getInt(1));
+            }
+            return ids;
+        });
     }
 
     private RowMapper<CoreWalletDto> getWalletDtoRowMapper() {

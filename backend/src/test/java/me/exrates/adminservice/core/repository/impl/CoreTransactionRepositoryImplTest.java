@@ -10,6 +10,8 @@ import me.exrates.adminservice.core.domain.CoreWalletDto;
 import me.exrates.adminservice.core.domain.enums.OperationType;
 import me.exrates.adminservice.core.domain.enums.TransactionSourceType;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
+import me.exrates.adminservice.core.repository.CoreUserRepository;
+import me.exrates.adminservice.core.repository.CoreWalletRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -119,14 +122,28 @@ public class CoreTransactionRepositoryImplTest extends DataComparisonTest {
         @Qualifier(TEST_CORE_NP_TEMPLATE) // it's ok bean will be imported later
         private NamedParameterJdbcOperations coreNPJdbcOperations;
 
+        @Autowired
+        @Qualifier(TEST_CORE_TEMPLATE) // it's ok bean will be imported later
+        private JdbcOperations coreJdbcOperations;
+
         @Override
         protected String getSchema() {
             return "CoreTransactionRepositoryImplTest";
         }
 
+        @Bean
+        CoreUserRepository coreUserRepository() {
+            return new CoreUserRepositoryImpl(coreNPJdbcOperations, coreJdbcOperations);
+        }
+
+        @Bean
+        CoreWalletRepository coreWalletRepository() {
+            return new CoreWalletRepositoryImpl(coreUserRepository(), coreNPJdbcOperations, coreTransactionRepository());
+        }
+
         @Bean("testCoreTransactionRepository")
         CoreTransactionRepository coreTransactionRepository() {
-            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations);
+            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations, coreUserRepository());
         }
     }
 }

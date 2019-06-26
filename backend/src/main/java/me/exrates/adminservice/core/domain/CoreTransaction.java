@@ -17,6 +17,7 @@ public class CoreTransaction {
     private Integer id;
     private Integer userId;
     private String currencyName;
+    private BigDecimal balanceBefore;
     private BigDecimal amount;
     private BigDecimal commissionAmount;
     private String sourceType;

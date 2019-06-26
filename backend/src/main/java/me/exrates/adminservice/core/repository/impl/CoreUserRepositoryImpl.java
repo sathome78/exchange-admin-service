@@ -37,6 +37,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.nonNull;
+import static me.exrates.adminservice.configurations.CoreDatasourceConfiguration.CORE_NP_TEMPLATE;
+import static me.exrates.adminservice.configurations.CoreDatasourceConfiguration.CORE_TEMPLATE;
 import static me.exrates.adminservice.utils.CollectionUtil.isNotEmpty;
 
 @Repository
@@ -53,8 +55,8 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
             " LEFT JOIN USER_STATUS US on u.status = US.id ";
 
     @Autowired
-    public CoreUserRepositoryImpl(@Qualifier("coreNPTemplate") NamedParameterJdbcOperations coreNPTemplate,
-                                  @Qualifier("coreTemplate") JdbcOperations coreTemplate) {
+    public CoreUserRepositoryImpl(@Qualifier(CORE_NP_TEMPLATE) NamedParameterJdbcOperations coreNPTemplate,
+                                  @Qualifier(CORE_TEMPLATE) JdbcOperations coreTemplate) {
         this.coreNPTemplate = coreNPTemplate;
         this.coreTemplate = coreTemplate;
     }

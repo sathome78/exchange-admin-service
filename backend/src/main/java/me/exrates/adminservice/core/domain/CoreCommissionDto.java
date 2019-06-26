@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import me.exrates.adminservice.core.domain.enums.OperationType;
 import me.exrates.adminservice.core.domain.enums.UserRole;
 
