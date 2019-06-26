@@ -1,17 +1,18 @@
 package me.exrates.adminservice.core.repository;
 
 import me.exrates.adminservice.core.domain.CoreUser;
+import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
 import me.exrates.adminservice.core.domain.FilterDto;
 import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
-import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
 import me.exrates.adminservice.core.domain.enums.UserRole;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface CoreUserRepository {
 
@@ -62,4 +63,8 @@ public interface CoreUserRepository {
     void updateUserRole(UserRole newRole, Integer userId);
 
     List<UserRole> getAllRoles();
+
+    Set<Integer> findAllRegisteredUsers();
+
+    Set<Integer> findAllNewUserIds();
 }

@@ -1,5 +1,6 @@
 package me.exrates.adminservice.core.repository.impl;
 
+import com.google.common.collect.Sets;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreUser;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Objects.nonNull;
 import static me.exrates.adminservice.configurations.CoreDatasourceConfiguration.CORE_NP_TEMPLATE;
@@ -635,6 +637,28 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         final String sql = "SELECT ur.name FROM USER_ROLE ur";
 
         return coreNPTemplate.query(sql, (rs, row) -> UserRole.valueOf(rs.getString("name")));
+    }
+
+    @Override
+    public Set<Integer> findAllRegisteredUsers() {
+        String sql = "SELECT id FROM USER WHERE status IN (1,2)";
+        return getUserIds(sql);
+    }
+
+    @Override
+    public Set<Integer> findAllNewUserIds() {
+        String sql = "SELECT u.id FROM USER u WHERE u.status IN (1,2) AND u.regdate >= CURRENT_TIMESTAMP - INTERVAL 1 DAY";
+        return getUserIds(sql);
+    }
+
+    private Set<Integer> getUserIds(String sql) {
+        return coreNPTemplate.query(sql, Collections.emptyMap(), rs -> {
+            Set<Integer> userIds = Sets.newHashSet();
+            while (rs.next()) {
+                userIds.add(rs.getInt(1));
+            }
+            return userIds;
+        });
     }
 
     private RowMapper<CoreUser> getCoreUserRowMapper() {

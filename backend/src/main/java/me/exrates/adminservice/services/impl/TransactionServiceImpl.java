@@ -126,6 +126,11 @@ public class TransactionServiceImpl implements TransactionService {
         return events;
     }
 
+    @Override
+    public Set<Integer> findUserIdsWithAnyRefill() {
+        return transactionRepository.findUserIdsWithAnyRefill();
+    }
+
     private Set<RefillEventEnum> getEvents(List<CoreTransaction> transactions) {
         Set<RefillEventEnum> events = Sets.newHashSet();
         final List<CoreTransaction> sorted = transactions.stream()

@@ -242,6 +242,16 @@ public class CoreUserServiceImpl implements CoreUserService {
         return coreUserRepository.getAllRoles();
     }
 
+    @Override
+    public Set<Integer> countAllRegisteredUsers() {
+        return coreUserRepository.findAllRegisteredUsers();
+    }
+
+    @Override
+    public Set<Integer> findAllNewUserIds() {
+        return coreUserRepository.findAllNewUserIds();
+    }
+
     private String getUserEmailFromSecurityContext() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (Objects.isNull(auth)) {

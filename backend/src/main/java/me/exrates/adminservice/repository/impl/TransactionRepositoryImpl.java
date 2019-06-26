@@ -2,6 +2,7 @@ package me.exrates.adminservice.repository.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
@@ -12,12 +13,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -26,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static me.exrates.adminservice.configurations.AdminDatasourceConfiguration.ADMIN_JDBC_OPS;
 import static me.exrates.adminservice.configurations.AdminDatasourceConfiguration.ADMIN_NP_TEMPLATE;
@@ -159,6 +163,18 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             events.putIfAbsent(tr.getUserId(), Lists.newArrayList(tr));
         });
         return events;
+    }
+
+    @Override
+    public Set<Integer> findUserIdsWithAnyRefill() {
+        String sql = "SELECT user_id FROM TRANSACTIONS WHERE source_type = \'REFIILL\' GROUP BY user_id";
+        return namedParameterJdbcOperations.query(sql, Collections.emptyMap(), rs -> {
+            Set<Integer> userIds = Sets.newHashSet();
+            while (rs.next()) {
+                userIds.add(rs.getInt(1));
+            }
+            return userIds;
+        });
     }
 
     private RowMapper<CoreTransaction> getTransactionRowMapper() {

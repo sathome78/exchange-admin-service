@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface TransactionRepository {
 
@@ -37,4 +38,6 @@ public interface TransactionRepository {
     Map<Integer, List<Integer>> findUsersRefills(Collection<Integer> usersIds);
 
     Map<Integer, List<CoreTransaction>> findAllTransactions(Collection<Integer> userIds);
+
+    Set<Integer> findUserIdsWithAnyRefill();
 }

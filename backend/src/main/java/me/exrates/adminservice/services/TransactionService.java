@@ -24,4 +24,5 @@ public interface TransactionService {
     Map<Integer, Set<RefillEventEnum>> getAllUsersRefillEvents(Map<Integer, List<CoreTransaction>> data,
                                                                Collection<Integer> usersIds);
 
+    Set<Integer> findUserIdsWithAnyRefill();
 }
