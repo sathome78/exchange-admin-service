@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.test.context.ActiveProfiles;
@@ -217,6 +218,7 @@ public class WalletRepositoryImplTest extends DataComparisonTest {
     }
 
     @Configuration
+    @Profile("test")
     static class InnerConfig extends AbstractDatabaseContextTest.AppContextConfig {
 
         @Autowired

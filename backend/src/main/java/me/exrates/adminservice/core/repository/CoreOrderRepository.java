@@ -1,8 +1,10 @@
 package me.exrates.adminservice.core.repository;
 
+import me.exrates.adminservice.core.domain.CoreOrderDto;
+
 import java.util.Map;
 
-public interface CoreExorderRepository {
+public interface CoreOrderRepository {
 
     String TABLE = "EXORDERS";
     String COL_ID = "id";
@@ -26,4 +28,6 @@ public interface CoreExorderRepository {
     Map<String, Integer> getDailyBuySellVolume();
 
     int getDailyUniqueUsersQuantity();
+
+    CoreOrderDto findOrderById(int id);
 }

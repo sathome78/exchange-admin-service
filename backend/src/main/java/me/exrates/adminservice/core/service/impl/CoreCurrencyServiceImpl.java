@@ -2,6 +2,7 @@ package me.exrates.adminservice.core.service.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
+import me.exrates.adminservice.core.domain.CoreCurrencyPairDto;
 import me.exrates.adminservice.core.repository.CoreCurrencyRepository;
 import me.exrates.adminservice.core.service.CoreCurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import static me.exrates.adminservice.configurations.CacheConfiguration.ACTIVE_C
 import static me.exrates.adminservice.configurations.CacheConfiguration.ALL_CURRENCIES_CACHE;
 import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY_CACHE_BY_ID;
 import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY_CACHE_BY_NAME;
+import static me.exrates.adminservice.configurations.CacheConfiguration.CURRENCY_PAIR_CACHE_BY_ID;
 
 @Log4j2
 @Service
@@ -26,6 +28,7 @@ public class CoreCurrencyServiceImpl implements CoreCurrencyService {
     private final CoreCurrencyRepository coreCurrencyRepository;
     private final Cache currencyCacheByName;
     private final Cache currencyCacheById;
+    private final Cache currencyPairCacheById;
     private final Cache allCurrenciesCache;
     private final Cache activeCurrenciesCache;
 
@@ -33,25 +36,27 @@ public class CoreCurrencyServiceImpl implements CoreCurrencyService {
     public CoreCurrencyServiceImpl(CoreCurrencyRepository coreCurrencyRepository,
                                    @Qualifier(CURRENCY_CACHE_BY_NAME) Cache currencyCacheByName,
                                    @Qualifier(CURRENCY_CACHE_BY_ID) Cache currencyCacheById,
+                                   @Qualifier(CURRENCY_PAIR_CACHE_BY_ID) Cache currencyPairCacheById,
                                    @Qualifier(ALL_CURRENCIES_CACHE) Cache allCurrenciesCache,
                                    @Qualifier(ACTIVE_CURRENCIES_CACHE) Cache activeCurrenciesCache) {
         this.coreCurrencyRepository = coreCurrencyRepository;
         this.currencyCacheByName = currencyCacheByName;
         this.currencyCacheById = currencyCacheById;
+        this.currencyPairCacheById = currencyPairCacheById;
         this.allCurrenciesCache = allCurrenciesCache;
         this.activeCurrenciesCache = activeCurrenciesCache;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public CoreCurrencyDto findById(int id) {
-        return currencyCacheById.get(id, () -> coreCurrencyRepository.findById(id));
+    public CoreCurrencyDto findCachedCurrencyById(int id) {
+        return currencyCacheById.get(id, () -> coreCurrencyRepository.findCurrencyById(id));
     }
 
     @Transactional(readOnly = true)
     @Override
-    public CoreCurrencyDto findByName(String name) {
-        return currencyCacheByName.get(name, () -> coreCurrencyRepository.findByName(name));
+    public CoreCurrencyDto findCachedCurrencyByName(String name) {
+        return currencyCacheByName.get(name, () -> coreCurrencyRepository.findCurrencyByName(name));
     }
 
     @Transactional(readOnly = true)
@@ -62,13 +67,13 @@ public class CoreCurrencyServiceImpl implements CoreCurrencyService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<CoreCurrencyDto> getActiveCachedCurrencies() {
+    public List<CoreCurrencyDto> getCachedActiveCurrencies() {
         return activeCurrenciesCache.get(ACTIVE_CURRENCIES_CACHE, coreCurrencyRepository::getActiveCurrencies);
     }
 
     @Override
     public List<String> getActiveCurrencyNames() {
-        return this.getActiveCachedCurrencies().stream()
+        return this.getCachedActiveCurrencies().stream()
                 .map(CoreCurrencyDto::getName)
                 .collect(toList());
     }
@@ -77,5 +82,11 @@ public class CoreCurrencyServiceImpl implements CoreCurrencyService {
     @Override
     public String getCurrencyName(int currencyId) {
         return coreCurrencyRepository.getCurrencyName(currencyId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public CoreCurrencyPairDto findCachedCurrencyPairById(int id) {
+        return currencyPairCacheById.get(id, () -> coreCurrencyRepository.findCurrencyPairById(id));
     }
 }

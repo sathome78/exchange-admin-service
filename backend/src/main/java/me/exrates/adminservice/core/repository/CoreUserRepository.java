@@ -6,6 +6,7 @@ import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
+import me.exrates.adminservice.core.domain.UserReferralInfoDto;
 import me.exrates.adminservice.core.domain.enums.UserRole;
 
 import java.util.Collection;
@@ -62,4 +63,6 @@ public interface CoreUserRepository {
     void updateUserRole(UserRole newRole, Integer userId);
 
     List<UserRole> getAllRoles();
+
+    List<UserReferralInfoDto> getUserReferralInfoList(Integer userId);
 }

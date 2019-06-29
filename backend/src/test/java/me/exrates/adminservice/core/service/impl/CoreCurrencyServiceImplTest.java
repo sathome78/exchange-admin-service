@@ -73,7 +73,7 @@ public class CoreCurrencyServiceImplTest {
                 coreCurrencyRepository,
                 currencyCacheByName,
                 currencyCacheById,
-                allCurrenciesCache,
+                currencyPairCacheById, allCurrenciesCache,
                 activeCurrenciesCache));
     }
 
@@ -83,26 +83,26 @@ public class CoreCurrencyServiceImplTest {
 
         doReturn(CoreCurrencyDto.builder().build())
                 .when(coreCurrencyRepository)
-                .findById(anyInt());
+                .findCurrencyById(anyInt());
 
-        CoreCurrencyDto currencyDto = coreCurrencyService.findById(1);
+        CoreCurrencyDto currencyDto = coreCurrencyService.findCachedCurrencyById(1);
 
         assertNotNull(currencyDto);
 
-        verify(coreCurrencyRepository, atLeastOnce()).findById(anyInt());
+        verify(coreCurrencyRepository, atLeastOnce()).findCurrencyById(anyInt());
     }
 
     @Test
     public void findById_with_cache() {
         doReturn(CoreCurrencyDto.builder().build())
                 .when(coreCurrencyRepository)
-                .findById(anyInt());
+                .findCurrencyById(anyInt());
 
-        CoreCurrencyDto currencyDto = coreCurrencyService.findById(1);
+        CoreCurrencyDto currencyDto = coreCurrencyService.findCachedCurrencyById(1);
 
         assertNotNull(currencyDto);
 
-        verify(coreCurrencyRepository, never()).findById(anyInt());
+        verify(coreCurrencyRepository, never()).findCurrencyById(anyInt());
     }
 
     @Test
@@ -111,26 +111,26 @@ public class CoreCurrencyServiceImplTest {
 
         doReturn(CoreCurrencyDto.builder().build())
                 .when(coreCurrencyRepository)
-                .findByName(anyString());
+                .findCurrencyByName(anyString());
 
-        CoreCurrencyDto currencyDto = coreCurrencyService.findByName("BTC");
+        CoreCurrencyDto currencyDto = coreCurrencyService.findCachedCurrencyByName("BTC");
 
         assertNotNull(currencyDto);
 
-        verify(coreCurrencyRepository, atLeastOnce()).findByName(anyString());
+        verify(coreCurrencyRepository, atLeastOnce()).findCurrencyByName(anyString());
     }
 
     @Test
     public void findByName_with_cache() {
         doReturn(CoreCurrencyDto.builder().build())
                 .when(coreCurrencyRepository)
-                .findByName(anyString());
+                .findCurrencyByName(anyString());
 
-        CoreCurrencyDto currencyDto = coreCurrencyService.findByName("BTC");
+        CoreCurrencyDto currencyDto = coreCurrencyService.findCachedCurrencyByName("BTC");
 
         assertNotNull(currencyDto);
 
-        verify(coreCurrencyRepository, never()).findByName(anyString());
+        verify(coreCurrencyRepository, never()).findCurrencyByName(anyString());
     }
 
     @Test
@@ -173,7 +173,7 @@ public class CoreCurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getActiveCurrencies();
 
-        List<CoreCurrencyDto> activeCachedCurrencies = coreCurrencyService.getActiveCachedCurrencies();
+        List<CoreCurrencyDto> activeCachedCurrencies = coreCurrencyService.getCachedActiveCurrencies();
 
         assertNotNull(activeCachedCurrencies);
         assertFalse(activeCachedCurrencies.isEmpty());
@@ -188,7 +188,7 @@ public class CoreCurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getActiveCurrencies();
 
-        List<CoreCurrencyDto> activeCachedCurrencies = coreCurrencyService.getActiveCachedCurrencies();
+        List<CoreCurrencyDto> activeCachedCurrencies = coreCurrencyService.getCachedActiveCurrencies();
 
         assertNotNull(activeCachedCurrencies);
         assertFalse(activeCachedCurrencies.isEmpty());

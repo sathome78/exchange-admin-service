@@ -106,7 +106,7 @@ public class CoreUserServiceImplTest {
                 .country("Ukraine")
                 .balanceSumUsd(BigDecimal.TEN)
                 .registrationDate(LocalDateTime.now().minusDays(1))
-                .lastEntryDate(LocalDateTime.now())
+                .lastLoginDate(LocalDateTime.now())
                 .phone("+31111111")
                 .verificationStatus("SUCCESS")
                 .role(UserRole.USER)
@@ -125,7 +125,7 @@ public class CoreUserServiceImplTest {
                 coreCurrencyService,
                 coreCommissionService,
                 coreCompanyWalletService,
-                userInfoCacheByKey));
+                coreOrderService, ratesService, userInfoCacheByKey, userReferralInfoCache));
     }
 
     @Test
@@ -291,7 +291,7 @@ public class CoreUserServiceImplTest {
                 .findByCurrency(any(CoreCurrencyDto.class));
         doReturn(CoreCurrencyDto.builder().build())
                 .when(coreCurrencyService)
-                .findById(anyInt());
+                .findCachedCurrencyById(anyInt());
         doNothing()
                 .when(coreCompanyWalletService)
                 .deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
@@ -303,7 +303,7 @@ public class CoreUserServiceImplTest {
         verify(coreCommissionService, atLeastOnce()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, atLeastOnce()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, atLeastOnce()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, atLeastOnce()).findById(anyInt());
+        verify(coreCurrencyService, atLeastOnce()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, atLeastOnce()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -317,7 +317,7 @@ public class CoreUserServiceImplTest {
         verify(coreCommissionService, never()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, never()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, never()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, never()).findById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, never()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -334,7 +334,7 @@ public class CoreUserServiceImplTest {
         verify(coreCommissionService, never()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, never()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, never()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, never()).findById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, never()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -354,7 +354,7 @@ public class CoreUserServiceImplTest {
         verify(coreCommissionService, never()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, never()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, never()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, never()).findById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, never()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -380,7 +380,7 @@ public class CoreUserServiceImplTest {
         verify(coreCommissionService, atLeastOnce()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, atLeastOnce()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, never()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, never()).findById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, never()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -406,7 +406,7 @@ public class CoreUserServiceImplTest {
         verify(coreCommissionService, atLeastOnce()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, atLeastOnce()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, never()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, never()).findById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, never()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 

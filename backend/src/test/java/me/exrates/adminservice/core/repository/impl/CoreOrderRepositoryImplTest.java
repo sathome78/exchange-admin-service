@@ -1,7 +1,7 @@
 package me.exrates.adminservice.core.repository.impl;
 
 import config.DataComparisonTest;
-import me.exrates.adminservice.core.repository.CoreExorderRepository;
+import me.exrates.adminservice.core.repository.CoreOrderRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,22 +27,23 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {
-        CoreExorderRepositoryImplTest.InnerConfig.class
+        CoreOrderRepositoryImplTest.InnerConfig.class
 })
-public class CoreExorderRepositoryImplTest extends DataComparisonTest {
+public class CoreOrderRepositoryImplTest extends DataComparisonTest {
 
     @Autowired
     @Qualifier(TEST_CORE_NP_TEMPLATE) // it's ok bean will be imported later
     private NamedParameterJdbcOperations coreNPJdbcOperations;
 
     @Autowired
-    private CoreExorderRepository coreExorderRepository;
+    @Qualifier("testCoreOrderRepository")
+    private CoreOrderRepository coreOrderRepository;
 
-    private CoreExorderRepositoryImpl impl = new CoreExorderRepositoryImpl(coreNPJdbcOperations);
+    private CoreOrderRepositoryImpl impl = new CoreOrderRepositoryImpl(coreNPJdbcOperations);
 
     @Test
     public void testGetDailyBuySellVolume() {
-        final Map<String, Integer> result = coreExorderRepository.getDailyBuySellVolume();
+        final Map<String, Integer> result = coreOrderRepository.getDailyBuySellVolume();
 
         assertEquals(11, (int)result.get("buy"));
         assertEquals(89, (int)result.get("sell"));
@@ -49,7 +51,7 @@ public class CoreExorderRepositoryImplTest extends DataComparisonTest {
 
     @Test
     public void testGetUniqueUsers() {
-        final int result = coreExorderRepository.getDailyUniqueUsersQuantity();
+        final int result = coreOrderRepository.getDailyUniqueUsersQuantity();
         assertEquals(3, result);
     }
 
@@ -105,20 +107,21 @@ public class CoreExorderRepositoryImplTest extends DataComparisonTest {
     }
 
     @Configuration
+    @Profile("test")
     static class InnerConfig extends AppContextConfig {
 
         @Autowired
         @Qualifier(TEST_CORE_NP_TEMPLATE) // it's ok bean will be imported later
         private NamedParameterJdbcOperations coreNPJdbcOperations;
 
-        @Bean
-        CoreExorderRepository coreExorderRepository() {
-            return new CoreExorderRepositoryImpl(coreNPJdbcOperations);
-        }
-
         @Override
         protected String getSchema() {
             return "CoreExorderRepositoryImplTest";
+        }
+
+        @Bean("testCoreOrderRepository")
+        CoreOrderRepository coreOrderRepository() {
+            return new CoreOrderRepositoryImpl(coreNPJdbcOperations);
         }
     }
 }

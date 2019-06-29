@@ -31,7 +31,7 @@ public class UserInfoDto {
     private LocalDateTime registrationDate;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime lastEntryDate;
+    private LocalDateTime lastLoginDate;
     private String phone;
     private String verificationStatus;
     private UserRole role;

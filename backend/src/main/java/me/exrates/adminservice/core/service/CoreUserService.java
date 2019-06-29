@@ -7,6 +7,7 @@ import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
+import me.exrates.adminservice.core.domain.UserReferralInfoDto;
 import me.exrates.adminservice.domain.PagedResult;
 import me.exrates.adminservice.core.domain.enums.UserRole;
 
@@ -34,4 +35,8 @@ public interface CoreUserService {
     void updateUserRole(UserRole newRole, Integer userId);
 
     List<UserRole> getAllRoles();
+
+    PagedResult<UserReferralInfoDto> getUserReferralInfo(Integer userId, Integer limit, Integer offset);
+
+    UserRole getUserRoleById(int id);
 }

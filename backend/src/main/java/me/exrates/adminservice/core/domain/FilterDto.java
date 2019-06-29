@@ -34,9 +34,9 @@ public class FilterDto {
     private LocalDate registeredTo;
 
     @Null
-    private LocalDate lastEntryFrom;
+    private LocalDate lastLoginFrom;
     @Null
-    private LocalDate lastEntryTo;
+    private LocalDate lastLoginTo;
 
     private boolean isVerified;
     @Null
@@ -69,8 +69,8 @@ public class FilterDto {
                 nonNull(maxBalance) ? maxBalance.toPlainString() : null,
                 nonNull(registeredFrom) ? registeredFrom.format(FORMATTER) : null,
                 nonNull(registeredTo) ? registeredTo.format(FORMATTER) : null,
-                nonNull(lastEntryFrom) ? lastEntryFrom.format(FORMATTER) : null,
-                nonNull(lastEntryTo) ? lastEntryTo.format(FORMATTER) : null,
+                nonNull(lastLoginFrom) ? lastLoginFrom.format(FORMATTER) : null,
+                nonNull(lastLoginTo) ? lastLoginTo.format(FORMATTER) : null,
                 String.valueOf(isVerified),
                 nonNull(role) ? role.name() : null,
                 String.valueOf(isActive),

@@ -130,7 +130,7 @@ public class ReportOneExcelGeneratorUtil {
             final String country = userInfo.getCountry();
             final BigDecimal balanceSumUsd = userInfo.getBalanceSumUsd();
             final LocalDateTime registrationDate = userInfo.getRegistrationDate();
-            final LocalDateTime lastEntryDate = userInfo.getLastEntryDate();
+            final LocalDateTime lastEntryDate = userInfo.getLastLoginDate();
             final String phone = userInfo.getPhone();
             final String verificationStatus = userInfo.getVerificationStatus();
             final UserRole userRole = userInfo.getRole();

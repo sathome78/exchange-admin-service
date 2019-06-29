@@ -42,7 +42,7 @@ public class CoreCurrencyRepositoryImplTest extends DataComparisonTest {
 
     @Test
     public void findById_ok() {
-        CoreCurrencyDto currencyDto = coreCurrencyRepository.findById(4);
+        CoreCurrencyDto currencyDto = coreCurrencyRepository.findCurrencyById(4);
 
         assertNotNull(currencyDto);
         assertEquals(4, currencyDto.getId());
@@ -50,14 +50,14 @@ public class CoreCurrencyRepositoryImplTest extends DataComparisonTest {
 
     @Test
     public void findById_not_found() {
-        CoreCurrencyDto currencyDto = coreCurrencyRepository.findById(0);
+        CoreCurrencyDto currencyDto = coreCurrencyRepository.findCurrencyById(0);
 
         assertNull(currencyDto);
     }
 
     @Test
     public void findByName_ok() {
-        CoreCurrencyDto currencyDto = coreCurrencyRepository.findByName("BTC");
+        CoreCurrencyDto currencyDto = coreCurrencyRepository.findCurrencyByName("BTC");
 
         assertNotNull(currencyDto);
         assertEquals("BTC", currencyDto.getName());
@@ -65,7 +65,7 @@ public class CoreCurrencyRepositoryImplTest extends DataComparisonTest {
 
     @Test
     public void findByName_not_found() {
-        CoreCurrencyDto currencyDto = coreCurrencyRepository.findByName("TEST_COIN");
+        CoreCurrencyDto currencyDto = coreCurrencyRepository.findCurrencyByName("TEST_COIN");
 
         assertNull(currencyDto);
     }
