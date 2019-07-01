@@ -89,7 +89,7 @@ VALUES (1, 1, 4, 1.0, 0.1, 'REFILL', 1, 1),
        (15, 2, 2, 1.0, 0.1, 'ORDER', 2, 15),
        (16, 5, 23, 10.0, 1, 'ORDER', 1, 16);
 
-INSERT INTO CURRENCY_PAIR (id, currency1_id, currency2_id, name, pair_order, hidden, market, ticker_name,
+INSERT IGNORE INTO CURRENCY_PAIR (id, currency1_id, currency2_id, name, pair_order, hidden, market, ticker_name,
                            permitted_link, type, scale)
 VALUES (1, 4, 2, 'BTC/USD', 13, 0, 'USD', 'BTC/USD', 0, 'MAIN', 2),
        (2, 4, 3, 'BTC/EUR', 201, 0, 'FIAT', 'BTC/EUR', 0, 'MAIN', 2),
@@ -106,6 +106,15 @@ VALUES (1, 1, 1, 3, 0.25, 1.24, 0.41, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3
        (5, 1, 1, 3, 0.25, 11.04, 0.41, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
        (6, 1, 1, 3, 0.25, 100.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1),
        (7, 1, 1, 4, 0.25, 10.24, 0.41, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 4, 1);
+
+INSERT IGNORE INTO IP_Log (id, user_id, date, event)
+VALUES (1, 1, CURRENT_TIMESTAMP, 'LOGIN_SUCCESS');
+
+INSERT IGNORE REFERRAL_LEVEL (id, level, percent)
+VALUES (1, 1, 10);
+
+INSERT IGNORE REFERRAL_TRANSACTION (id, order_id, referral_level_id, user_id, initiator_id, status)
+VALUES (1, 1, 1, 1, 2, 'PAYED');
 
 INSERT IGNORE INTO TRANSACTION_STATUS (id)
 VALUES (1);

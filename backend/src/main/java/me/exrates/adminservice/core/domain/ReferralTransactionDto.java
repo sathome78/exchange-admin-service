@@ -11,9 +11,11 @@ import java.math.BigDecimal;
 @Builder(builderClassName = "Builder", toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserReferralInfoDto {
+public class ReferralTransactionDto {
 
-    private String email;
+    private int initiatorId;
+    private String initiatorEmail;
     private int referralLevel;
-    private BigDecimal summaryAmount;
+    private BigDecimal referralPercent;
+    private int orderId;
 }

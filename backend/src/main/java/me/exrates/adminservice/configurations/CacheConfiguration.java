@@ -19,6 +19,7 @@ public class CacheConfiguration {
     public static final String CURRENCY_CACHE_BY_ID = "currency-cache-id";
     public static final String CURRENCY_PAIR_CACHE_BY_ID = "currency-pair-cache-id";
     public static final String ORDER_CACHE_BY_ID = "order-cache-id";
+    public static final String COMMISSION_CACHE_BY_ROLE_AND_TYPE = "commission-cache-role-type";
     public static final String USER_INFO_CACHE_BY_KEY = "user-info-cache-key";
     public static final String USER_REFERRAL_INFO_CACHE_BY_ID = "user-referral-info-cache-id";
 
@@ -74,6 +75,13 @@ public class CacheConfiguration {
     @Bean(ORDER_CACHE_BY_ID)
     public Cache cacheOrderById() {
         return new CaffeineCache(ORDER_CACHE_BY_ID, Caffeine.newBuilder()
+                .expireAfterWrite(30, TimeUnit.MINUTES)
+                .build());
+    }
+
+    @Bean(COMMISSION_CACHE_BY_ROLE_AND_TYPE)
+    public Cache cacheCommissionByRoleAndType() {
+        return new CaffeineCache(COMMISSION_CACHE_BY_ROLE_AND_TYPE, Caffeine.newBuilder()
                 .expireAfterWrite(30, TimeUnit.MINUTES)
                 .build());
     }

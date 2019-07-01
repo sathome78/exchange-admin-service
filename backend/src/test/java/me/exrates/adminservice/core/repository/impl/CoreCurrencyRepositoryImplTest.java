@@ -2,6 +2,7 @@ package me.exrates.adminservice.core.repository.impl;
 
 import config.DataComparisonTest;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
+import me.exrates.adminservice.core.domain.CoreCurrencyPairDto;
 import me.exrates.adminservice.core.repository.CoreCurrencyRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -101,6 +102,21 @@ public class CoreCurrencyRepositoryImplTest extends DataComparisonTest {
         String currencyName = coreCurrencyRepository.getCurrencyName(0);
 
         assertNull(currencyName);
+    }
+
+    @Test
+    public void findCurrencyPairById_ok() {
+        CoreCurrencyPairDto currencyPair = coreCurrencyRepository.findCurrencyPairById(1);
+
+        assertNotNull(currencyPair);
+        assertEquals("BTC/USD", currencyPair.getName());
+    }
+
+    @Test
+    public void findCurrencyPairById_not_found() {
+        CoreCurrencyPairDto currencyPair = coreCurrencyRepository.findCurrencyPairById(0);
+
+        assertNull(currencyPair);
     }
 
     @Configuration

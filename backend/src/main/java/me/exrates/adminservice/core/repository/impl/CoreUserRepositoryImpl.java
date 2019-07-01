@@ -7,7 +7,7 @@ import me.exrates.adminservice.core.domain.FilterDto;
 import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
-import me.exrates.adminservice.core.domain.UserReferralInfoDto;
+import me.exrates.adminservice.core.domain.ReferralTransactionDto;
 import me.exrates.adminservice.core.domain.enums.UserOperationAuthority;
 import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.core.domain.enums.UserStatus;
@@ -142,7 +142,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
 
         final List<Integer> allUsers = coreNPTemplate.queryForList(sql, Collections.emptyMap(), Integer.class);
 
-        sql = "SELECT u.id FROM USER u WHERE u.kyc_status = 'SUCCESS' OR (u.kyc_status = 'ACCEPTED' AND u.kyc_verification_step = 2)";
+        sql = "SELECT u.id FROM USER u WHERE u.kyc_status = \'SUCCESS\' OR (u.kyc_status = \'ACCEPTED\' AND u.kyc_verification_step = 2)";
 
         final List<Integer> allVerifiedUsers = coreNPTemplate.queryForList(sql, Collections.emptyMap(), Integer.class);
 
@@ -192,7 +192,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         }
 
         String verificationStatusClause = filter.isVerified()
-                ? "AGR.verification_status = 'SUCCESS' OR (AGR.verification_status = 'ACCEPTED' AND AGR.verification_step = 2) AND "
+                ? "AGR.verification_status = \'SUCCESS\' OR (AGR.verification_status = \'ACCEPTED\' AND AGR.verification_step = 2) AND "
                 : StringUtils.EMPTY;
 
         String closedOrdersCountClause = StringUtils.EMPTY;
@@ -364,7 +364,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         }
 
         String verificationStatusClause = filter.isVerified()
-                ? "AGR.verification_status = 'SUCCESS' OR (AGR.verification_status = 'ACCEPTED' AND AGR.verification_step = 2) AND "
+                ? "AGR.verification_status = \'SUCCESS\' OR (AGR.verification_status = \'ACCEPTED\' AND AGR.verification_step = 2) AND "
                 : StringUtils.EMPTY;
 
         String closedOrdersCountClause = StringUtils.EMPTY;
@@ -696,17 +696,17 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
     }
 
     @Override
-    public List<UserReferralInfoDto> getUserReferralInfoList(Integer userId) {
+    public List<ReferralTransactionDto> getUserReferralTransactionList(Integer userId) {
         final String sql = "SELECT " +
-                "child.id AS child_id, " +
-                "child.email AS child_email, " +
+                "child.id AS initiator_id, " +
+                "child.email AS initiator_email, " +
                 "rl.level AS referral_level, " +
                 "rl.percent AS referral_percent, " +
                 "rt.order_id " +
                 "FROM REFERRAL_TRANSACTION rt " +
                 "JOIN USER child ON child.id = rt.initiator_id " +
                 "JOIN REFERRAL_LEVEL rl ON rl.id = rt.referral_level_id " +
-                "WHERE rt.user_id = :user_id AND rt.status = 'PAYED'";
+                "WHERE rt.user_id = :user_id AND rt.status = \'PAYED\'";
 
         Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
@@ -759,10 +759,10 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 .build();
     }
 
-    private RowMapper<UserReferralInfoDto> getUserReferralInfoDtoRowMapper() {
-        return (rs, idx) -> UserReferralInfoDto.builder()
-                .childId(rs.getInt("child_id"))
-                .childEmail(rs.getString("child_email"))
+    private RowMapper<ReferralTransactionDto> getUserReferralInfoDtoRowMapper() {
+        return (rs, idx) -> ReferralTransactionDto.builder()
+                .initiatorId(rs.getInt("initiator_id"))
+                .initiatorEmail(rs.getString("initiator_email"))
                 .referralLevel(rs.getInt("referral_level"))
                 .referralPercent(rs.getBigDecimal("referral_percent"))
                 .orderId(rs.getInt("order_id"))

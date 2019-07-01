@@ -107,7 +107,7 @@ public class CoreOrderRepositoryImpl implements CoreOrderRepository {
                 .comissionId(rs.getInt("commission_id"))
                 .commissionFixedAmount(rs.getBigDecimal("commission_fixed_amount"))
                 .userAcceptorId(rs.getInt("user_acceptor_id"))
-                .orderBaseType(OrderBaseType.convert("base_type"))
+                .orderBaseType(OrderBaseType.convert(rs.getString("base_type")))
                 .build();
     }
 

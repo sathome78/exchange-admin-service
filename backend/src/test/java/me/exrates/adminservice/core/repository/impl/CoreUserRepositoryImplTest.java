@@ -8,6 +8,7 @@ import me.exrates.adminservice.core.domain.FilterDto;
 import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
+import me.exrates.adminservice.core.domain.ReferralTransactionDto;
 import me.exrates.adminservice.core.domain.enums.UserOperationAuthority;
 import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.core.exceptions.UserNotFoundException;
@@ -250,6 +251,23 @@ public class CoreUserRepositoryImplTest extends DataComparisonTest {
         assertNotNull(roles);
         assertFalse(roles.isEmpty());
         assertEquals(12, roles.size());
+    }
+
+    @Test
+    public void getUserReferralInfoList_ok() {
+        List<ReferralTransactionDto> referrals = coreUserRepository.getUserReferralTransactionList(1);
+
+        assertNotNull(referrals);
+        assertFalse(referrals.isEmpty());
+        assertEquals(1, referrals.size());
+    }
+
+    @Test
+    public void getUserReferralInfoList_not_found() {
+        List<ReferralTransactionDto> referrals = coreUserRepository.getUserReferralTransactionList(0);
+
+        assertNotNull(referrals);
+        assertTrue(referrals.isEmpty());
     }
 
     @Configuration

@@ -3,7 +3,6 @@ package me.exrates.adminservice.core.repository.impl;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
 import me.exrates.adminservice.core.domain.CoreCurrencyPairDto;
-import me.exrates.adminservice.core.domain.UserReferralInfoDto;
 import me.exrates.adminservice.core.domain.enums.CurrencyPairType;
 import me.exrates.adminservice.core.repository.CoreCurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,8 +115,8 @@ public class CoreCurrencyRepositoryImpl implements CoreCurrencyRepository {
 
     private RowMapper<CoreCurrencyPairDto> getCoreCurrencyPairDtoRowMapper() {
         return (rs, idx) -> CoreCurrencyPairDto.builder()
-                .id(rs.getInt("id"))
-                .name(rs.getString("name"))
+                .id(rs.getInt("currency_pair_id"))
+                .name(rs.getString("currency_pair_name"))
                 .pairType(CurrencyPairType.valueOf(rs.getString("type")))
                 .currency1(CoreCurrencyDto.builder()
                         .id(rs.getInt("currency1_id"))

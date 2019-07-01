@@ -10,6 +10,7 @@ import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
 import me.exrates.adminservice.core.domain.CoreWalletDto;
 import me.exrates.adminservice.core.domain.CoreWalletOperationDto;
 import me.exrates.adminservice.core.domain.FilterDto;
+import me.exrates.adminservice.core.domain.ReferralTransactionDto;
 import me.exrates.adminservice.core.domain.ReportDto;
 import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
@@ -19,6 +20,7 @@ import me.exrates.adminservice.core.domain.enums.ActionType;
 import me.exrates.adminservice.core.domain.enums.OperationType;
 import me.exrates.adminservice.core.domain.enums.OrderBaseType;
 import me.exrates.adminservice.core.domain.enums.TransactionSourceType;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.core.domain.enums.WalletTransferStatus;
 import me.exrates.adminservice.core.exceptions.AuthenticationNotAvailableException;
 import me.exrates.adminservice.core.exceptions.BalanceChangeException;
@@ -32,7 +34,6 @@ import me.exrates.adminservice.core.service.CoreOrderService;
 import me.exrates.adminservice.core.service.CoreUserService;
 import me.exrates.adminservice.core.service.CoreWalletService;
 import me.exrates.adminservice.domain.PagedResult;
-import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.domain.api.RateDto;
 import me.exrates.adminservice.services.ExchangeRatesService;
 import me.exrates.adminservice.utils.BigDecimalProcessingUtil;
@@ -201,7 +202,7 @@ public class CoreUserServiceImpl implements CoreUserService {
     }
 
     private void changeWalletActiveBalance(BigDecimal amount, CoreWalletDto wallet) {
-        CoreCommissionDto commission = coreCommissionService.findCommissionByTypeAndRole(OperationType.MANUAL, getUserRoleFromSecurityContext());
+        CoreCommissionDto commission = coreCommissionService.findCachedCommissionByTypeAndRole(OperationType.MANUAL, getUserRoleFromSecurityContext());
         BigDecimal commissionAmount = BigDecimalProcessingUtil.doAction(amount, commission.getValue(), ActionType.MULTIPLY_PERCENT);
 
         CoreWalletOperationDto walletOperationData = CoreWalletOperationDto.builder()
@@ -268,19 +269,19 @@ public class CoreUserServiceImpl implements CoreUserService {
     @Transactional(readOnly = true)
     @Override
     public PagedResult<UserReferralInfoDto> getUserReferralInfo(Integer userId, Integer limit, Integer offset) {
-        Map<String, List<UserReferralInfoDto>> groupedByEmail = getUserReferralInfoFromCache(userId).stream()
-                .collect(groupingBy(UserReferralInfoDto::getChildEmail));
+        Map<String, List<ReferralTransactionDto>> groupedByEmail = getCachedUserReferralTransactions(userId).stream()
+                .collect(groupingBy(ReferralTransactionDto::getInitiatorEmail));
 
         final Map<String, RateDto> cachedRates = ratesService.getCachedRates();
 
         final List<UserReferralInfoDto> userReferralInfoList = groupedByEmail.entrySet().stream()
                 .map(entry -> {
-                    final String childEmail = entry.getKey();
-                    final List<UserReferralInfoDto> referralInfoList = entry.getValue();
+                    final String initiatorEmail = entry.getKey();
+                    final List<ReferralTransactionDto> referralInfoList = entry.getValue();
 
                     BigDecimal summaryAmount = referralInfoList.stream()
                             .map(referralInfo -> {
-                                final int childId = referralInfo.getChildId();
+                                final int initiatorId = referralInfo.getInitiatorId();
                                 final int orderId = referralInfo.getOrderId();
                                 final BigDecimal percent = referralInfo.getReferralPercent();
 
@@ -298,19 +299,19 @@ public class CoreUserServiceImpl implements CoreUserService {
                                 BigDecimal usdRate = rate.getUsdRate();
 
                                 BigDecimal commission = BigDecimal.ZERO;
-                                if (childId == order.getUserId()) {
+                                if (initiatorId == order.getUserId()) {
                                     commission = order.getCommissionFixedAmount();
                                     if (!currencyName.equals(USD)) {
                                         commission = BigDecimalProcessingUtil.doAction(commission, usdRate, ActionType.MULTIPLY);
                                     }
-                                } else if (childId == order.getUserAcceptorId()) {
+                                } else if (initiatorId == order.getUserAcceptorId()) {
                                     OperationType operationTypeForAcceptor = order.getOperationType() == OperationType.BUY ? OperationType.SELL : OperationType.BUY;
 
                                     CoreCommissionDto commissionForAcceptor;
                                     if (order.getOrderBaseType() == OrderBaseType.ICO || currencyPair.getName().contains(EDR)) {
                                         commissionForAcceptor = CoreCommissionDto.zeroComission();
                                     } else {
-                                        commissionForAcceptor = coreCommissionService.findCommissionByTypeAndRole(operationTypeForAcceptor, this.getUserRoleById(order.getUserAcceptorId()));
+                                        commissionForAcceptor = coreCommissionService.findCachedCommissionByTypeAndRole(operationTypeForAcceptor, this.getUserRoleById(order.getUserAcceptorId()));
                                     }
                                     commission = BigDecimalProcessingUtil.doAction(order.getAmountConvert(), commissionForAcceptor.getValue(), ActionType.MULTIPLY_PERCENT);
                                     if (!currencyName.equals(USD)) {
@@ -322,7 +323,7 @@ public class CoreUserServiceImpl implements CoreUserService {
                             .reduce(BigDecimal::add)
                             .orElse(BigDecimal.ZERO);
                     return UserReferralInfoDto.builder()
-                            .childEmail(childEmail)
+                            .email(initiatorEmail)
                             .referralLevel(referralInfoList.get(0).getReferralLevel())
                             .summaryAmount(summaryAmount)
                             .build();
@@ -344,8 +345,8 @@ public class CoreUserServiceImpl implements CoreUserService {
         return pagedResult;
     }
 
-    private List<UserReferralInfoDto> getUserReferralInfoFromCache(Integer userId) {
-        return userReferralInfoCache.get(userId, () -> coreUserRepository.getUserReferralInfoList(userId));
+    private List<ReferralTransactionDto> getCachedUserReferralTransactions(Integer userId) {
+        return userReferralInfoCache.get(userId, () -> coreUserRepository.getUserReferralTransactionList(userId));
     }
 
     @Transactional(readOnly = true)

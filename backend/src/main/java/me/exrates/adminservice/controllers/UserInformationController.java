@@ -9,9 +9,10 @@ import me.exrates.adminservice.core.domain.ReportDto;
 import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
+import me.exrates.adminservice.core.domain.UserReferralInfoDto;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.core.service.CoreUserService;
 import me.exrates.adminservice.domain.PagedResult;
-import me.exrates.adminservice.core.domain.enums.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -126,5 +127,12 @@ public class UserInformationController {
                                          @RequestParam("user_id") Integer userId) {
         coreUserService.updateUserRole(newRole, userId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/user-referral/{user_id}")
+    public ResponseEntity<PagedResult<UserReferralInfoDto>> getUserReferralInfo(@PathVariable("user_id") Integer userId,
+                                                                                @RequestParam(required = false, defaultValue = "20") Integer limit,
+                                                                                @RequestParam(required = false, defaultValue = "0") Integer offset) {
+        return ResponseEntity.ok(coreUserService.getUserReferralInfo(userId, limit, offset));
     }
 }
