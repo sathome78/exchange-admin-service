@@ -21,6 +21,9 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
+import static me.exrates.adminservice.configurations.AdminDatasourceConfiguration.ADMIN_JDBC_OPS;
+import static me.exrates.adminservice.configurations.AdminDatasourceConfiguration.ADMIN_NP_TEMPLATE;
+
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
@@ -28,8 +31,8 @@ public class UserRepositoryImpl implements UserRepository {
     private final JdbcOperations jdbcOperations;
 
     @Autowired
-    public UserRepositoryImpl(@Qualifier("adminNPTemplate") NamedParameterJdbcOperations adminTemplate,
-                              @Qualifier("adminTemplate") JdbcOperations jdbcOperations) {
+    public UserRepositoryImpl(@Qualifier(ADMIN_NP_TEMPLATE) NamedParameterJdbcOperations adminTemplate,
+                              @Qualifier(ADMIN_JDBC_OPS) JdbcOperations jdbcOperations) {
         this.adminTemplate = adminTemplate;
         this.jdbcOperations = jdbcOperations;
     }

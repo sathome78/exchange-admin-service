@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,48 +21,50 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 @Log4j2
+@Order(1)
 @Configuration
-@Order(2)
-public class CoreDatasourceConfiguration extends DatabaseConfiguration {
+@Profile({"devtest"})
+public class AdminDeployDatasourceConfiguration extends DatabaseConfiguration {
 
-    public final static String CORE_TEMPLATE = "coreTemplate";
-    public final static String CORE_NP_TEMPLATE = "coreNPTemplate";
-
-    @Value("${db-core.datasource.url}")
+    @Value("${db-admin.datasource.url}")
     private String databaseUrl;
 
-    @Value("${db-core.datasource.driver-class-name}")
+    @Value("${db-admin.datasource.driver-class-name}")
     private String databaseDriverName;
 
-    @Value("${db-core.datasource.username}")
+    @Value("${db-admin.datasource.username}")
     private String databaseUsername;
 
-    @Value("${db-core.ssm.password-path}")
+    @Value("${db-admin.ssm.password-path}")
     private String ssmPath;
 
     @Autowired
     private SSMGetter ssmGetter;
 
-    @Bean(name = "coreDataSource")
+    @Primary
+    @Bean(name = "adminDataSource")
     public DataSource dataSource() {
         return createDataSource();
     }
 
-    @DependsOn("coreDataSource")
-    @Bean(name = CORE_TEMPLATE)
-    public JdbcOperations jdbcTemplate(@Qualifier("coreDataSource") DataSource dataSource) {
+    @Primary
+    @DependsOn("adminDataSource")
+    @Bean(name = "adminTemplate")
+    public JdbcOperations jdbcTemplate(@Qualifier("adminDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
-    @DependsOn("coreDataSource")
-    @Bean(name = "coreNPTemplate")
-    public NamedParameterJdbcOperations coreTemplate(@Qualifier("coreDataSource") DataSource dataSource) {
+    @Primary
+    @DependsOn("adminDataSource")
+    @Bean(name = "adminNPTemplate")
+    public NamedParameterJdbcOperations adminTemplate(@Qualifier("adminDataSource") DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 
-    @DependsOn("coreDataSource")
-    @Bean(name = "coreTxManager")
-    public PlatformTransactionManager platformTransactionManager(@Qualifier("coreDataSource") DataSource dataSource) {
+    @Primary
+    @DependsOn("adminDataSource")
+    @Bean(name = "adminTxManager")
+    public PlatformTransactionManager platformTransactionManager(@Qualifier("adminDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
@@ -83,4 +87,5 @@ public class CoreDatasourceConfiguration extends DatabaseConfiguration {
     protected String getDatabaseDriverClassName() {
         return databaseDriverName;
     }
+
 }

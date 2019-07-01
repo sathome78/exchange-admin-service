@@ -1,0 +1,81 @@
+{
+  "sql" : "SELECT * FROM CLOSED_ORDERS",
+  "content" : [ {
+    "id" : "1",
+    "currency_pair_name" : "BTC/USD",
+    "user_id" : "1",
+    "user_acceptor_id" : "2",
+    "rate" : "0.25000000",
+    "amount_base" : "1.240000000",
+    "amount_convert" : "0.410000000",
+    "amount_usd" : "0.41",
+    "closed" : "p(any)",
+    "base_type" : "LIMIT"
+  }, {
+    "id" : "2",
+    "currency_pair_name" : "BTC/EUR",
+    "user_id" : "1",
+    "user_acceptor_id" : "3",
+    "rate" : "0.50000000",
+    "amount_base" : "1.330000000",
+    "amount_convert" : "0.620000000",
+    "amount_usd" : "0.00",
+    "closed" : "p(any)",
+    "base_type" : "LIMIT"
+  }, {
+    "id" : "3",
+    "currency_pair_name" : "BTC/RUB",
+    "user_id" : "1",
+    "user_acceptor_id" : "3",
+    "rate" : "0.75000000",
+    "amount_base" : "1.240000000",
+    "amount_convert" : "0.410000000",
+    "amount_usd" : "0.00",
+    "closed" : "p(any)",
+    "base_type" : "LIMIT"
+  }, {
+    "id" : "4",
+    "currency_pair_name" : "BTC/USD",
+    "user_id" : "1",
+    "user_acceptor_id" : "3",
+    "rate" : "0.25000000",
+    "amount_base" : "2.550000000",
+    "amount_convert" : "0.410000000",
+    "amount_usd" : "0.41",
+    "closed" : "p(any)",
+    "base_type" : "LIMIT"
+  }, {
+    "id" : "5",
+    "currency_pair_name" : "BTC/USD",
+    "user_id" : "1",
+    "user_acceptor_id" : "2",
+    "rate" : "0.25000000",
+    "amount_base" : "11.040000000",
+    "amount_convert" : "0.410000000",
+    "amount_usd" : "0.41",
+    "closed" : "p(any)",
+    "base_type" : "LIMIT"
+  }, {
+    "id" : "6",
+    "currency_pair_name" : "BTC/USD",
+    "user_id" : "1",
+    "user_acceptor_id" : "3",
+    "rate" : "0.25000000",
+    "amount_base" : "100.240000000",
+    "amount_convert" : "0.410000000",
+    "amount_usd" : "0.41",
+    "closed" : "p(any)",
+    "base_type" : "LIMIT"
+  }, {
+    "id" : "7",
+    "currency_pair_name" : "BTC/USD",
+    "user_id" : "1",
+    "user_acceptor_id" : "3",
+    "rate" : "0.25000000",
+    "amount_base" : "10.240000000",
+    "amount_convert" : "0.410000000",
+    "amount_usd" : "0.41",
+    "closed" : "p(any)",
+    "base_type" : "LIMIT"
+  } ]
+}

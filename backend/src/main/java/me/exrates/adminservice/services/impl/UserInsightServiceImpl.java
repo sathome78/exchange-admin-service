@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreUser;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
@@ -14,7 +13,7 @@ import me.exrates.adminservice.domain.UserInsight;
 import me.exrates.adminservice.domain.api.UserInsightDTO;
 import me.exrates.adminservice.repository.UserInoutStatusRepository;
 import me.exrates.adminservice.repository.UserInsightRepository;
-import me.exrates.adminservice.services.UserInsightsService;
+import me.exrates.adminservice.services.UserInsightService;
 import me.exrates.adminservice.utils.UserInsightMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,11 +31,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @Log4j2
-public class UserInsightsServiceImpl implements UserInsightsService {
+public class UserInsightServiceImpl implements UserInsightService {
 
     private final CoreUserRepository coreUserRepository;
     private final UserInsightRepository userInsightRepository;
@@ -44,19 +42,19 @@ public class UserInsightsServiceImpl implements UserInsightsService {
     private final LoadingCache<Integer, Set<UserInsight>> insightsCache;
 
     @Autowired
-    public UserInsightsServiceImpl(CoreUserRepository coreUserRepository,
-                                   UserInsightRepository userInsightRepository,
-                                   UserInoutStatusRepository userInoutStatusRepository) {
+    public UserInsightServiceImpl(CoreUserRepository coreUserRepository,
+                                  UserInsightRepository userInsightRepository,
+                                  UserInoutStatusRepository userInoutStatusRepository) {
         this.coreUserRepository = coreUserRepository;
         this.userInsightRepository = userInsightRepository;
         this.userInoutStatusRepository = userInoutStatusRepository;
         this.insightsCache = buildCache();
     }
 
-    public UserInsightsServiceImpl(CoreUserRepository coreUserRepository,
-                                   UserInsightRepository userInsightRepository,
-                                   UserInoutStatusRepository userInoutStatusRepository,
-                                   LoadingCache<Integer, Set<UserInsight>> insightsCache) {
+    public UserInsightServiceImpl(CoreUserRepository coreUserRepository,
+                                  UserInsightRepository userInsightRepository,
+                                  UserInoutStatusRepository userInoutStatusRepository,
+                                  LoadingCache<Integer, Set<UserInsight>> insightsCache) {
         this.coreUserRepository = coreUserRepository;
         this.userInsightRepository = userInsightRepository;
         this.userInoutStatusRepository = userInoutStatusRepository;

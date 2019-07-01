@@ -1,5 +1,7 @@
 package me.exrates.adminservice.repository.impl;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
@@ -46,7 +48,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
     @Override
     public boolean batchInsert(List<CoreTransaction> transactions) {
-        final String sql = "INSERT INTO " + TABLE + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO " + TABLE + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         final int[] rows = jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -54,15 +56,16 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 ps.setInt(1, transaction.getId());
                 ps.setInt(2, transaction.getUserId());
                 ps.setString(3, transaction.getCurrencyName());
-                ps.setBigDecimal(4, transaction.getAmount());
-                ps.setBigDecimal(5, transaction.getCommissionAmount());
-                ps.setString(6, transaction.getSourceType());
-                ps.setString(7, transaction.getOperationType());
-                ps.setTimestamp(8, Timestamp.valueOf(transaction.getDateTime()));
-                ps.setBigDecimal(9, transaction.getRateInUsd());
-                ps.setBigDecimal(10, transaction.getRateInBtc());
-                ps.setBigDecimal(11, transaction.getRateBtcForOneUsd());
-                ps.setInt(12, transaction.getSourceId());
+                ps.setBigDecimal(4, transaction.getBalanceBefore());
+                ps.setBigDecimal(5, transaction.getAmount());
+                ps.setBigDecimal(6, transaction.getCommissionAmount());
+                ps.setString(7, transaction.getSourceType());
+                ps.setString(8, transaction.getOperationType());
+                ps.setTimestamp(9, Timestamp.valueOf(transaction.getDateTime()));
+                ps.setBigDecimal(10, transaction.getRateInUsd());
+                ps.setBigDecimal(11, transaction.getRateInBtc());
+                ps.setBigDecimal(12, transaction.getRateBtcForOneUsd());
+                ps.setInt(13, transaction.getSourceId());
             }
 
             @Override
@@ -117,6 +120,63 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             values1.put("BTC", rs.getBigDecimal("btc_volume"));
             return values1;
         });
+    }
+
+    @Override
+    public Map<Integer, List<Integer>> findUsersRefills(Collection<Integer> usersIds) {
+        String sql = "SELECT " + COL_USER_ID + " FROM " + TABLE +
+                " WHERE " + COL_SOURCE_TYPE + " = \'REFILL\' AND " + COL_OPERATION_TYPE + " = \'INPUT\'" +
+                " AND " + COL_USER_ID + " IN (:ids)";
+        Map<String, Object> params = Collections.singletonMap("ids", usersIds);
+        return namedParameterJdbcOperations.query(sql, params, rs -> {
+            Map<Integer, List<Integer>> refills = Maps.newHashMap();
+            while (rs.next()) {
+                final int userId = rs.getInt(1);
+                refills.computeIfPresent(userId, (integer, integers) -> {
+                    integers.add(integer);
+                    return integers;
+                });
+                refills.putIfAbsent(userId, Lists.newArrayList(userId));
+            }
+            return refills;
+        });
+    }
+
+    @Override
+    public Map<Integer, List<CoreTransaction>> findAllTransactions(Collection<Integer> userIds) {
+        if (userIds.isEmpty()) {
+            return Maps.newHashMap();
+        }
+        String sql = "SELECT * FROM " + TABLE + " WHERE " + COL_USER_ID + " IN (:ids)";
+        Map<String, Object> params = Collections.singletonMap("ids", userIds);
+        final List<CoreTransaction> transactions = namedParameterJdbcOperations.query(sql, params, getTransactionRowMapper());
+        Map<Integer, List<CoreTransaction>> events = Maps.newHashMap();
+        transactions.forEach(tr -> {
+            events.computeIfPresent(tr.getUserId(), (k, list) -> {
+                list.add(tr);
+                return list;
+            });
+            events.putIfAbsent(tr.getUserId(), Lists.newArrayList(tr));
+        });
+        return events;
+    }
+
+    private RowMapper<CoreTransaction> getTransactionRowMapper() {
+        return (rs, rowNum) -> CoreTransaction.builder()
+                .id(rs.getInt(COL_ID))
+                .userId(rs.getInt(COL_USER_ID))
+                .currencyName(rs.getString(COL_CURRENCY_NAME))
+                .balanceBefore(rs.getBigDecimal(COL_ACTIVE_BALANCE_BEFORE))
+                .amount(rs.getBigDecimal(COL_AMOUNT))
+                .commissionAmount(rs.getBigDecimal(COL_COMMISSION_AMOUNT))
+                .sourceType(rs.getString(COL_SOURCE_TYPE))
+                .operationType(rs.getString(COL_OPERATION_TYPE))
+                .dateTime(rs.getTimestamp(COL_DATETIME).toLocalDateTime())
+                .rateInUsd(rs.getBigDecimal(COL_RATE_IN_USD))
+                .rateInBtc(rs.getBigDecimal(COL_RATE_IN_BTC))
+                .sourceId(rs.getInt(COL_SOURCE_ID))
+                .rateBtcForOneUsd(rs.getBigDecimal(COL_RATE_BTC_FOR_ONE_USD))
+                .build();
     }
 
     private RowMapper<CurrencyTuple> getCurrencyTupleRowMapper() {

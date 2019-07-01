@@ -1,13 +1,18 @@
 package me.exrates.adminservice.services.impl;
 
+import com.google.common.collect.ImmutableList;
 import config.AbstractDatabaseContextTest;
 import config.AsyncTransactionsTestConfig;
 import config.DataComparisonTest;
+import me.exrates.adminservice.core.domain.CoreTransaction;
 import me.exrates.adminservice.core.repository.CoreTransactionRepository;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
+import me.exrates.adminservice.core.repository.CoreWalletRepository;
 import me.exrates.adminservice.core.repository.impl.CoreTransactionRepositoryImpl;
 import me.exrates.adminservice.core.repository.impl.CoreUserRepositoryImpl;
+import me.exrates.adminservice.core.repository.impl.CoreWalletRepositoryImpl;
 import me.exrates.adminservice.domain.api.RateDto;
+import me.exrates.adminservice.domain.enums.RefillEventEnum;
 import me.exrates.adminservice.repository.TransactionRepository;
 import me.exrates.adminservice.repository.UserInsightRepository;
 import me.exrates.adminservice.repository.impl.TransactionRepositoryImpl;
@@ -32,9 +37,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -86,6 +94,25 @@ public class TransactionServiceTest extends DataComparisonTest {
         assertEquals("49600", revenue.get("USD").stripTrailingZeros().toPlainString());
     }
 
+    @Test
+    public void testGetAllUsersRefillEvents() {
+        final ImmutableList<Integer> userIds = ImmutableList.of(1, 2, 3);
+        final Map<Integer, List<CoreTransaction>> transactions = transactionService.findAllTransactions(userIds);
+        final Map<Integer, Set<RefillEventEnum>> usersRefillEvents = transactionService.getAllUsersRefillEvents(transactions, userIds);
+
+        assertTrue(usersRefillEvents.get(1).isEmpty());
+
+        final Set<RefillEventEnum> secondUserEvents = usersRefillEvents.get(2);
+        assertEquals(2, secondUserEvents.size());
+        assertTrue(secondUserEvents.contains(RefillEventEnum.ZEROED));
+        assertTrue(secondUserEvents.contains(RefillEventEnum.REANIMATED));
+
+        final Set<RefillEventEnum> thirdUserEvents = usersRefillEvents.get(3);
+        assertEquals(1, thirdUserEvents.size());
+        assertTrue(thirdUserEvents.contains(RefillEventEnum.ZEROED));
+        assertTrue(!thirdUserEvents.contains(RefillEventEnum.REANIMATED));
+    }
+
     private Map<String, RateDto> getTestRates() {
         BigDecimal crossRate = new BigDecimal(0.00012548);
         Map<String, RateDto> rateDtoMap = new HashMap<>(3);
@@ -124,6 +151,11 @@ public class TransactionServiceTest extends DataComparisonTest {
         }
 
         @Bean
+        CoreWalletRepository coreWalletRepository() {
+            return new CoreWalletRepositoryImpl(coreUserRepository(), coreNPJdbcOperations, testCoreTransactionRepository());
+        }
+
+        @Bean
         public TransactionRepository adminTransactionRepository() {
             return new TransactionRepositoryImpl(adminJdbcOperations, adminNPJdbcOperations, coreUserRepository());
         }
@@ -135,7 +167,7 @@ public class TransactionServiceTest extends DataComparisonTest {
 
         @Bean
         public CoreTransactionRepository testCoreTransactionRepository() {
-            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations);
+            return new CoreTransactionRepositoryImpl(coreNPJdbcOperations, coreUserRepository());
         }
 
         @Bean
@@ -146,7 +178,7 @@ public class TransactionServiceTest extends DataComparisonTest {
 
         @Override
         protected String getSchema() {
-            return "SyncTransactionServiceTest";
+            return "TransactionServiceTest";
         }
     }
 }

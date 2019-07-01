@@ -17,4 +17,6 @@ public interface CoreWalletRepository {
     boolean isUserAllowedToManuallyChangeWalletBalance(Integer adminId, Integer userId);
 
     WalletTransferStatus walletBalanceChange(CoreWalletOperationDto walletOperation);
+
+    List<Integer> findAllBotsWalletIds();
 }
