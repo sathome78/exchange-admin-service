@@ -1,11 +1,13 @@
 package me.exrates.adminservice.core.repository.impl;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Maps;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreOrderDto;
 import me.exrates.adminservice.core.domain.enums.OperationType;
 import me.exrates.adminservice.core.domain.enums.OrderBaseType;
 import me.exrates.adminservice.core.repository.CoreOrderRepository;
+import me.exrates.adminservice.domain.ClosedOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -32,6 +35,22 @@ public class CoreOrderRepositoryImpl implements CoreOrderRepository {
     @Autowired
     public CoreOrderRepositoryImpl(@Qualifier("coreNPTemplate") NamedParameterJdbcOperations npJdbcOperations) {
         this.npJdbcOperations = npJdbcOperations;
+    }
+
+    @Override
+    public List<ClosedOrder> findAllLimited(int chunkSize, int maxId) {
+        String sql = "SELECT E.id, CP.name, E.user_id, E.user_acceptor_id, E.exrate, E.amount_base, E.amount_convert," +
+                " DATE(E.date_acception) as closed, E.base_type" +
+                " FROM EXORDERS E" +
+                " LEFT JOIN CURRENCY_PAIR CP on E.currency_pair_id = CP.id" +
+                " WHERE E.status_id = 3 AND E.user_id <> E.user_acceptor_id" +
+                " AND E.id > :position" +
+                " ORDER BY E.id ASC" +
+                " LIMIT :size";
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("size", chunkSize);
+        params.put("position", maxId);
+        return npJdbcOperations.query(sql, params, getRowMapper());
     }
 
     @Override
@@ -124,5 +143,19 @@ public class CoreOrderRepositoryImpl implements CoreOrderRepository {
         result.put(BUY, buyPercent);
         result.put(SELL, 100 - buyPercent);
         return result;
+    }
+
+    private RowMapper<ClosedOrder> getRowMapper() {
+        return (rs, i) -> ClosedOrder.builder()
+                .id(rs.getInt("id"))
+                .currencyPairName(rs.getString("name"))
+                .creatorId(rs.getInt("user_id"))
+                .acceptorId(rs.getInt("user_acceptor_id"))
+                .rate(rs.getBigDecimal("exrate"))
+                .amountBase(rs.getBigDecimal("amount_base"))
+                .amountConvert(rs.getBigDecimal("amount_convert"))
+                .closedDate(rs.getDate("closed").toLocalDate())
+                .baseType(rs.getString("base_type"))
+                .build();
     }
 }

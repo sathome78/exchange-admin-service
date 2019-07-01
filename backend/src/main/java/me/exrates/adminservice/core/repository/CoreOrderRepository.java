@@ -1,7 +1,9 @@
 package me.exrates.adminservice.core.repository;
 
 import me.exrates.adminservice.core.domain.CoreOrderDto;
+import me.exrates.adminservice.domain.ClosedOrder;
 
+import java.util.List;
 import java.util.Map;
 
 public interface CoreOrderRepository {
@@ -24,6 +26,8 @@ public interface CoreOrderRepository {
     String COL_ORDER_SOURCE_ID = "order_source_id";
     String COL_COUNTER_ORDER_ID = "counter_order_id";
     String COL_BASE_TYPE = "base_type";
+
+    List<ClosedOrder> findAllLimited(int chunkSize, int maxId);
 
     Map<String, Integer> getDailyBuySellVolume();
 

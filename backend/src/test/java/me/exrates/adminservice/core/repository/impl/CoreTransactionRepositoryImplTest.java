@@ -102,6 +102,7 @@ public class CoreTransactionRepositoryImplTest extends DataComparisonTest {
                 .companyBalanceBefore(BigDecimal.ONE)
                 .companyCommissionBalanceBefore(BigDecimal.ONE)
                 .sourceType(TransactionSourceType.REFILL)
+                .activeBalanceBefore(BigDecimal.TEN)
                 .sourceId(1)
                 .build();
 

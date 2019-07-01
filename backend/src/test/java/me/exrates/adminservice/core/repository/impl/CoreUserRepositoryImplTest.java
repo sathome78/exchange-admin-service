@@ -103,7 +103,7 @@ public class CoreUserRepositoryImplTest extends DataComparisonTest {
     public void findAllUsersIdAndEmail() {
         final Map<Integer, String> users = coreUserRepository.findAllUsersIdAndEmail();
 
-        assertEquals(3, users.size());
+        assertEquals(5, users.size());
         assertTrue(users.containsKey(1));
         assertEquals("admin@exrates.me", users.get(1));
     }
@@ -139,8 +139,8 @@ public class CoreUserRepositoryImplTest extends DataComparisonTest {
         UserDashboardDto usersDashboard = coreUserRepository.getUsersDashboard();
 
         assertNotNull(usersDashboard);
-        assertEquals(3, usersDashboard.getAllUsersCount().intValue());
-        assertEquals(2, usersDashboard.getAllVerifiedUsersCount().intValue());
+        assertEquals(5, usersDashboard.getAllUsersCount().intValue());
+        assertEquals(3, usersDashboard.getAllVerifiedUsersCount().intValue());
         assertEquals(1, usersDashboard.getAllBlockedUsersCount().intValue());
         assertEquals(0, usersDashboard.getAllOnlineUsersCount().intValue());
     }
