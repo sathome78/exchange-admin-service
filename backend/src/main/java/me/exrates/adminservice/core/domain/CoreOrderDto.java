@@ -1,6 +1,8 @@
 package me.exrates.adminservice.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.exrates.adminservice.core.domain.enums.OperationType;
@@ -15,7 +17,9 @@ import java.time.LocalDateTime;
 
 @Component
 @Data
+@Builder(builderClassName = "Builder", toBuilder = true)
 @NoArgsConstructor
+@AllArgsConstructor
 public class CoreOrderDto implements Serializable {
 
     private int id;

@@ -1,17 +1,6 @@
 {
   "sql" : "SELECT * FROM USERS",
   "content" : [ {
-    "user_id" : "1",
-    "pub_id" : "HJGFJHFGSDASDGFSD",
-    "email" : "admin@exrates.me",
-    "password" : "{bcrypt}$2a$10$ywda3/fTYHWR6E9e9KXUj.5tB3xFO1jdIBJs3BLpO6ORRSJZMg3v.",
-    "regdate" : "p(any)",
-    "phone" : "+380672223344",
-    "user_status" : "ACTIVATED",
-    "user_role" : "ADMINISTRATOR",
-    "use2fa" : "0",
-    "kyc_status" : "success"
-  }, {
     "user_id" : "2",
     "pub_id" : "SIAAWWASADDWDDWAW",
     "email" : "admin1@exrates.me",
@@ -21,6 +10,6 @@
     "user_status" : "ACTIVATED",
     "user_role" : "ADMINISTRATOR",
     "use2fa" : "0",
-    "kyc_status" : "success"
+    "kyc_status" : "SUCCESS"
   } ]
 }

@@ -57,7 +57,7 @@ public class CoreWalletRepositoryImplTest extends DataComparisonTest {
 
         assertNotNull(walletBalances);
         assertFalse(walletBalances.isEmpty());
-        assertEquals(4, walletBalances.size());
+        assertEquals(12, walletBalances.size());
     }
 
     @Test

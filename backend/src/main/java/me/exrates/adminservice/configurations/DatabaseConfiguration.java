@@ -27,7 +27,7 @@ public abstract class DatabaseConfiguration {
         config.setPassword(getDatabasePassword());
         config.setDriverClassName(getDatabaseDriverClassName());
         config.setMaximumPoolSize(10);
-        config.setLeakDetectionThreshold(TimeUnit.MILLISECONDS.convert(45, TimeUnit.SECONDS));
+        config.setLeakDetectionThreshold(60000);
         config.setMinimumIdle(1);
         config.setIdleTimeout(30000);
         return new HikariDataSource(config);

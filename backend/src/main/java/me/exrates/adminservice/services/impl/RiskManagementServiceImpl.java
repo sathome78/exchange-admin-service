@@ -1,6 +1,6 @@
 package me.exrates.adminservice.services.impl;
 
-import me.exrates.adminservice.core.repository.CoreExorderRepository;
+import me.exrates.adminservice.core.repository.CoreOrderRepository;
 import me.exrates.adminservice.domain.api.RiskManagementBoardDTO;
 import me.exrates.adminservice.services.RiskManagementService;
 import me.exrates.adminservice.services.TransactionService;
@@ -13,19 +13,19 @@ import java.util.Map;
 @Service
 public class RiskManagementServiceImpl implements RiskManagementService {
 
-    private final CoreExorderRepository coreExorderRepository;
+    private final CoreOrderRepository coreOrderRepository;
     private final TransactionService transactionService;
 
     @Autowired
-    public RiskManagementServiceImpl(CoreExorderRepository coreExorderRepository,
+    public RiskManagementServiceImpl(CoreOrderRepository coreOrderRepository,
                                      TransactionService transactionService) {
-        this.coreExorderRepository = coreExorderRepository;
+        this.coreOrderRepository = coreOrderRepository;
         this.transactionService = transactionService;
     }
 
     @Override
     public RiskManagementBoardDTO getRiskManagementBoard() {
-        final Map<String, Integer> dailyBuySellVolume = coreExorderRepository.getDailyBuySellVolume();
+        final Map<String, Integer> dailyBuySellVolume = coreOrderRepository.getDailyBuySellVolume();
         final Map<String, BigDecimal> dailyCommissionRevenue = transactionService.getDailyCommissionRevenue();
         final Map<String, BigDecimal> dailyInnerTradeVolume = transactionService.getDailyInnerTradeVolume();
 
@@ -45,7 +45,7 @@ public class RiskManagementServiceImpl implements RiskManagementService {
                 .tradeIncomeUSD(BigDecimal.ZERO)
                 .commissionRevenueBTC(dailyCommissionRevenue.getOrDefault("BTC", BigDecimal.ZERO))
                 .commissionRevenueUSD(dailyCommissionRevenue.getOrDefault("USD", BigDecimal.ZERO))
-                .uniqueClientsQuantity(coreExorderRepository.getDailyUniqueUsersQuantity())
+                .uniqueClientsQuantity(coreOrderRepository.getDailyUniqueUsersQuantity())
                 .build();
     }
 }

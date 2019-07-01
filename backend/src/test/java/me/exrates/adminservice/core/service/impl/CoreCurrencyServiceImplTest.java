@@ -2,6 +2,7 @@ package me.exrates.adminservice.core.service.impl;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
+import me.exrates.adminservice.core.domain.CoreCurrencyPairDto;
 import me.exrates.adminservice.core.repository.CoreCurrencyRepository;
 import me.exrates.adminservice.core.service.CoreCurrencyService;
 import org.junit.Before;
@@ -27,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
@@ -42,8 +42,9 @@ public class CoreCurrencyServiceImplTest {
 
     private static final String ALL_CURRENCIES_CACHE_TEST = "all-currencies-cache-test";
     private static final String ACTIVE_CURRENCIES_CACHE_TEST = "active-currencies-cache-test";
-    private static final String CURRENCY_CACHE_BY_NAME_TEST = "currency-cache-name-test";
-    private static final String CURRENCY_CACHE_BY_ID_TEST = "currency-cache-id-test";
+    private static final String CURRENCY_CACHE_BY_NAME_TEST = "currency-cache-by-name-test";
+    private static final String CURRENCY_CACHE_BY_ID_TEST = "currency-cache-by-id-test";
+    private static final String CURRENCY_PAIR_CACHE_BY_ID_TEST = "currency-pair-cache-by-id-test";
 
     @Mock
     private CoreCurrencyRepository coreCurrencyRepository;
@@ -53,6 +54,9 @@ public class CoreCurrencyServiceImplTest {
     @Autowired
     @Qualifier(CURRENCY_CACHE_BY_ID_TEST)
     private Cache currencyCacheById;
+    @Autowired
+    @Qualifier(CURRENCY_PAIR_CACHE_BY_ID_TEST)
+    private Cache currencyPairCacheById;
     @Autowired
     @Qualifier(ALL_CURRENCIES_CACHE_TEST)
     private Cache allCurrenciesCache;
@@ -66,6 +70,7 @@ public class CoreCurrencyServiceImplTest {
     public void setUp() throws Exception {
         currencyCacheByName.put("BTC", CoreCurrencyDto.builder().build());
         currencyCacheById.put(1, CoreCurrencyDto.builder().build());
+        currencyPairCacheById.put(1, CoreCurrencyPairDto.builder().build());
         allCurrenciesCache.put(ALL_CURRENCIES_CACHE, Collections.singletonList(CoreCurrencyDto.builder().build()));
         activeCurrenciesCache.put(ACTIVE_CURRENCIES_CACHE, Collections.singletonList(CoreCurrencyDto.builder().build()));
 
@@ -73,6 +78,7 @@ public class CoreCurrencyServiceImplTest {
                 coreCurrencyRepository,
                 currencyCacheByName,
                 currencyCacheById,
+                currencyPairCacheById,
                 allCurrenciesCache,
                 activeCurrenciesCache));
     }
@@ -83,26 +89,26 @@ public class CoreCurrencyServiceImplTest {
 
         doReturn(CoreCurrencyDto.builder().build())
                 .when(coreCurrencyRepository)
-                .findById(anyInt());
+                .findCurrencyById(anyInt());
 
-        CoreCurrencyDto currencyDto = coreCurrencyService.findById(1);
+        CoreCurrencyDto currencyDto = coreCurrencyService.findCachedCurrencyById(1);
 
         assertNotNull(currencyDto);
 
-        verify(coreCurrencyRepository, atLeastOnce()).findById(anyInt());
+        verify(coreCurrencyRepository, atLeastOnce()).findCurrencyById(anyInt());
     }
 
     @Test
     public void findById_with_cache() {
         doReturn(CoreCurrencyDto.builder().build())
                 .when(coreCurrencyRepository)
-                .findById(anyInt());
+                .findCurrencyById(anyInt());
 
-        CoreCurrencyDto currencyDto = coreCurrencyService.findById(1);
+        CoreCurrencyDto currencyDto = coreCurrencyService.findCachedCurrencyById(1);
 
         assertNotNull(currencyDto);
 
-        verify(coreCurrencyRepository, never()).findById(anyInt());
+        verify(coreCurrencyRepository, never()).findCurrencyById(anyInt());
     }
 
     @Test
@@ -111,26 +117,54 @@ public class CoreCurrencyServiceImplTest {
 
         doReturn(CoreCurrencyDto.builder().build())
                 .when(coreCurrencyRepository)
-                .findByName(anyString());
+                .findCurrencyByName(anyString());
 
-        CoreCurrencyDto currencyDto = coreCurrencyService.findByName("BTC");
+        CoreCurrencyDto currencyDto = coreCurrencyService.findCachedCurrencyByName("BTC");
 
         assertNotNull(currencyDto);
 
-        verify(coreCurrencyRepository, atLeastOnce()).findByName(anyString());
+        verify(coreCurrencyRepository, atLeastOnce()).findCurrencyByName(anyString());
     }
 
     @Test
     public void findByName_with_cache() {
         doReturn(CoreCurrencyDto.builder().build())
                 .when(coreCurrencyRepository)
-                .findByName(anyString());
+                .findCurrencyByName(anyString());
 
-        CoreCurrencyDto currencyDto = coreCurrencyService.findByName("BTC");
+        CoreCurrencyDto currencyDto = coreCurrencyService.findCachedCurrencyByName("BTC");
 
         assertNotNull(currencyDto);
 
-        verify(coreCurrencyRepository, never()).findByName(anyString());
+        verify(coreCurrencyRepository, never()).findCurrencyByName(anyString());
+    }
+
+    @Test
+    public void findCachedCurrencyPairById_without_cache() {
+        currencyPairCacheById.clear();
+
+        doReturn(CoreCurrencyPairDto.builder().build())
+                .when(coreCurrencyRepository)
+                .findCurrencyPairById(anyInt());
+
+        CoreCurrencyPairDto currencyPair = coreCurrencyService.findCachedCurrencyPairById(1);
+
+        assertNotNull(currencyPair);
+
+        verify(coreCurrencyRepository, atLeastOnce()).findCurrencyPairById(anyInt());
+    }
+
+    @Test
+    public void findCachedCurrencyPairById_with_cache() {
+        doReturn(CoreCurrencyPairDto.builder().build())
+                .when(coreCurrencyRepository)
+                .findCurrencyPairById(anyInt());
+
+        CoreCurrencyPairDto currencyPair = coreCurrencyService.findCachedCurrencyPairById(1);
+
+        assertNotNull(currencyPair);
+
+        verify(coreCurrencyRepository, never()).findCurrencyPairById(anyInt());
     }
 
     @Test
@@ -173,7 +207,7 @@ public class CoreCurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getActiveCurrencies();
 
-        List<CoreCurrencyDto> activeCachedCurrencies = coreCurrencyService.getActiveCachedCurrencies();
+        List<CoreCurrencyDto> activeCachedCurrencies = coreCurrencyService.getCachedActiveCurrencies();
 
         assertNotNull(activeCachedCurrencies);
         assertFalse(activeCachedCurrencies.isEmpty());
@@ -188,7 +222,7 @@ public class CoreCurrencyServiceImplTest {
                 .when(coreCurrencyRepository)
                 .getActiveCurrencies();
 
-        List<CoreCurrencyDto> activeCachedCurrencies = coreCurrencyService.getActiveCachedCurrencies();
+        List<CoreCurrencyDto> activeCachedCurrencies = coreCurrencyService.getCachedActiveCurrencies();
 
         assertNotNull(activeCachedCurrencies);
         assertFalse(activeCachedCurrencies.isEmpty());
@@ -257,6 +291,13 @@ public class CoreCurrencyServiceImplTest {
         @Bean(CURRENCY_CACHE_BY_ID_TEST)
         public Cache cacheById() {
             return new CaffeineCache(CURRENCY_CACHE_BY_ID_TEST, Caffeine.newBuilder()
+                    .expireAfterWrite(1, TimeUnit.MINUTES)
+                    .build());
+        }
+
+        @Bean(CURRENCY_PAIR_CACHE_BY_ID_TEST)
+        public Cache pairCacheById() {
+            return new CaffeineCache(CURRENCY_PAIR_CACHE_BY_ID_TEST, Caffeine.newBuilder()
                     .expireAfterWrite(1, TimeUnit.MINUTES)
                     .build());
         }

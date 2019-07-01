@@ -105,7 +105,7 @@ public class WalletServiceImplTest {
                 .name("BTC")
                 .build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         PagedResult<ExternalWalletBalancesDto> externalWalletBalances = walletService.getExternalWalletBalances(1, 0);
 
@@ -115,7 +115,7 @@ public class WalletServiceImplTest {
         assertFalse(externalWalletBalances.getItems().isEmpty());
 
         verify(walletRepository, atLeastOnce()).getExternalMainWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
     }
 
     @Test
@@ -140,7 +140,7 @@ public class WalletServiceImplTest {
                 .build());
         doReturn(coreCurrencyList)
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         PagedResult<ExternalWalletBalancesDto> externalWalletBalances = walletService.getExternalWalletBalances(1, 0);
 
@@ -152,7 +152,7 @@ public class WalletServiceImplTest {
         assertEquals("BTC", externalWalletBalances.getItems().get(0).getCurrencyName());
 
         verify(walletRepository, atLeastOnce()).getExternalMainWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
     }
 
     @Test
@@ -177,7 +177,7 @@ public class WalletServiceImplTest {
                 .build());
         doReturn(coreCurrencyList)
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         PagedResult<ExternalWalletBalancesDto> externalWalletBalances = walletService.getExternalWalletBalances(2, 1);
 
@@ -189,7 +189,7 @@ public class WalletServiceImplTest {
         assertEquals("ETH", externalWalletBalances.getItems().get(0).getCurrencyName());
 
         verify(walletRepository, atLeastOnce()).getExternalMainWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
     }
 
     @Test
@@ -220,7 +220,7 @@ public class WalletServiceImplTest {
                 .name("BTC")
                 .build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         doReturn(Collections.singletonList(CoreCurrencyDto.builder()
                 .name("BTC")
@@ -239,7 +239,7 @@ public class WalletServiceImplTest {
 
         verify(walletRepository, atLeastOnce()).getExternalMainWalletBalances();
         verify(walletRepository, atLeastOnce()).getInternalWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
         verify(coreCurrencyService, atLeastOnce()).getCachedCurrencies();
     }
 
@@ -266,7 +266,7 @@ public class WalletServiceImplTest {
                 .getExternalMainWalletBalances();
         doReturn(Collections.emptyList())
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         List<ExternalWalletBalancesDto> externalWalletBalances = walletService.getExternalWalletBalances();
 
@@ -274,7 +274,7 @@ public class WalletServiceImplTest {
         assertTrue(externalWalletBalances.isEmpty());
 
         verify(walletRepository, atLeastOnce()).getExternalMainWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
     }
 
     @Test
@@ -288,7 +288,7 @@ public class WalletServiceImplTest {
                 .name("BTC")
                 .build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         List<ExternalWalletBalancesDto> externalWalletBalances = walletService.getExternalWalletBalances();
 
@@ -297,7 +297,7 @@ public class WalletServiceImplTest {
         assertEquals(1, externalWalletBalances.size());
 
         verify(walletRepository, atLeastOnce()).getExternalMainWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
     }
 
     @Test
@@ -324,7 +324,7 @@ public class WalletServiceImplTest {
                 .getInternalWalletBalances();
         doReturn(Collections.emptyList())
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         List<InternalWalletBalancesDto> internalWalletBalances = walletService.getInternalWalletBalances();
 
@@ -332,7 +332,7 @@ public class WalletServiceImplTest {
         assertTrue(internalWalletBalances.isEmpty());
 
         verify(walletRepository, atLeastOnce()).getInternalWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
     }
 
     @Test
@@ -347,7 +347,7 @@ public class WalletServiceImplTest {
                 .name("BTC")
                 .build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         List<InternalWalletBalancesDto> internalWalletBalances = walletService.getInternalWalletBalances();
 
@@ -356,7 +356,7 @@ public class WalletServiceImplTest {
         assertEquals(1, internalWalletBalances.size());
 
         verify(walletRepository, atLeastOnce()).getInternalWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
     }
 
     @Test
@@ -433,7 +433,7 @@ public class WalletServiceImplTest {
                 .name("BTC")
                 .build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
         doNothing()
                 .when(walletRepository)
                 .updateExternalMainWalletBalances(anyList());
@@ -443,7 +443,7 @@ public class WalletServiceImplTest {
         verify(exchangeRatesService, atLeastOnce()).getCachedRates();
         verify(walletBalancesService, atLeastOnce()).getCachedBalances();
         verify(walletRepository, atLeastOnce()).getExternalMainWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
         verify(walletRepository, atLeastOnce()).updateExternalMainWalletBalances(anyList());
     }
 
@@ -456,7 +456,7 @@ public class WalletServiceImplTest {
         walletService.updateExternalReservedWalletBalances();
 
         verify(walletsApi, atLeastOnce()).getReservedBalancesFromApi();
-        verify(coreCurrencyService, never()).findByName(anyString());
+        verify(coreCurrencyService, never()).findCachedCurrencyByName(anyString());
         verify(walletRepository, never()).updateExternalReservedWalletBalances(anyInt(), anyString(), any(BigDecimal.class), any(LocalDateTime.class));
     }
 
@@ -467,12 +467,12 @@ public class WalletServiceImplTest {
                 .getReservedBalancesFromApi();
         doReturn(null)
                 .when(coreCurrencyService)
-                .findByName("BTC");
+                .findCachedCurrencyByName("BTC");
 
         walletService.updateExternalReservedWalletBalances();
 
         verify(walletsApi, atLeastOnce()).getReservedBalancesFromApi();
-        verify(coreCurrencyService, atLeastOnce()).findByName(anyString());
+        verify(coreCurrencyService, atLeastOnce()).findCachedCurrencyByName(anyString());
         verify(walletRepository, never()).updateExternalReservedWalletBalances(anyInt(), anyString(), any(BigDecimal.class), any(LocalDateTime.class));
     }
 
@@ -486,12 +486,12 @@ public class WalletServiceImplTest {
                 .name("BTC")
                 .build())
                 .when(coreCurrencyService)
-                .findByName("BTC");
+                .findCachedCurrencyByName("BTC");
 
         walletService.updateExternalReservedWalletBalances();
 
         verify(walletsApi, atLeastOnce()).getReservedBalancesFromApi();
-        verify(coreCurrencyService, atLeastOnce()).findByName(anyString());
+        verify(coreCurrencyService, atLeastOnce()).findCachedCurrencyByName(anyString());
         verify(walletRepository, atLeastOnce()).updateExternalReservedWalletBalances(anyInt(), anyString(), any(BigDecimal.class), any(LocalDateTime.class));
     }
 
@@ -546,7 +546,7 @@ public class WalletServiceImplTest {
                 .name("BTC")
                 .build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
         doNothing()
                 .when(walletRepository)
                 .updateInternalWalletBalances(anyList());
@@ -556,7 +556,7 @@ public class WalletServiceImplTest {
         verify(exchangeRatesService, atLeastOnce()).getCachedRates();
         verify(coreWalletRepository, atLeastOnce()).getWalletBalances();
         verify(walletRepository, atLeastOnce()).getInternalWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
         verify(walletRepository, atLeastOnce()).updateInternalWalletBalances(anyList());
     }
 
@@ -673,13 +673,13 @@ public class WalletServiceImplTest {
     public void getExternalReservedWalletBalance_currency_is_not_present() {
         doReturn(null)
                 .when(coreCurrencyService)
-                .findById(anyInt());
+                .findCachedCurrencyById(anyInt());
 
         BigDecimal balance = walletService.getExternalReservedWalletBalance(1, "wallet_address");
 
         assertNull(balance);
 
-        verify(coreCurrencyService, atLeastOnce()).findById(anyInt());
+        verify(coreCurrencyService, atLeastOnce()).findCachedCurrencyById(anyInt());
         verify(walletsApi, never()).getBalanceByCurrencyAndWallet(anyString(), anyString());
     }
 
@@ -689,7 +689,7 @@ public class WalletServiceImplTest {
                 .name("BTC")
                 .build())
                 .when(coreCurrencyService)
-                .findById(anyInt());
+                .findCachedCurrencyById(anyInt());
         doReturn(BigDecimal.TEN)
                 .when(walletsApi)
                 .getBalanceByCurrencyAndWallet(anyString(), anyString());
@@ -699,7 +699,7 @@ public class WalletServiceImplTest {
         assertNotNull(balance);
         assertEquals(0, BigDecimal.TEN.compareTo(balance));
 
-        verify(coreCurrencyService, atLeastOnce()).findById(anyInt());
+        verify(coreCurrencyService, atLeastOnce()).findCachedCurrencyById(anyInt());
         verify(walletsApi, atLeastOnce()).getBalanceByCurrencyAndWallet(anyString(), anyString());
     }
 
@@ -820,7 +820,7 @@ public class WalletServiceImplTest {
                 .getInternalWalletBalances();
         doReturn(Collections.singletonList(CoreCurrencyDto.builder().name("BTC").build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         PagedResult<BalancesDto> balancesSliceStatistic = walletService.getBalancesSliceStatistic(Collections.emptyList(), BigDecimal.ZERO, BigDecimal.ONE,
                 BigDecimal.ZERO, BigDecimal.ONE, 1, 0);
@@ -866,7 +866,7 @@ public class WalletServiceImplTest {
                 .getInternalWalletBalances();
         doReturn(Collections.singletonList(CoreCurrencyDto.builder().name("BTC").build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         PagedResult<BalancesDto> balancesSliceStatistic = walletService.getBalancesSliceStatistic(Collections.singletonList("BTC"), BigDecimal.ZERO, BigDecimal.TEN,
                 BigDecimal.ZERO, BigDecimal.TEN, 1, 0);
@@ -912,7 +912,7 @@ public class WalletServiceImplTest {
                 .getInternalWalletBalances();
         doReturn(Collections.singletonList(CoreCurrencyDto.builder().name("BTC").build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         PagedResult<BalancesDto> balancesSliceStatistic = walletService.getBalancesSliceStatistic(Collections.singletonList("BTC"), BigDecimal.ZERO, BigDecimal.TEN,
                 BigDecimal.ZERO, BigDecimal.TEN, 1, 0);
@@ -954,7 +954,7 @@ public class WalletServiceImplTest {
                 .getInternalWalletBalances();
         doReturn(Collections.singletonList(CoreCurrencyDto.builder().name("BTC").build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         PagedResult<BalancesDto> balancesSliceStatistic = walletService.getBalancesSliceStatistic(Collections.singletonList("BTC"), BigDecimal.ZERO, BigDecimal.TEN,
                 BigDecimal.ZERO, BigDecimal.TEN, 1, 0);
@@ -1000,7 +1000,7 @@ public class WalletServiceImplTest {
                 .getInternalWalletBalances();
         doReturn(Collections.singletonList(CoreCurrencyDto.builder().name("BTC").build()))
                 .when(coreCurrencyService)
-                .getActiveCachedCurrencies();
+                .getCachedActiveCurrencies();
 
         DashboardTwoDto dashboardTwo = walletService.getDashboardTwo(Collections.singletonList("BTC"), BigDecimal.ZERO, BigDecimal.TEN,
                 BigDecimal.ZERO, BigDecimal.TEN);
@@ -1017,6 +1017,6 @@ public class WalletServiceImplTest {
 
         verify(walletRepository, atLeastOnce()).getExternalMainWalletBalances();
         verify(walletRepository, atLeastOnce()).getInternalWalletBalances();
-        verify(coreCurrencyService, atLeastOnce()).getActiveCachedCurrencies();
+        verify(coreCurrencyService, atLeastOnce()).getCachedActiveCurrencies();
     }
 }

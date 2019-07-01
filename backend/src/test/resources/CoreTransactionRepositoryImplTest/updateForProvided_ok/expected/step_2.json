@@ -16,7 +16,7 @@
     "order_id" : null,
     "status_id" : "1",
     "status_modification_date" : "p(any)",
-    "active_balance_before" : "1.0",
+    "active_balance_before" : "10.0",
     "reserved_balance_before" : "1.0",
     "company_balance_before" : "1.0",
     "company_commission_balance_before" : "1.0",

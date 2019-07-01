@@ -108,7 +108,7 @@ public class WalletServiceImpl implements WalletService {
 
         final int allCurrenciesCount = coreCurrencyService.getCachedCurrencies().size();
 
-        final int activeCurrenciesCount = coreCurrencyService.getActiveCachedCurrencies().size();
+        final int activeCurrenciesCount = coreCurrencyService.getCachedActiveCurrencies().size();
 
         return DashboardOneDto.builder()
                 .exWalletBalancesUSDSum(exWalletSum)
@@ -154,7 +154,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     private Map<String, CoreCurrencyDto> getActiveCurrenciesMap() {
-        return coreCurrencyService.getActiveCachedCurrencies().stream()
+        return coreCurrencyService.getCachedActiveCurrencies().stream()
                 .collect(toMap(
                         CoreCurrencyDto::getName,
                         Function.identity()
@@ -229,7 +229,7 @@ public class WalletServiceImpl implements WalletService {
                     ? LocalDateTime.parse(data[3], FORMATTER)
                     : null;
 
-            CoreCurrencyDto currency = coreCurrencyService.findByName(currencySymbol);
+            CoreCurrencyDto currency = coreCurrencyService.findCachedCurrencyByName(currencySymbol);
             if (isNull(currency)) {
                 return;
             }
@@ -340,7 +340,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public BigDecimal getExternalReservedWalletBalance(Integer currencyId, String walletAddress) {
-        CoreCurrencyDto currency = coreCurrencyService.findById(currencyId);
+        CoreCurrencyDto currency = coreCurrencyService.findCachedCurrencyById(currencyId);
         if (isNull(currency)) {
             log.info("Currency with id: {} not found", currencyId);
             return null;
@@ -449,7 +449,7 @@ public class WalletServiceImpl implements WalletService {
 
         final int monitoredCurrenciesCount = redDeviationCount + greenDeviationCount + yellowDeviationCount;
 
-        final int activeCurrenciesCount = coreCurrencyService.getActiveCachedCurrencies().size();
+        final int activeCurrenciesCount = coreCurrencyService.getCachedActiveCurrencies().size();
 
         return DashboardTwoDto.builder()
                 .exWalletBalancesUSDSum(exWalletBalancesUSDSum)

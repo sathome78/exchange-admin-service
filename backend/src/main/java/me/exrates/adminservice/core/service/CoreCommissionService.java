@@ -6,5 +6,5 @@ import me.exrates.adminservice.core.domain.enums.UserRole;
 
 public interface CoreCommissionService {
 
-    CoreCommissionDto findCommissionByTypeAndRole(OperationType operationType, UserRole userRole);
+    CoreCommissionDto findCachedCommissionByTypeAndRole(OperationType operationType, UserRole userRole);
 }

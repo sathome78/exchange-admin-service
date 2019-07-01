@@ -2,10 +2,13 @@ package me.exrates.adminservice.core.repository.impl;
 
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
+import me.exrates.adminservice.core.domain.CoreCurrencyPairDto;
+import me.exrates.adminservice.core.domain.enums.CurrencyPairType;
 import me.exrates.adminservice.core.repository.CoreCurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 
@@ -26,7 +29,7 @@ public class CoreCurrencyRepositoryImpl implements CoreCurrencyRepository {
     }
 
     @Override
-    public CoreCurrencyDto findById(int id) {
+    public CoreCurrencyDto findCurrencyById(int id) {
         final String sql = "SELECT * FROM CURRENCY WHERE id = :id";
 
         try {
@@ -38,7 +41,7 @@ public class CoreCurrencyRepositoryImpl implements CoreCurrencyRepository {
     }
 
     @Override
-    public CoreCurrencyDto findByName(String name) {
+    public CoreCurrencyDto findCurrencyByName(String name) {
         final String sql = "SELECT * FROM CURRENCY WHERE name = :name";
 
         try {
@@ -84,5 +87,46 @@ public class CoreCurrencyRepositoryImpl implements CoreCurrencyRepository {
             log.warn("Failed to find currency by id: {}", currencyId);
             return null;
         }
+    }
+
+    @Override
+    public CoreCurrencyPairDto findCurrencyPairById(int id) {
+        final String sql = "SELECT " +
+                "cp.id AS currency_pair_id, " +
+                "cp.currency1_id, " +
+                "cp.currency2_id, " +
+                "cp.name AS currency_pair_name, " +
+                "cp.market, " +
+                "cp.type, " +
+                "(SELECT cur.name FROM CURRENCY cur WHERE cur.id = cp.currency1_id) AS currency1_name, " +
+                "(SELECT cur.name FROM CURRENCY cur WHERE cur.id = cp.currency2_id) AS currency2_name " +
+                "FROM CURRENCY_PAIR cp WHERE cp.id = :id";
+        
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        
+        try {
+            return npJdbcTemplate.queryForObject(sql, params, getCoreCurrencyPairDtoRowMapper());
+        } catch (Exception ex) {
+            log.warn("Failed to find currency pair by id: {}", id);
+            return null;
+        }
+    }
+
+    private RowMapper<CoreCurrencyPairDto> getCoreCurrencyPairDtoRowMapper() {
+        return (rs, idx) -> CoreCurrencyPairDto.builder()
+                .id(rs.getInt("currency_pair_id"))
+                .name(rs.getString("currency_pair_name"))
+                .pairType(CurrencyPairType.valueOf(rs.getString("type")))
+                .currency1(CoreCurrencyDto.builder()
+                        .id(rs.getInt("currency1_id"))
+                        .name(rs.getString("currency1_name"))
+                        .build())
+                .currency2(CoreCurrencyDto.builder()
+                        .id(rs.getInt("currency2_id"))
+                        .name(rs.getString("currency2_name"))
+                        .build())
+                .market(rs.getString("market"))
+                .build();
     }
 }

@@ -3,18 +3,24 @@ package me.exrates.adminservice.core.service.impl;
 import lombok.extern.log4j.Log4j2;
 import me.exrates.adminservice.core.domain.CoreCommissionDto;
 import me.exrates.adminservice.core.domain.CoreCompanyWalletDto;
+import me.exrates.adminservice.core.domain.CoreCurrencyPairDto;
+import me.exrates.adminservice.core.domain.CoreOrderDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
 import me.exrates.adminservice.core.domain.CoreWalletDto;
 import me.exrates.adminservice.core.domain.CoreWalletOperationDto;
 import me.exrates.adminservice.core.domain.FilterDto;
+import me.exrates.adminservice.core.domain.ReferralTransactionDto;
 import me.exrates.adminservice.core.domain.ReportDto;
 import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
+import me.exrates.adminservice.core.domain.UserReferralInfoDto;
 import me.exrates.adminservice.core.domain.enums.ActionType;
 import me.exrates.adminservice.core.domain.enums.OperationType;
+import me.exrates.adminservice.core.domain.enums.OrderBaseType;
 import me.exrates.adminservice.core.domain.enums.TransactionSourceType;
+import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.core.domain.enums.WalletTransferStatus;
 import me.exrates.adminservice.core.exceptions.AuthenticationNotAvailableException;
 import me.exrates.adminservice.core.exceptions.BalanceChangeException;
@@ -24,10 +30,12 @@ import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.core.service.CoreCommissionService;
 import me.exrates.adminservice.core.service.CoreCompanyWalletService;
 import me.exrates.adminservice.core.service.CoreCurrencyService;
+import me.exrates.adminservice.core.service.CoreOrderService;
 import me.exrates.adminservice.core.service.CoreUserService;
 import me.exrates.adminservice.core.service.CoreWalletService;
 import me.exrates.adminservice.domain.PagedResult;
-import me.exrates.adminservice.core.domain.enums.UserRole;
+import me.exrates.adminservice.domain.api.RateDto;
+import me.exrates.adminservice.services.ExchangeRatesService;
 import me.exrates.adminservice.utils.BigDecimalProcessingUtil;
 import me.exrates.adminservice.utils.ReportOneExcelGeneratorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,18 +52,25 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static me.exrates.adminservice.configurations.CacheConfiguration.USER_INFO_CACHE_BY_KEY;
+import static me.exrates.adminservice.configurations.CacheConfiguration.USER_REFERRAL_INFO_CACHE_BY_ID;
 import static me.exrates.adminservice.utils.CollectionUtil.isEmpty;
 
 @Log4j2
 @Service
 @Transactional
 public class CoreUserServiceImpl implements CoreUserService {
+
+    private static final String USD = "USD";
+    private static final String EDR = "EDR";
 
     private static final DateTimeFormatter FORMATTER_FOR_NAME = DateTimeFormatter.ofPattern("dd_MM_yyyy_HH_mm");
 
@@ -69,7 +84,10 @@ public class CoreUserServiceImpl implements CoreUserService {
     private final CoreCurrencyService coreCurrencyService;
     private final CoreCommissionService coreCommissionService;
     private final CoreCompanyWalletService coreCompanyWalletService;
+    private final CoreOrderService coreOrderService;
+    private final ExchangeRatesService ratesService;
     private final Cache userInfoCache;
+    private final Cache userReferralInfoCache;
 
     @Autowired
     public CoreUserServiceImpl(CoreUserRepository coreUserRepository,
@@ -77,13 +95,19 @@ public class CoreUserServiceImpl implements CoreUserService {
                                CoreCurrencyService coreCurrencyService,
                                CoreCommissionService coreCommissionService,
                                CoreCompanyWalletService coreCompanyWalletService,
-                               @Qualifier(USER_INFO_CACHE_BY_KEY) Cache userInfoCache) {
+                               CoreOrderService coreOrderService,
+                               ExchangeRatesService ratesService,
+                               @Qualifier(USER_INFO_CACHE_BY_KEY) Cache userInfoCache,
+                               @Qualifier(USER_REFERRAL_INFO_CACHE_BY_ID) Cache userReferralInfoCache) {
         this.coreUserRepository = coreUserRepository;
         this.coreWalletService = coreWalletService;
         this.coreCurrencyService = coreCurrencyService;
         this.coreCommissionService = coreCommissionService;
         this.coreCompanyWalletService = coreCompanyWalletService;
+        this.coreOrderService = coreOrderService;
+        this.ratesService = ratesService;
         this.userInfoCache = userInfoCache;
+        this.userReferralInfoCache = userReferralInfoCache;
     }
 
     @Transactional(readOnly = true)
@@ -178,7 +202,7 @@ public class CoreUserServiceImpl implements CoreUserService {
     }
 
     private void changeWalletActiveBalance(BigDecimal amount, CoreWalletDto wallet) {
-        CoreCommissionDto commission = coreCommissionService.findCommissionByTypeAndRole(OperationType.MANUAL, getUserRoleFromSecurityContext());
+        CoreCommissionDto commission = coreCommissionService.findCachedCommissionByTypeAndRole(OperationType.MANUAL, getUserRoleFromSecurityContext());
         BigDecimal commissionAmount = BigDecimalProcessingUtil.doAction(amount, commission.getValue(), ActionType.MULTIPLY_PERCENT);
 
         CoreWalletOperationDto walletOperationData = CoreWalletOperationDto.builder()
@@ -198,7 +222,7 @@ public class CoreUserServiceImpl implements CoreUserService {
         }
         if (commissionAmount.signum() > 0) {
 
-            CoreCompanyWalletDto companyWallet = coreCompanyWalletService.findByCurrency(coreCurrencyService.findById(wallet.getCurrencyId()));
+            CoreCompanyWalletDto companyWallet = coreCompanyWalletService.findByCurrency(coreCurrencyService.findCachedCurrencyById(wallet.getCurrencyId()));
             coreCompanyWalletService.deposit(companyWallet, BigDecimal.ZERO, commissionAmount);
         }
     }
@@ -212,7 +236,7 @@ public class CoreUserServiceImpl implements CoreUserService {
         final Integer userId = authority.getUserId();
         final List<CoreUserOperationAuthorityOptionDto> options = authority.getOptions();
 
-        final UserRole forUpdate = coreUserRepository.getUserRoleById(userId);
+        final UserRole forUpdate = this.getUserRoleById(userId);
 
         if (forUpdate == UserRole.ADMINISTRATOR) {
             throw new ForbiddenOperationException("Status modification not permitted");
@@ -228,7 +252,7 @@ public class CoreUserServiceImpl implements CoreUserService {
 
     @Override
     public void updateUserRole(UserRole newRole, Integer userId) {
-        final UserRole forUpdate = coreUserRepository.getUserRoleById(userId);
+        final UserRole forUpdate = this.getUserRoleById(userId);
 
         if (forUpdate == UserRole.ADMINISTRATOR) {
             throw new ForbiddenOperationException("Role modification not permitted");
@@ -242,9 +266,97 @@ public class CoreUserServiceImpl implements CoreUserService {
         return coreUserRepository.getAllRoles();
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public PagedResult<UserReferralInfoDto> getUserReferralInfo(Integer userId, Integer limit, Integer offset) {
+        Map<String, List<ReferralTransactionDto>> groupedByEmail = getCachedUserReferralTransactions(userId).stream()
+                .collect(groupingBy(ReferralTransactionDto::getInitiatorEmail));
+
+        final Map<String, RateDto> cachedRates = ratesService.getCachedRates();
+
+        final List<UserReferralInfoDto> userReferralInfoList = groupedByEmail.entrySet().stream()
+                .map(entry -> {
+                    final String initiatorEmail = entry.getKey();
+                    final List<ReferralTransactionDto> referralInfoList = entry.getValue();
+
+                    BigDecimal summaryAmount = referralInfoList.stream()
+                            .map(referralInfo -> {
+                                final int initiatorId = referralInfo.getInitiatorId();
+                                final int orderId = referralInfo.getOrderId();
+                                final BigDecimal percent = referralInfo.getReferralPercent();
+
+                                CoreOrderDto order = coreOrderService.findCachedOrderById(orderId);
+                                if (isNull(order)) {
+                                    return BigDecimal.ZERO;
+                                }
+                                CoreCurrencyPairDto currencyPair = coreCurrencyService.findCachedCurrencyPairById(order.getCurrencyPairId());
+                                if (isNull(currencyPair)) {
+                                    return BigDecimal.ZERO;
+                                }
+                                String currencyName = currencyPair.getCurrency2().getName();
+
+                                RateDto rate = cachedRates.getOrDefault(currencyName, RateDto.zeroRate(currencyName));
+                                BigDecimal usdRate = rate.getUsdRate();
+
+                                BigDecimal commission = BigDecimal.ZERO;
+                                if (initiatorId == order.getUserId()) {
+                                    commission = order.getCommissionFixedAmount();
+                                    if (!currencyName.equals(USD)) {
+                                        commission = BigDecimalProcessingUtil.doAction(commission, usdRate, ActionType.MULTIPLY);
+                                    }
+                                } else if (initiatorId == order.getUserAcceptorId()) {
+                                    OperationType operationTypeForAcceptor = order.getOperationType() == OperationType.BUY ? OperationType.SELL : OperationType.BUY;
+
+                                    CoreCommissionDto commissionForAcceptor;
+                                    if (order.getOrderBaseType() == OrderBaseType.ICO || currencyPair.getName().contains(EDR)) {
+                                        commissionForAcceptor = CoreCommissionDto.zeroComission();
+                                    } else {
+                                        commissionForAcceptor = coreCommissionService.findCachedCommissionByTypeAndRole(operationTypeForAcceptor, this.getUserRoleById(order.getUserAcceptorId()));
+                                    }
+                                    commission = BigDecimalProcessingUtil.doAction(order.getAmountConvert(), commissionForAcceptor.getValue(), ActionType.MULTIPLY_PERCENT);
+                                    if (!currencyName.equals(USD)) {
+                                        commission = BigDecimalProcessingUtil.doAction(commission, usdRate, ActionType.MULTIPLY);
+                                    }
+                                }
+                                return BigDecimalProcessingUtil.doAction(commission, percent, ActionType.MULTIPLY_PERCENT);
+                            })
+                            .reduce(BigDecimal::add)
+                            .orElse(BigDecimal.ZERO);
+                    return UserReferralInfoDto.builder()
+                            .email(initiatorEmail)
+                            .referralLevel(referralInfoList.get(0).getReferralLevel())
+                            .summaryAmount(summaryAmount)
+                            .build();
+                })
+                .collect(toList());
+
+        int recordsCount = userReferralInfoList.size();
+
+        List<UserReferralInfoDto> items = Collections.emptyList();
+        if (recordsCount > 0) {
+            items = userReferralInfoList.stream()
+                    .skip(offset)
+                    .limit(limit)
+                    .collect(toList());
+        }
+        PagedResult<UserReferralInfoDto> pagedResult = new PagedResult<>();
+        pagedResult.setCount(recordsCount);
+        pagedResult.setItems(items);
+        return pagedResult;
+    }
+
+    private List<ReferralTransactionDto> getCachedUserReferralTransactions(Integer userId) {
+        return userReferralInfoCache.get(userId, () -> coreUserRepository.getUserReferralTransactionList(userId));
+    }
+
+    @Transactional(readOnly = true)
+    public UserRole getUserRoleById(int id) {
+        return coreUserRepository.getUserRoleById(id);
+    }
+
     private String getUserEmailFromSecurityContext() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (Objects.isNull(auth)) {
+        if (isNull(auth)) {
             throw new AuthenticationNotAvailableException();
         }
         return auth.getName();
@@ -253,7 +365,7 @@ public class CoreUserServiceImpl implements CoreUserService {
     private UserRole getUserRoleFromSecurityContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (Objects.isNull(authentication)) {
+        if (isNull(authentication)) {
             throw new AuthenticationNotAvailableException();
         }
         String grantedAuthority = authentication.getAuthorities().

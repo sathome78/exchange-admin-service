@@ -26,6 +26,6 @@ public class CurrencyController {
 
     @GetMapping("/retrieve/active-currencies")
     public ResponseEntity<List<CoreCurrencyDto>> retrieveDashboardOne() {
-        return ResponseEntity.ok(coreCurrencyService.getActiveCachedCurrencies());
+        return ResponseEntity.ok(coreCurrencyService.getCachedActiveCurrencies());
     }
 }

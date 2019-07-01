@@ -7,6 +7,7 @@ import me.exrates.adminservice.core.domain.FilterDto;
 import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
+import me.exrates.adminservice.core.domain.ReferralTransactionDto;
 import me.exrates.adminservice.core.domain.enums.UserOperationAuthority;
 import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.core.domain.enums.UserStatus;
@@ -27,7 +28,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -144,9 +144,13 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
 
         final List<Integer> allUsers = coreNPTemplate.queryForList(sql, Collections.emptyMap(), Integer.class);
 
-        sql = "SELECT u.id FROM USER u WHERE u.kyc_status = 'SUCCESS' OR (u.kyc_status = 'ACCEPTED' AND u.kyc_verification_step = 2)";
+        sql = "SELECT u.id FROM USER u WHERE u.kyc_status = \'SUCCESS\' OR (u.kyc_status = \'ACCEPTED\' AND u.kyc_verification_step = 2)";
 
         final List<Integer> allVerifiedUsers = coreNPTemplate.queryForList(sql, Collections.emptyMap(), Integer.class);
+
+        sql = "SELECT MAX(aut.expired_at) FROM API_AUTH_TOKEN aut WHERE aut.expired_at > NOW() GROUP BY aut.username";
+
+        final List<Integer> allOnlineUsers = coreNPTemplate.queryForList(sql, Collections.emptyMap(), Integer.class);
 
         sql = "SELECT u.id FROM USER u WHERE u.status = 3";
 
@@ -155,7 +159,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         return UserDashboardDto.builder()
                 .allUsersCount(allUsers.size())
                 .allVerifiedUsersCount(allVerifiedUsers.size())
-                .allOnlineUsersCount(0) //TODO: not implemented yet
+                .allOnlineUsersCount(allOnlineUsers.size())
                 .allBlockedUsersCount(allBlockedUsers.size())
                 .build();
     }
@@ -180,10 +184,17 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
             registrationDateClause = "AGR.registration_date <= :registered_to AND ";
         }
 
-        String lastEntryDateClause = StringUtils.EMPTY;
+        String lastLoginDateClause = StringUtils.EMPTY;
+        if (nonNull(filter.getLastLoginFrom()) && nonNull(filter.getLastLoginTo())) {
+            lastLoginDateClause = "AGR.last_login_date BETWEEN :last_login_from AND :last_login_to AND ";
+        } else if (nonNull(filter.getLastLoginFrom())) {
+            lastLoginDateClause = "AGR.last_login_date >= :last_login_from AND ";
+        } else if (nonNull(filter.getLastLoginTo())) {
+            lastLoginDateClause = "AGR.last_login_date <= :last_login_to AND ";
+        }
 
         String verificationStatusClause = filter.isVerified()
-                ? "AGR.verification_status = 'SUCCESS' OR (AGR.verification_status = 'ACCEPTED' AND AGR.verification_step = 2) AND "
+                ? "AGR.verification_status = \'SUCCESS\' OR (AGR.verification_status = \'ACCEPTED\' AND AGR.verification_step = 2) AND "
                 : StringUtils.EMPTY;
 
         String closedOrdersCountClause = StringUtils.EMPTY;
@@ -226,11 +237,21 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "u.status AS status_id, " +
                 "SUM((w.active_balance + w.reserved_balance) * ccr.usd_rate) AS balance, " +
                 "u.regdate AS registration_date, " +
+                "(SELECT MAX(ipl.date) " +
+                " FROM IP_Log ipl " +
+                " WHERE ipl.user_id = u.id AND ipl.event = \'LOGIN_SUCCESS\' " +
+                " GROUP BY ipl.user_id) AS last_login_date, " +
                 "u.kyc_status AS verification_status, " +
                 "u.kyc_verification_step AS verification_step, " +
-                "(SELECT COUNT(o.id) FROM EXORDERS o WHERE o.user_id = u.id AND o.status_id = 3) AS closed_orders, " +
-                "(SELECT COUNT(rr.id) FROM REFILL_REQUEST rr WHERE rr.user_id = u.id AND rr.status_id IN (9, 10)) AS success_input, " +
-                "(SELECT COUNT(wr.id) FROM WITHDRAW_REQUEST wr WHERE wr.user_id = u.id AND wr.status_id IN (9, 10)) AS success_output " +
+                "(SELECT COUNT(o.id) " +
+                " FROM EXORDERS o " +
+                " WHERE o.user_id = u.id AND o.status_id = 3) AS closed_orders, " +
+                "(SELECT COUNT(rr.id) " +
+                " FROM REFILL_REQUEST rr " +
+                " WHERE rr.user_id = u.id AND rr.status_id IN (9, 10)) AS success_input, " +
+                "(SELECT COUNT(wr.id) " +
+                " FROM WITHDRAW_REQUEST wr " +
+                " WHERE wr.user_id = u.id AND wr.status_id IN (9, 10)) AS success_output " +
                 "FROM USER u " +
                 "JOIN USER_ROLE ur ON ur.id = u.roleid " +
                 (nonNull(filter.getRole()) ? "AND ur.name IN (:user_role) " : StringUtils.EMPTY) +
@@ -243,7 +264,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "WHERE " +
                 balanceClause +
                 registrationDateClause +
-                lastEntryDateClause +
+                lastLoginDateClause +
                 verificationStatusClause +
                 closedOrdersCountClause +
                 refillRequestCountClause +
@@ -268,6 +289,14 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
             params.put("registered_from", Date.valueOf(filter.getRegisteredFrom()));
         } else if (nonNull(filter.getRegisteredTo())) {
             params.put("registered_to", Date.valueOf(filter.getRegisteredTo()));
+        }
+        if (nonNull(filter.getLastLoginFrom()) && nonNull(filter.getLastLoginTo())) {
+            params.put("last_login_from", Date.valueOf(filter.getLastLoginFrom()));
+            params.put("last_login_to", Date.valueOf(filter.getLastLoginTo()));
+        } else if (nonNull(filter.getLastLoginFrom())) {
+            params.put("last_login_from", Date.valueOf(filter.getLastLoginFrom()));
+        } else if (nonNull(filter.getLastLoginTo())) {
+            params.put("last_login_to", Date.valueOf(filter.getLastLoginTo()));
         }
         if (nonNull(filter.getMinClosedOrders()) && nonNull(filter.getMaxClosedOrders())) {
             params.put("min_closed_orders", filter.getMinClosedOrders());
@@ -327,10 +356,17 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
             registrationDateClause = "AGR.registration_date <= :registered_to AND ";
         }
 
-        String lastEntryDateClause = StringUtils.EMPTY;
+        String lastLoginDateClause = StringUtils.EMPTY;
+        if (nonNull(filter.getLastLoginFrom()) && nonNull(filter.getLastLoginTo())) {
+            lastLoginDateClause = "AGR.last_login_date BETWEEN :last_login_from AND :last_login_to AND ";
+        } else if (nonNull(filter.getLastLoginFrom())) {
+            lastLoginDateClause = "AGR.last_login_date >= :last_login_from AND ";
+        } else if (nonNull(filter.getLastLoginTo())) {
+            lastLoginDateClause = "AGR.last_login_date <= :last_login_to AND ";
+        }
 
         String verificationStatusClause = filter.isVerified()
-                ? "AGR.verification_status = 'SUCCESS' OR (AGR.verification_status = 'ACCEPTED' AND AGR.verification_step = 2) AND "
+                ? "AGR.verification_status = \'SUCCESS\' OR (AGR.verification_status = \'ACCEPTED\' AND AGR.verification_step = 2) AND "
                 : StringUtils.EMPTY;
 
         String closedOrdersCountClause = StringUtils.EMPTY;
@@ -373,6 +409,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "AGR.country, " +
                 "AGR.balance, " +
                 "AGR.registration_date, " +
+                "AGR.last_login_date, " +
                 "AGR.phone, " +
                 "AGR.verification_status, " +
                 "AGR.role_name, " +
@@ -386,14 +423,24 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "u.country, " +
                 "SUM((w.active_balance + w.reserved_balance) * ccr.usd_rate) AS balance, " +
                 "u.regdate AS registration_date, " +
+                "(SELECT MAX(ipl.date) " +
+                " FROM IP_Log ipl " +
+                " WHERE ipl.user_id = u.id AND ipl.event = \'LOGIN_SUCCESS\' " +
+                " GROUP BY ipl.user_id) AS last_login_date, " +
                 "u.phone, " +
                 "u.kyc_status AS verification_status, " +
                 "u.kyc_verification_step AS verification_step, " +
                 "ur.name AS role_name, " +
                 "u.status AS status_id, " +
-                "(SELECT COUNT(o.id) FROM EXORDERS o WHERE o.user_id = u.id AND o.status_id = 3) AS closed_orders, " +
-                "(SELECT COUNT(rr.id) FROM REFILL_REQUEST rr WHERE rr.user_id = u.id AND rr.status_id IN (9, 10)) AS success_input, " +
-                "(SELECT COUNT(wr.id) FROM WITHDRAW_REQUEST wr WHERE wr.user_id = u.id AND wr.status_id IN (9, 10)) AS success_output " +
+                "(SELECT COUNT(o.id) " +
+                " FROM EXORDERS o " +
+                " WHERE o.user_id = u.id AND o.status_id = 3) AS closed_orders, " +
+                "(SELECT COUNT(rr.id) " +
+                " FROM REFILL_REQUEST rr " +
+                " WHERE rr.user_id = u.id AND rr.status_id IN (9, 10)) AS success_input, " +
+                "(SELECT COUNT(wr.id) " +
+                " FROM WITHDRAW_REQUEST wr " +
+                " WHERE wr.user_id = u.id AND wr.status_id IN (9, 10)) AS success_output " +
                 "FROM USER u " +
                 "JOIN USER_ROLE ur ON ur.id = u.roleid " +
                 (nonNull(filter.getRole()) ? "AND ur.name IN (:user_role) " : StringUtils.EMPTY) +
@@ -406,7 +453,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "WHERE " +
                 balanceClause +
                 registrationDateClause +
-                lastEntryDateClause +
+                lastLoginDateClause +
                 verificationStatusClause +
                 closedOrdersCountClause +
                 refillRequestCountClause +
@@ -431,6 +478,14 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
             params.put("registered_from", Date.valueOf(filter.getRegisteredFrom()));
         } else if (nonNull(filter.getRegisteredTo())) {
             params.put("registered_to", Date.valueOf(filter.getRegisteredTo()));
+        }
+        if (nonNull(filter.getLastLoginFrom()) && nonNull(filter.getLastLoginTo())) {
+            params.put("last_login_from", Date.valueOf(filter.getLastLoginFrom()));
+            params.put("last_login_to", Date.valueOf(filter.getLastLoginTo()));
+        } else if (nonNull(filter.getLastLoginFrom())) {
+            params.put("last_login_from", Date.valueOf(filter.getLastLoginFrom()));
+        } else if (nonNull(filter.getLastLoginTo())) {
+            params.put("last_login_to", Date.valueOf(filter.getLastLoginTo()));
         }
         if (nonNull(filter.getMinClosedOrders()) && nonNull(filter.getMaxClosedOrders())) {
             params.put("min_closed_orders", filter.getMinClosedOrders());
@@ -476,6 +531,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "AGR.country, " +
                 "AGR.balance, " +
                 "AGR.registration_date, " +
+                "AGR.last_login_date, " +
                 "AGR.phone, " +
                 "AGR.verification_status, " +
                 "AGR.role_name, " +
@@ -489,6 +545,10 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 "u.country, " +
                 "SUM((w.active_balance + w.reserved_balance) * ccr.usd_rate) AS balance, " +
                 "u.regdate AS registration_date, " +
+                "(SELECT MAX(ipl.date) " +
+                " FROM IP_Log ipl " +
+                " WHERE ipl.user_id = u.id AND ipl.event = \'LOGIN_SUCCESS\' " +
+                " GROUP BY ipl.user_id) AS last_login_date, " +
                 "u.phone, " +
                 "u.kyc_status AS verification_status, " +
                 "u.kyc_verification_step AS verification_step, " +
@@ -637,6 +697,25 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
         return coreNPTemplate.query(sql, (rs, row) -> UserRole.valueOf(rs.getString("name")));
     }
 
+    @Override
+    public List<ReferralTransactionDto> getUserReferralTransactionList(Integer userId) {
+        final String sql = "SELECT " +
+                "child.id AS initiator_id, " +
+                "child.email AS initiator_email, " +
+                "rl.level AS referral_level, " +
+                "rl.percent AS referral_percent, " +
+                "rt.order_id " +
+                "FROM REFERRAL_TRANSACTION rt " +
+                "JOIN USER child ON child.id = rt.initiator_id " +
+                "JOIN REFERRAL_LEVEL rl ON rl.id = rt.referral_level_id " +
+                "WHERE rt.user_id = :user_id AND rt.status = \'PAYED\'";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+
+        return coreNPTemplate.query(sql, params, getUserReferralInfoDtoRowMapper());
+    }
+
     private RowMapper<CoreUser> getCoreUserRowMapper() {
         return (rs, i) -> CoreUser.builder()
                 .userId(rs.getInt(CoreUserRepository.COL_USER_ID))
@@ -661,7 +740,7 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 .country(rs.getString("country"))
                 .balanceSumUsd(rs.getBigDecimal("balance"))
                 .registrationDate(rs.getTimestamp("registration_date").toLocalDateTime())
-                .lastEntryDate(LocalDateTime.MIN) //TODO: not implemented yet
+                .lastLoginDate(rs.getTimestamp("last_login_date").toLocalDateTime())
                 .phone(rs.getString("phone"))
                 .verificationStatus(rs.getString("verification_status"))
                 .role(UserRole.valueOf(rs.getString("role_name")))
@@ -679,6 +758,16 @@ public class CoreUserRepositoryImpl implements CoreUserRepository {
                 .activeBalance(rs.getBigDecimal("active_balance"))
                 .reservedBalance(rs.getBigDecimal("reserved_balance"))
                 .commonBalance(rs.getBigDecimal("common_balance"))
+                .build();
+    }
+
+    private RowMapper<ReferralTransactionDto> getUserReferralInfoDtoRowMapper() {
+        return (rs, idx) -> ReferralTransactionDto.builder()
+                .initiatorId(rs.getInt("initiator_id"))
+                .initiatorEmail(rs.getString("initiator_email"))
+                .referralLevel(rs.getInt("referral_level"))
+                .referralPercent(rs.getBigDecimal("referral_percent"))
+                .orderId(rs.getInt("order_id"))
                 .build();
     }
 }

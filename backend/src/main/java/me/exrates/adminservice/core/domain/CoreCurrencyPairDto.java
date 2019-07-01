@@ -1,6 +1,8 @@
 package me.exrates.adminservice.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.exrates.adminservice.core.domain.enums.CurrencyPairType;
@@ -10,7 +12,9 @@ import java.io.Serializable;
 
 @Component
 @Data
+@Builder(builderClassName = "Builder", toBuilder = true)
 @NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CoreCurrencyPairDto implements Serializable {
     private int id;

@@ -8,6 +8,7 @@ import me.exrates.adminservice.core.domain.FilterDto;
 import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
+import me.exrates.adminservice.core.domain.ReferralTransactionDto;
 import me.exrates.adminservice.core.domain.enums.UserOperationAuthority;
 import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.core.exceptions.UserNotFoundException;
@@ -102,7 +103,7 @@ public class CoreUserRepositoryImplTest extends DataComparisonTest {
     public void findAllUsersIdAndEmail() {
         final Map<Integer, String> users = coreUserRepository.findAllUsersIdAndEmail();
 
-        assertEquals(3, users.size());
+        assertEquals(5, users.size());
         assertTrue(users.containsKey(1));
         assertEquals("admin@exrates.me", users.get(1));
     }
@@ -138,8 +139,8 @@ public class CoreUserRepositoryImplTest extends DataComparisonTest {
         UserDashboardDto usersDashboard = coreUserRepository.getUsersDashboard();
 
         assertNotNull(usersDashboard);
-        assertEquals(3, usersDashboard.getAllUsersCount().intValue());
-        assertEquals(2, usersDashboard.getAllVerifiedUsersCount().intValue());
+        assertEquals(5, usersDashboard.getAllUsersCount().intValue());
+        assertEquals(3, usersDashboard.getAllVerifiedUsersCount().intValue());
         assertEquals(1, usersDashboard.getAllBlockedUsersCount().intValue());
         assertEquals(0, usersDashboard.getAllOnlineUsersCount().intValue());
     }
@@ -250,6 +251,23 @@ public class CoreUserRepositoryImplTest extends DataComparisonTest {
         assertNotNull(roles);
         assertFalse(roles.isEmpty());
         assertEquals(12, roles.size());
+    }
+
+    @Test
+    public void getUserReferralInfoList_ok() {
+        List<ReferralTransactionDto> referrals = coreUserRepository.getUserReferralTransactionList(1);
+
+        assertNotNull(referrals);
+        assertFalse(referrals.isEmpty());
+        assertEquals(1, referrals.size());
+    }
+
+    @Test
+    public void getUserReferralInfoList_not_found() {
+        List<ReferralTransactionDto> referrals = coreUserRepository.getUserReferralTransactionList(0);
+
+        assertNotNull(referrals);
+        assertTrue(referrals.isEmpty());
     }
 
     @Configuration

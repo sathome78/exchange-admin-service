@@ -4,29 +4,38 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import me.exrates.adminservice.core.domain.CoreCommissionDto;
 import me.exrates.adminservice.core.domain.CoreCompanyWalletDto;
 import me.exrates.adminservice.core.domain.CoreCurrencyDto;
+import me.exrates.adminservice.core.domain.CoreCurrencyPairDto;
+import me.exrates.adminservice.core.domain.CoreOrderDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityDto;
 import me.exrates.adminservice.core.domain.CoreUserOperationAuthorityOptionDto;
 import me.exrates.adminservice.core.domain.CoreWalletDto;
 import me.exrates.adminservice.core.domain.CoreWalletOperationDto;
 import me.exrates.adminservice.core.domain.FilterDto;
+import me.exrates.adminservice.core.domain.ReferralTransactionDto;
 import me.exrates.adminservice.core.domain.ReportDto;
 import me.exrates.adminservice.core.domain.UserBalancesInfoDto;
 import me.exrates.adminservice.core.domain.UserDashboardDto;
 import me.exrates.adminservice.core.domain.UserInfoDto;
+import me.exrates.adminservice.core.domain.UserReferralInfoDto;
 import me.exrates.adminservice.core.domain.enums.OperationType;
+import me.exrates.adminservice.core.domain.enums.OrderBaseType;
 import me.exrates.adminservice.core.domain.enums.UserRole;
 import me.exrates.adminservice.core.domain.enums.UserStatus;
 import me.exrates.adminservice.core.domain.enums.WalletTransferStatus;
 import me.exrates.adminservice.core.exceptions.BalanceChangeException;
 import me.exrates.adminservice.core.exceptions.ForbiddenOperationException;
 import me.exrates.adminservice.core.exceptions.InvalidAmountException;
+import me.exrates.adminservice.core.exceptions.UserRoleNotFoundException;
 import me.exrates.adminservice.core.repository.CoreUserRepository;
 import me.exrates.adminservice.core.service.CoreCommissionService;
 import me.exrates.adminservice.core.service.CoreCompanyWalletService;
 import me.exrates.adminservice.core.service.CoreCurrencyService;
+import me.exrates.adminservice.core.service.CoreOrderService;
 import me.exrates.adminservice.core.service.CoreUserService;
 import me.exrates.adminservice.core.service.CoreWalletService;
 import me.exrates.adminservice.domain.PagedResult;
+import me.exrates.adminservice.domain.api.RateDto;
+import me.exrates.adminservice.services.ExchangeRatesService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,6 +81,7 @@ import static org.mockito.Mockito.when;
 public class CoreUserServiceImplTest {
 
     private static final String USER_INFO_CACHE_BY_KEY_TEST = "user-info-cache-by-key-test";
+    private static final String USER_REFERRAL_CACHE_BY_ID_TEST = "user-referral-cache-by-id-test";
 
     @Mock
     private CoreUserRepository coreUserRepository;
@@ -83,9 +93,16 @@ public class CoreUserServiceImplTest {
     private CoreCommissionService coreCommissionService;
     @Mock
     private CoreCompanyWalletService coreCompanyWalletService;
+    @Mock
+    private CoreOrderService coreOrderService;
+    @Mock
+    private ExchangeRatesService ratesService;
     @Autowired
     @Qualifier(USER_INFO_CACHE_BY_KEY_TEST)
     private Cache userInfoCacheByKey;
+    @Autowired
+    @Qualifier(USER_REFERRAL_CACHE_BY_ID_TEST)
+    private Cache userReferralInfoCache;
 
     private CoreUserService coreUserService;
 
@@ -106,7 +123,7 @@ public class CoreUserServiceImplTest {
                 .country("Ukraine")
                 .balanceSumUsd(BigDecimal.TEN)
                 .registrationDate(LocalDateTime.now().minusDays(1))
-                .lastEntryDate(LocalDateTime.now())
+                .lastLoginDate(LocalDateTime.now())
                 .phone("+31111111")
                 .verificationStatus("SUCCESS")
                 .role(UserRole.USER)
@@ -118,6 +135,7 @@ public class CoreUserServiceImplTest {
         final String cacheKey = filterDto.buildCacheKey(15, 0);
 
         userInfoCacheByKey.put(cacheKey, pagedResult);
+        userReferralInfoCache.put(1, Collections.singletonList(ReferralTransactionDto.builder().build()));
 
         coreUserService = spy(new CoreUserServiceImpl(
                 coreUserRepository,
@@ -125,7 +143,10 @@ public class CoreUserServiceImplTest {
                 coreCurrencyService,
                 coreCommissionService,
                 coreCompanyWalletService,
-                userInfoCacheByKey));
+                coreOrderService,
+                ratesService,
+                userInfoCacheByKey,
+                userReferralInfoCache));
     }
 
     @Test
@@ -282,7 +303,7 @@ public class CoreUserServiceImplTest {
                 .isUserAllowedToManuallyChangeWalletBalance(anyInt(), anyInt());
         doReturn(CoreCommissionDto.builder().value(BigDecimal.ONE).build())
                 .when(coreCommissionService)
-                .findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+                .findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         doReturn(WalletTransferStatus.SUCCESS)
                 .when(coreWalletService)
                 .walletBalanceChange(any(CoreWalletOperationDto.class));
@@ -291,7 +312,7 @@ public class CoreUserServiceImplTest {
                 .findByCurrency(any(CoreCurrencyDto.class));
         doReturn(CoreCurrencyDto.builder().build())
                 .when(coreCurrencyService)
-                .findById(anyInt());
+                .findCachedCurrencyById(anyInt());
         doNothing()
                 .when(coreCompanyWalletService)
                 .deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
@@ -300,10 +321,10 @@ public class CoreUserServiceImplTest {
 
         verify(coreWalletService, atLeastOnce()).findByUserAndCurrency(anyInt(), anyInt());
         verify(coreWalletService, atLeastOnce()).isUserAllowedToManuallyChangeWalletBalance(anyInt(), anyInt());
-        verify(coreCommissionService, atLeastOnce()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+        verify(coreCommissionService, atLeastOnce()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, atLeastOnce()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, atLeastOnce()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, atLeastOnce()).findById(anyInt());
+        verify(coreCurrencyService, atLeastOnce()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, atLeastOnce()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -314,10 +335,10 @@ public class CoreUserServiceImplTest {
 
         verify(coreWalletService, never()).findByUserAndCurrency(anyInt(), anyInt());
         verify(coreWalletService, never()).isUserAllowedToManuallyChangeWalletBalance(anyInt(), anyInt());
-        verify(coreCommissionService, never()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+        verify(coreCommissionService, never()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, never()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, never()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, never()).findById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, never()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -331,10 +352,10 @@ public class CoreUserServiceImplTest {
 
         verify(coreWalletService, atLeastOnce()).findByUserAndCurrency(anyInt(), anyInt());
         verify(coreWalletService, never()).isUserAllowedToManuallyChangeWalletBalance(anyInt(), anyInt());
-        verify(coreCommissionService, never()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+        verify(coreCommissionService, never()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, never()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, never()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, never()).findById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, never()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -351,10 +372,10 @@ public class CoreUserServiceImplTest {
 
         verify(coreWalletService, atLeastOnce()).findByUserAndCurrency(anyInt(), anyInt());
         verify(coreWalletService, atLeastOnce()).isUserAllowedToManuallyChangeWalletBalance(anyInt(), anyInt());
-        verify(coreCommissionService, never()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+        verify(coreCommissionService, never()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, never()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, never()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, never()).findById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, never()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -368,7 +389,7 @@ public class CoreUserServiceImplTest {
                 .isUserAllowedToManuallyChangeWalletBalance(anyInt(), anyInt());
         doReturn(CoreCommissionDto.builder().value(BigDecimal.ONE).build())
                 .when(coreCommissionService)
-                .findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+                .findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         doReturn(WalletTransferStatus.WALLET_UPDATE_ERROR)
                 .when(coreWalletService)
                 .walletBalanceChange(any(CoreWalletOperationDto.class));
@@ -377,10 +398,10 @@ public class CoreUserServiceImplTest {
 
         verify(coreWalletService, atLeastOnce()).findByUserAndCurrency(anyInt(), anyInt());
         verify(coreWalletService, atLeastOnce()).isUserAllowedToManuallyChangeWalletBalance(anyInt(), anyInt());
-        verify(coreCommissionService, atLeastOnce()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+        verify(coreCommissionService, atLeastOnce()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, atLeastOnce()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, never()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, never()).findById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, never()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -394,7 +415,7 @@ public class CoreUserServiceImplTest {
                 .isUserAllowedToManuallyChangeWalletBalance(anyInt(), anyInt());
         doReturn(CoreCommissionDto.builder().value(BigDecimal.ONE).build())
                 .when(coreCommissionService)
-                .findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+                .findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         doReturn(WalletTransferStatus.SUCCESS)
                 .when(coreWalletService)
                 .walletBalanceChange(any(CoreWalletOperationDto.class));
@@ -403,10 +424,10 @@ public class CoreUserServiceImplTest {
 
         verify(coreWalletService, atLeastOnce()).findByUserAndCurrency(anyInt(), anyInt());
         verify(coreWalletService, atLeastOnce()).isUserAllowedToManuallyChangeWalletBalance(anyInt(), anyInt());
-        verify(coreCommissionService, atLeastOnce()).findCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+        verify(coreCommissionService, atLeastOnce()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
         verify(coreWalletService, atLeastOnce()).walletBalanceChange(any(CoreWalletOperationDto.class));
         verify(coreCompanyWalletService, never()).findByCurrency(any(CoreCurrencyDto.class));
-        verify(coreCurrencyService, never()).findById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyById(anyInt());
         verify(coreCompanyWalletService, never()).deposit(any(CoreCompanyWalletDto.class), any(BigDecimal.class), any(BigDecimal.class));
     }
 
@@ -514,12 +535,330 @@ public class CoreUserServiceImplTest {
         verify(coreUserRepository, atLeastOnce()).getAllRoles();
     }
 
+    @Test
+    public void getUserReferralInfo_initiator_email_equal_user_id() {
+        userReferralInfoCache.clear();
+
+        doReturn(Collections.singletonList(ReferralTransactionDto.builder()
+                .orderId(1)
+                .initiatorId(1)
+                .initiatorEmail("initiator@example.com")
+                .referralLevel(1)
+                .referralPercent(BigDecimal.TEN)
+                .build()))
+                .when(coreUserRepository)
+                .getUserReferralTransactionList(anyInt());
+        doReturn(Collections.singletonMap("ETH", RateDto.builder()
+                .usdRate(BigDecimal.ONE)
+                .btcRate(BigDecimal.TEN)
+                .build()))
+                .when(ratesService)
+                .getCachedRates();
+        doReturn(CoreOrderDto.builder()
+                .currencyPairId(1)
+                .userId(1)
+                .userAcceptorId(2)
+                .commissionFixedAmount(BigDecimal.ONE)
+                .operationType(OperationType.INPUT)
+                .orderBaseType(OrderBaseType.LIMIT)
+                .amountBase(BigDecimal.valueOf(100))
+                .amountConvert(BigDecimal.valueOf(200))
+                .build())
+                .when(coreOrderService)
+                .findCachedOrderById(anyInt());
+        doReturn(CoreCurrencyPairDto.builder()
+                .name("BTC/ETH")
+                .currency2(CoreCurrencyDto.builder()
+                        .name("ETH")
+                        .build())
+                .build())
+                .when(coreCurrencyService)
+                .findCachedCurrencyPairById(anyInt());
+
+        PagedResult<UserReferralInfoDto> userReferralInfo = coreUserService.getUserReferralInfo(1, 15, 0);
+
+        assertNotNull(userReferralInfo);
+        assertNotNull(userReferralInfo.getItems());
+        assertFalse(userReferralInfo.getItems().isEmpty());
+        assertEquals(1, userReferralInfo.getItems().size());
+        assertEquals(1, userReferralInfo.getCount());
+
+        verify(coreUserRepository, atLeastOnce()).getUserReferralTransactionList(anyInt());
+        verify(ratesService, atLeastOnce()).getCachedRates();
+        verify(coreOrderService, atLeastOnce()).findCachedOrderById(anyInt());
+        verify(coreCurrencyService, atLeastOnce()).findCachedCurrencyPairById(anyInt());
+        verify(coreCommissionService, never()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+    }
+
+    @Test
+    public void getUserReferralInfo_initiator_email_equal_user_acceptor_id() {
+        userReferralInfoCache.clear();
+
+        doReturn(Collections.singletonList(ReferralTransactionDto.builder()
+                .orderId(1)
+                .initiatorId(2)
+                .initiatorEmail("initiator@example.com")
+                .referralLevel(1)
+                .referralPercent(BigDecimal.TEN)
+                .build()))
+                .when(coreUserRepository)
+                .getUserReferralTransactionList(anyInt());
+        doReturn(Collections.singletonMap("ETH", RateDto.builder()
+                .usdRate(BigDecimal.ONE)
+                .btcRate(BigDecimal.TEN)
+                .build()))
+                .when(ratesService)
+                .getCachedRates();
+        doReturn(CoreOrderDto.builder()
+                .currencyPairId(1)
+                .userId(1)
+                .userAcceptorId(2)
+                .commissionFixedAmount(BigDecimal.ONE)
+                .operationType(OperationType.INPUT)
+                .orderBaseType(OrderBaseType.LIMIT)
+                .amountBase(BigDecimal.valueOf(100))
+                .amountConvert(BigDecimal.valueOf(200))
+                .build())
+                .when(coreOrderService)
+                .findCachedOrderById(anyInt());
+        doReturn(CoreCurrencyPairDto.builder()
+                .name("BTC/ETH")
+                .currency2(CoreCurrencyDto.builder()
+                        .name("ETH")
+                        .build())
+                .build())
+                .when(coreCurrencyService)
+                .findCachedCurrencyPairById(anyInt());
+        doReturn(CoreCommissionDto.builder()
+                .value(BigDecimal.valueOf(3))
+                .build())
+                .when(coreCommissionService)
+                .findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+        doReturn(UserRole.USER)
+                .when(coreUserRepository)
+                .getUserRoleById(anyInt());
+
+        PagedResult<UserReferralInfoDto> userReferralInfo = coreUserService.getUserReferralInfo(1, 15, 0);
+
+        assertNotNull(userReferralInfo);
+        assertNotNull(userReferralInfo.getItems());
+        assertFalse(userReferralInfo.getItems().isEmpty());
+        assertEquals(1, userReferralInfo.getItems().size());
+        assertEquals(1, userReferralInfo.getCount());
+
+        verify(coreUserRepository, atLeastOnce()).getUserReferralTransactionList(anyInt());
+        verify(ratesService, atLeastOnce()).getCachedRates();
+        verify(coreOrderService, atLeastOnce()).findCachedOrderById(anyInt());
+        verify(coreCurrencyService, atLeastOnce()).findCachedCurrencyPairById(anyInt());
+        verify(coreCommissionService, atLeastOnce()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+        verify(coreUserRepository, atLeastOnce()).getUserRoleById(anyInt());
+    }
+
+    @Test
+    public void getUserReferralInfo_initiator_email_equal_user_acceptor_id_and_order_base_type_ico() {
+        userReferralInfoCache.clear();
+
+        doReturn(Collections.singletonList(ReferralTransactionDto.builder()
+                .orderId(1)
+                .initiatorId(2)
+                .initiatorEmail("initiator@example.com")
+                .referralLevel(1)
+                .referralPercent(BigDecimal.TEN)
+                .build()))
+                .when(coreUserRepository)
+                .getUserReferralTransactionList(anyInt());
+        doReturn(Collections.singletonMap("ETH", RateDto.builder()
+                .usdRate(BigDecimal.ONE)
+                .btcRate(BigDecimal.TEN)
+                .build()))
+                .when(ratesService)
+                .getCachedRates();
+        doReturn(CoreOrderDto.builder()
+                .currencyPairId(1)
+                .userId(1)
+                .userAcceptorId(2)
+                .commissionFixedAmount(BigDecimal.ONE)
+                .operationType(OperationType.INPUT)
+                .orderBaseType(OrderBaseType.ICO)
+                .amountBase(BigDecimal.valueOf(100))
+                .amountConvert(BigDecimal.valueOf(200))
+                .build())
+                .when(coreOrderService)
+                .findCachedOrderById(anyInt());
+        doReturn(CoreCurrencyPairDto.builder()
+                .name("BTC/ETH")
+                .currency2(CoreCurrencyDto.builder()
+                        .name("ETH")
+                        .build())
+                .build())
+                .when(coreCurrencyService)
+                .findCachedCurrencyPairById(anyInt());
+
+        PagedResult<UserReferralInfoDto> userReferralInfo = coreUserService.getUserReferralInfo(1, 15, 0);
+
+        assertNotNull(userReferralInfo);
+        assertNotNull(userReferralInfo.getItems());
+        assertFalse(userReferralInfo.getItems().isEmpty());
+        assertEquals(1, userReferralInfo.getItems().size());
+        assertEquals(1, userReferralInfo.getCount());
+
+        verify(coreUserRepository, atLeastOnce()).getUserReferralTransactionList(anyInt());
+        verify(ratesService, atLeastOnce()).getCachedRates();
+        verify(coreOrderService, atLeastOnce()).findCachedOrderById(anyInt());
+        verify(coreCurrencyService, atLeastOnce()).findCachedCurrencyPairById(anyInt());
+        verify(coreCommissionService, never()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+    }
+
+    @Test
+    public void getUserReferralInfo_referral_transaction_not_found() {
+        userReferralInfoCache.clear();
+
+        doReturn(Collections.emptyList())
+                .when(coreUserRepository)
+                .getUserReferralTransactionList(anyInt());
+        doReturn(Collections.singletonMap("ETH", RateDto.builder()
+                .usdRate(BigDecimal.ONE)
+                .btcRate(BigDecimal.TEN)
+                .build()))
+                .when(ratesService)
+                .getCachedRates();
+
+        PagedResult<UserReferralInfoDto> userReferralInfo = coreUserService.getUserReferralInfo(1, 15, 0);
+
+        assertNotNull(userReferralInfo);
+        assertNotNull(userReferralInfo.getItems());
+        assertTrue(userReferralInfo.getItems().isEmpty());
+        assertEquals(0, userReferralInfo.getCount());
+
+        verify(coreUserRepository, atLeastOnce()).getUserReferralTransactionList(anyInt());
+        verify(ratesService, atLeastOnce()).getCachedRates();
+        verify(coreOrderService, never()).findCachedOrderById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyPairById(anyInt());
+        verify(coreCommissionService, never()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+    }
+
+    @Test
+    public void getUserReferralInfo_order_not_found() {
+        userReferralInfoCache.clear();
+
+        doReturn(Collections.singletonList(ReferralTransactionDto.builder()
+                .orderId(1)
+                .initiatorId(1)
+                .initiatorEmail("initiator@example.com")
+                .referralLevel(1)
+                .referralPercent(BigDecimal.TEN)
+                .build()))
+                .when(coreUserRepository)
+                .getUserReferralTransactionList(anyInt());
+        doReturn(Collections.singletonMap("ETH", RateDto.builder()
+                .usdRate(BigDecimal.ONE)
+                .btcRate(BigDecimal.TEN)
+                .build()))
+                .when(ratesService)
+                .getCachedRates();
+        doReturn(null)
+                .when(coreOrderService)
+                .findCachedOrderById(anyInt());
+
+        PagedResult<UserReferralInfoDto> userReferralInfo = coreUserService.getUserReferralInfo(1, 15, 0);
+
+        assertNotNull(userReferralInfo);
+        assertNotNull(userReferralInfo.getItems());
+        assertFalse(userReferralInfo.getItems().isEmpty());
+        assertEquals(1, userReferralInfo.getItems().size());
+        assertEquals(1, userReferralInfo.getCount());
+
+        verify(coreUserRepository, atLeastOnce()).getUserReferralTransactionList(anyInt());
+        verify(ratesService, atLeastOnce()).getCachedRates();
+        verify(coreOrderService, atLeastOnce()).findCachedOrderById(anyInt());
+        verify(coreCurrencyService, never()).findCachedCurrencyPairById(anyInt());
+        verify(coreCommissionService, never()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+    }
+
+    @Test
+    public void getUserReferralInfo_currency_pair_not_found() {
+        userReferralInfoCache.clear();
+
+        doReturn(Collections.singletonList(ReferralTransactionDto.builder()
+                .orderId(1)
+                .initiatorId(1)
+                .initiatorEmail("initiator@example.com")
+                .referralLevel(1)
+                .referralPercent(BigDecimal.TEN)
+                .build()))
+                .when(coreUserRepository)
+                .getUserReferralTransactionList(anyInt());
+        doReturn(Collections.singletonMap("ETH", RateDto.builder()
+                .usdRate(BigDecimal.ONE)
+                .btcRate(BigDecimal.TEN)
+                .build()))
+                .when(ratesService)
+                .getCachedRates();
+        doReturn(CoreOrderDto.builder()
+                .currencyPairId(1)
+                .userId(1)
+                .userAcceptorId(2)
+                .commissionFixedAmount(BigDecimal.ONE)
+                .operationType(OperationType.INPUT)
+                .orderBaseType(OrderBaseType.LIMIT)
+                .amountBase(BigDecimal.valueOf(100))
+                .amountConvert(BigDecimal.valueOf(200))
+                .build())
+                .when(coreOrderService)
+                .findCachedOrderById(anyInt());
+        doReturn(null)
+                .when(coreCurrencyService)
+                .findCachedCurrencyPairById(anyInt());
+
+        PagedResult<UserReferralInfoDto> userReferralInfo = coreUserService.getUserReferralInfo(1, 15, 0);
+
+        assertNotNull(userReferralInfo);
+        assertNotNull(userReferralInfo.getItems());
+        assertFalse(userReferralInfo.getItems().isEmpty());
+        assertEquals(1, userReferralInfo.getItems().size());
+        assertEquals(1, userReferralInfo.getCount());
+
+        verify(coreUserRepository, atLeastOnce()).getUserReferralTransactionList(anyInt());
+        verify(ratesService, atLeastOnce()).getCachedRates();
+        verify(coreOrderService, atLeastOnce()).findCachedOrderById(anyInt());
+        verify(coreCurrencyService, atLeastOnce()).findCachedCurrencyPairById(anyInt());
+        verify(coreCommissionService, never()).findCachedCommissionByTypeAndRole(any(OperationType.class), any(UserRole.class));
+    }
+
+    @Test
+    public void getUserRoleById_ok() {
+        doReturn(UserRole.USER)
+                .when(coreUserRepository)
+                .getUserRoleById(anyInt());
+
+        UserRole role = coreUserService.getUserRoleById(1);
+
+        assertNotNull(role);
+        assertEquals(UserRole.USER, role);
+    }
+
+    @Test(expected = UserRoleNotFoundException.class)
+    public void getUserRoleById_not_found() {
+        doThrow(UserRoleNotFoundException.class)
+                .when(coreUserRepository)
+                .getUserRoleById(anyInt());
+
+        coreUserService.getUserRoleById(1);
+    }
+
     @Configuration
     static class InnerConfig {
 
         @Bean(USER_INFO_CACHE_BY_KEY_TEST)
         public Cache cacheByName() {
             return new CaffeineCache(USER_INFO_CACHE_BY_KEY_TEST, Caffeine.newBuilder()
+                    .expireAfterWrite(1, TimeUnit.MINUTES)
+                    .build());
+        }
+
+        @Bean(USER_REFERRAL_CACHE_BY_ID_TEST)
+        public Cache referralCacheById() {
+            return new CaffeineCache(USER_REFERRAL_CACHE_BY_ID_TEST, Caffeine.newBuilder()
                     .expireAfterWrite(1, TimeUnit.MINUTES)
                     .build());
         }
