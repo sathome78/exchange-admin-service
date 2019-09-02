@@ -1,0 +1,25 @@
+<div>
+  <ul class="pagination pagination-sm">
+    <li
+      class="page-item"
+      [ngClass]="{'disabled': activePage === 1}"
+    >
+      <a class="page-link" href="#" (click)="onChangePage($event, activePage - 1)">&laquo;</a>
+    </li>
+
+    <li
+      class="page-item"
+      [ngClass]="{'active': activePage === p}"
+      *ngFor="let p of pagesArray"
+    >
+      <a class="page-link" href="#" (click)="onChangePage($event, p)">{{p}}</a>
+    </li>
+
+    <li
+      class="page-item"
+      [ngClass]="{'disabled': activePage === pagesArray[pagesArray.length - 1]}"
+    >
+      <a class="page-link" href="#" (click)="onChangePage($event, activePage + 1)">&raquo;</a>
+    </li>
+  </ul>
+</div>

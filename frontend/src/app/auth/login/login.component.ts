@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { UtilsService } from 'src/app/shared/utils.service';
-import {ApiService} from '../../services/api.service';
-import {HttpParams} from '@angular/common/http';
-import {Location} from '@angular/common';
+import { UtilsService } from 'src/app/shared/services/utils.service';
+import { ApiService } from '../../shared/services/api.service';
+import { HttpParams } from '@angular/common/http';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
   }
 
   submitForm(e) {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     if (this.loginForm.invalid) {
       return;
     }
@@ -43,10 +43,9 @@ export class LoginComponent implements OnInit {
       .set('password', this.loginForm.controls.password.value)
       .set('grant_type', 'password');
 
-
-    this.apiService.login(body.toString()).subscribe(data => {      
+    this.apiService.login(body.toString()).subscribe(data => {
       localStorage.setItem('token', JSON.stringify(data));
-      this.location.back()
+      this.location.back();
     }, error => {
       alert(error.error);
     });
